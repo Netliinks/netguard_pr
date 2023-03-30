@@ -33,6 +33,10 @@ export const tableLayout = `
           ID <i class="fa-regular fa-filter"></i>
         </span></th>
 
+        <th><span data-type="type">
+          Tipo <i class="fa-regular fa-filter"></i>
+        </span></th>
+
         <!-- th class="header_filled header_key"></!-->
 
         <th class="thead_centered"><span data-type="status">

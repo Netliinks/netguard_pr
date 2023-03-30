@@ -83,6 +83,7 @@ export class SuperUsers {
         <td>los datos no coinciden con su búsqueda</td>
         <td></td>
         <td></td>
+        <td></td>
       `;
             table.appendChild(row);
         }
@@ -91,9 +92,10 @@ export class SuperUsers {
                 let client = paginatedItems[i];
                 let row = document.createElement('tr');
                 row.innerHTML += `
-          <td>${client.firstName} ${client.lastName}</dt>
-          <td>${client.username}</dt>
+          <td>${client.firstName} ${client.lastName}</td>
+          <td>${client.username}</td>
           <td class="key"><button class="button"><i class="fa-regular fa-key"></i></button></td>
+          <td>${this.verifyUserType(client.userType)}</td>
           <td class="tag"><span>${client.state.name}</span></td>
 
           <td class="entity_options">
@@ -350,6 +352,13 @@ export class SuperUsers {
             </div>
 
             <div class="material_input_select">
+              <label for="entity-type">Tipo</label>
+              <input type="text" id="entity-type" class="input_select" readonly placeholder="cargando..." autocomplete="none">
+              <div id="input-options" class="input_options">
+              </div>
+            </div>
+
+            <div class="material_input_select">
               <label for="entity-state">Estado</label>
               <input type="text" id="entity-state" class="input_select" readonly placeholder="cargando...">
               <div id="input-options" class="input_options">
@@ -399,6 +408,7 @@ export class SuperUsers {
         </div>
       `;
             inputObserver();
+            inputSelectType('entity-type');
             inputSelect('Business', 'entity-citadel');
             inputSelect('Customer', 'entity-customer');
             inputSelect('State', 'entity-state', data.state.name);
@@ -477,6 +487,12 @@ export class SuperUsers {
         return 'CUSTOMER'
       }else if(userType == 'Guardia'){
         return 'GUARD'
+      }else if(userType == 'CUSTOMER'){
+        return 'Cliente'
+      }else if(userType == 'GUARD'){
+        return 'Guardia'
+      }else{
+        return userType
       }
     }
 }
