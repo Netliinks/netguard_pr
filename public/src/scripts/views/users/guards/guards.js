@@ -13,10 +13,10 @@ const currentPage = Config.currentPage;
 const getUsers = async () => {
     const users = await getEntitiesData('User');
     const FSuper = users.filter((data) => data.isSuper === false);
-    const data = FSuper.filter((data) => `${data.userType}`.includes('CUSTOMER'));
+    const data = FSuper.filter((data) => `${data.userType}`.includes('GUARD'));
     return data;
 };
-export class Clients {
+export class Guards {
     constructor() {
         this.dialogContainer = document.getElementById('app-dialogs');
         this.entityDialogContainer = document.getElementById('entity-editor-container');
@@ -272,7 +272,7 @@ export class Clients {
                         "id": `${inputsCollection.citadel.dataset.optionid}`
                     },
                     "phone": `${inputsCollection.phoneNumer.value}`,
-                    "userType": "CUSTOMER",
+                    "userType": "GUARD",
                     "username": `${inputsCollection.username.value}@${inputsCollection.customer.value.toLowerCase()}.com`
                 });
                 reg(raw);
@@ -622,7 +622,7 @@ export class Clients {
 export const setUserPassword = async () => {
     const users = await getEntitiesData('User');
     const filterBySuperUsers = users.filter((data) => data.isSuper === false);
-    const filterByUserType = filterBySuperUsers.filter((data) => `${data.userType}`.includes('CUSTOMER'));
+    const filterByUserType = filterBySuperUsers.filter((data) => `${data.userType}`.includes('GUARD'));
     const data = filterByUserType;
     data.forEach((newUser) => {
         let raw = JSON.stringify({
@@ -636,12 +636,12 @@ export const setUserPassword = async () => {
 export async function setRole() {
     const users = await getEntitiesData('User');
     const filterByNewUsers = users.filter((data) => data.newUser === true);
-    const filterByUserType = filterByNewUsers.filter((data) => `${data.userType}`.includes('CUSTOMER'));
+    const filterByUserType = filterByNewUsers.filter((data) => `${data.userType}`.includes('GUARD'));
     const data = filterByUserType;
     data.forEach((newUser) => {
         let raw = JSON.stringify({
             "id": `${newUser.id}`,
-            "roleCode": 'app_clientes'
+            "roleCode": 'app_guardias'
         });
         let updateNewUser = JSON.stringify({
             "newUser": false

@@ -1,6 +1,7 @@
 // Views
 import { Dashboard } from "../views/dashboard/dashboard.js";
 import { Notes } from "../views/binnacle/notes/NotesView.js";
+import { Guards } from "../views/users/guards/guards.js";
 import { Clients } from "../views/users/clients/clients.js";
 import { Visits } from "../views/binnacle/visits/VisitsView.js";
 import { Employees } from "../views/users/employees/employees.js";
@@ -31,6 +32,13 @@ export const renderSidebar = () => {
               </span>
 
               <div class="sidebar_subitems">
+
+                <div class="sidebar_subitem" id="render-guards">
+                  <span class="sidebar_subitem_label">
+                    <i class="fa-regular fa-user-group"></i> <div class="label">Guardias</div>
+                  </span>
+                </div>
+
                 <div class="sidebar_subitem" id="render-clients">
                   <span class="sidebar_subitem_label">
                     <i class="fa-regular fa-user-group"></i> <div class="label">Clientes</div>
@@ -124,6 +132,9 @@ const getSidebarItems = () => {
 const renders = () => {
     document.getElementById('render-dashboard')?.addEventListener('click', () => {
         new Dashboard().render();
+    });
+    document.getElementById('render-guards')?.addEventListener('click', () => {
+        new Guards().render();
     });
     document.getElementById('render-clients')?.addEventListener('click', () => {
         new Clients().render();
