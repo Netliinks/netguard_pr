@@ -1,0 +1,93 @@
+//
+//  _sidebar.scss
+//
+//  Created by Poll Castillo on 14/02/2023
+//
+
+.app {
+  &_sidebar {
+    background-color: $dark;
+    height: 100%;
+    max-width: 100%;
+    overflow-y: scroll;
+    padding: 2px;
+
+    &_container {
+      width: 100%;
+    }
+  }
+
+  .sidebar_item {
+    span {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      color: $white;
+      padding: 16px;
+      margin: 8px 0;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: 0.3s all ease-in-out;
+
+      .fa-regular {
+        font-size: 22px;
+        margin-right: 8px;
+        color: $white;
+      }
+
+    }
+    :hover {
+      background-color: lighten($dark, 8%);
+    }
+
+    .sidebar_subitems {
+      display: none;
+      padding-top: 4px;
+
+      .fa-regular {
+        font-size: 16px;
+      }
+
+      .isActive {
+        background-color: lighten($dark, 20%);
+      }
+
+      .sidebar_subitem {
+        margin: 4px;
+        border-radius: 4px;
+        text-align: center;
+      }
+    }
+
+    &.isActive {
+      background-color: lighten($dark, 20%);
+      color: $gray;
+      border-radius: 4px;
+
+      &:hover {
+        background-color: darken($dark, 6%);
+        color: $blue;
+      }
+
+      & .sidebar_subitems {
+        display: block !important;
+        background-color: darken($dark, 3%);
+      }
+    }
+
+    .sidebar_subitem_label {
+      font-size: 14px;
+    }
+  }
+}
+
+.sidebar_section {
+    display: block;
+    margin-top: 24px;
+}
+
+.section_title {
+    font-size: 16px;
+    margin-bottom: 16px;
+    color: $slategray;
+}
