@@ -100,7 +100,7 @@ export const getEntitiesData = async (entities) => {
  * @returns all data of specified entity.
  */
 export const getEntityData = async (entities, entity) => {
-    const URL = `${NetliinksUrl}${entities}/${entity}?fetchPlan=full&sort=-creationDate`;
+    const URL = `${NetliinksUrl}${entities}/${entity}?fetchPlan=full&sort=-createdDate`;
     return getData(URL);
 };
 export const updateEntity = async (entities, entity, raw) => {

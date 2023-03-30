@@ -14,15 +14,16 @@ const connectionHeader = {
     "Content-Type": "application/x-www-form-urlencoded",
     Cookie: "JSESSIONID=CDD208A868EAABD1F523BB6F3C8946AF",
 };
-const platformSystem = 'clients';
+const platformSystem = 'guards';
 const reqOP = {
     url: 'https://backend.netliinks.com:443/oauth/token',
     method: 'POST'
 };
 class CheckUser {
     checkType(userType, isNew, isSuper) {
-        if (userType === 'GUARD') {
+        if (userType === 'CUSTOMER') {
             console.log('mensaje...');
+            //this.signOut();
         }
         else {
             this.checkIfNew(isNew);
@@ -32,6 +33,7 @@ class CheckUser {
     checkIfIsSuper(isSuper) {
         if (isSuper === false) {
             console.log('Ocultando controles...');
+            this.signOut();
         }
     }
     checkIfNew(isNew) {
