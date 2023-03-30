@@ -11,9 +11,9 @@ const pageName = 'Eventos';
 const getEvents = async () => {
     const events = await getEntitiesData('Notification');
     // notificationType.name
-    const removeVisitsFromList = events.filter((data) => data.notificationType.name !== "Visita");
-    const removeVehicularFromList = removeVisitsFromList.filter((data) => data.notificationType.name !== 'Vehicular');
-    return removeVehicularFromList;
+    //const removeVisitsFromList = events.filter((data) => data.notificationType.name !== "Visita");
+    //const removeVehicularFromList = removeVisitsFromList.filter((data) => data.notificationType.name !== 'Vehicular');
+    //return removeVehicularFromList;
 };
 export class Events {
     constructor() {
