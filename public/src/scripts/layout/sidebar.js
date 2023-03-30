@@ -35,7 +35,7 @@ export const renderSidebar = () => {
 
                 <div class="sidebar_subitem" id="render-guards">
                   <span class="sidebar_subitem_label">
-                    <i class="fa-regular fa-user-group"></i> <div class="label">Guardias</div>
+                    <i class="fa-regular fa-person-military-pointing"></i> <div class="label">Guardias</div>
                   </span>
                 </div>
 

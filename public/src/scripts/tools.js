@@ -61,6 +61,45 @@ export const inputSelect = async (entity, selectId, currentStatus) => {
         });
     });
 };
+
+export const inputSelectType = (selectId) => {
+    const data = [
+        {id: 'CUSTOMER', name: 'Cliente'},
+        {id: 'GUARD', name: 'Guardia'},
+    ]
+    const select = document.querySelector(`#${selectId}`);
+    const inputParent = select.parentNode;
+    const optionsContent = inputParent.querySelector('#input-options');
+    const optionsContainer = document.createElement('div');
+    optionsContainer.classList.add('input_options_container');
+    optionsContent.appendChild(optionsContainer);
+
+    for (let i = 0; i < data.length; i++) {
+        const inputOption = document.createElement('div');
+        select.setAttribute('data-optionid', data[0].id);
+        select.setAttribute('value', data[0].name);
+        inputOption.classList.add('input_option');
+        inputOption.setAttribute('id', data[i].id);
+        let nameData = data[i].name;
+        inputOption.innerHTML = nameData;
+        optionsContainer.appendChild(inputOption);
+    }
+
+    const options = optionsContainer.querySelectorAll('.input_option');
+    select.value = data[0].name;
+    select.addEventListener('click', () => {
+        inputParent.classList.toggle('select_active');
+    });
+    options.forEach((option) => {
+        option.addEventListener('click', () => {
+            select.value = option.innerText;
+            select.removeAttribute('data-optionid');
+            select.setAttribute('data-optionid', option.getAttribute('id'));
+            inputParent.classList.remove('select_active');
+        });
+    });
+} 
+
 export class FixStatusElement {
     fix(element) {
         const elementTextValue = element.innerText;

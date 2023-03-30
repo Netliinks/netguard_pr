@@ -1,6 +1,6 @@
 // @filename: SuperUsers.ts
 import { deleteEntity, getEntitiesData, getEntityData, registerEntity } from "../../../endpoints.js";
-import { drawTagsIntoTables, inputObserver, inputSelect, CloseDialog } from "../../../tools.js";
+import { drawTagsIntoTables, inputObserver, inputSelect, inputSelectType, CloseDialog } from "../../../tools.js";
 import { Config } from "../../../Configs.js";
 import { tableLayout } from "./Layout.js";
 import { tableLayoutTemplate } from "./Templates.js";
@@ -130,7 +130,7 @@ export class SuperUsers {
           <div class="entity_editor_header">
             <div class="user_info">
               <div class="avatar"><i class="fa-regular fa-user"></i></div>
-              <h1 class="entity_editor_title">Registrar <br><small>Contratista</small></h1>
+              <h1 class="entity_editor_title">Registrar <br><small>Superusuarios</small></h1>
             </div>
 
             <button class="btn btn_close_editor" id="close"><i class="fa-regular fa-x"></i></button>
@@ -163,6 +163,13 @@ export class SuperUsers {
             <div class="material_input">
               <input type="text" id="entity-username" class="input_filled" placeholder="john.doe@ejemplo.com" readonly>
               <label for="entity-username"><i class="input_locked fa-solid fa-lock"></i> Nombre de usuario</label>
+            </div>
+
+            <div class="material_input_select">
+              <label for="entity-type">Tipo</label>
+              <input type="text" id="entity-type" class="input_select" readonly placeholder="cargando..." autocomplete="none">
+              <div id="input-options" class="input_options">
+              </div>
             </div>
 
             <div class="material_input_select">
@@ -216,6 +223,7 @@ export class SuperUsers {
       `;
             // @ts-ignore
             inputObserver();
+            inputSelectType('entity-type');
             inputSelect('Citadel', 'entity-citadel');
             inputSelect('Customer', 'entity-customer');
             inputSelect('State', 'entity-state');
@@ -234,8 +242,10 @@ export class SuperUsers {
                     customer: document.getElementById('entity-customer'),
                     username: document.getElementById('entity-username'),
                     citadel: document.getElementById('entity-citadel'),
-                    temporalPass: document.getElementById('tempPass')
+                    temporalPass: document.getElementById('tempPass'),
+                    userType: document.getElementById('entity-type'),
                 };
+
                 const raw = JSON.stringify({
                     "lastName": `${inputsCollection.lastName.value}`,
                     "secondLastName": `${inputsCollection.secondLastName.value}`,
@@ -258,7 +268,7 @@ export class SuperUsers {
                         "id": `${inputsCollection.citadel.dataset.entityid}`
                     },
                     "phone": `${inputsCollection.phoneNumer.value}`,
-                    "userType": "CONTRACTOR",
+                    "userType": `${this.verifyUserType(inputsCollection.userType.value)}`,
                     "username": `${inputsCollection.username.value}@${inputsCollection.customer.value}.com`
                 });
                 reg(raw);
@@ -461,6 +471,13 @@ export class SuperUsers {
         closeButton.addEventListener('click', () => {
             new CloseDialog().x(editor);
         }, false);
+    }
+    verifyUserType(userType){
+      if(userType == 'Cliente'){
+        return 'CUSTOMER'
+      }else if(userType == 'Guardia'){
+        return 'GUARD'
+      }
     }
 }
 export const setNewPassword = async () => {
