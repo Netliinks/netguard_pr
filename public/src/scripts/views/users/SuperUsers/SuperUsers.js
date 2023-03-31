@@ -281,12 +281,17 @@ export class SuperUsers {
             });
         };
         const reg = async (raw) => {
-            console.log(raw)
-            /*registerEntity(raw, 'User')
+            registerEntity(raw, 'User')
                 .then(res => {
-                this.render();
+                setTimeout(async () => {
+                  let data = await getUsers();
+                    const tableBody = document.getElementById('datatable-body');
+                    const container = document.getElementById('entity-editor-container');
+                    new CloseDialog().x(container);
+                    this.load(tableBody, currentPage, data);
+                }, 1000);
                 //setNewPassword();
-            });*/
+            });
             /*const setNewPassword = async () => {
                 const users = await getEntitiesData('User');
                 const FNewUsers = users.filter((data) => data.isSuper === true);
