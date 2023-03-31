@@ -62,11 +62,12 @@ export const inputSelect = async (entity, selectId, currentStatus) => {
     });
 };
 
-export const inputSelectType = (selectId) => {
+export const inputSelectType = async (selectId, currentType) => {
     const data = [
         {id: 'CUSTOMER', name: 'Cliente'},
         {id: 'GUARD', name: 'Guardia'},
     ]
+    const type = await currentType;
     const select = document.querySelector(`#${selectId}`);
     const inputParent = select.parentNode;
     const optionsContent = inputParent.querySelector('#input-options');
@@ -86,7 +87,17 @@ export const inputSelectType = (selectId) => {
     }
 
     const options = optionsContainer.querySelectorAll('.input_option');
-    select.value = data[0].name;
+    if (type === "CUSTOMER") {
+        select.value = "Cliente";
+        select.setAttribute('data-optionid', type);
+    }
+    else if (type === 'GUARD') {
+        select.value = "Guardia";
+        select.setAttribute('data-optionid', type);
+    }
+    else {
+        select.value = data[0].name;
+    }
     select.addEventListener('click', () => {
         inputParent.classList.toggle('select_active');
     });

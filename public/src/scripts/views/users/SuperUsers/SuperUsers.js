@@ -207,7 +207,7 @@ export class SuperUsers {
               </div>
             </div>
 
-            <div class="material_input_select">
+            <div class="material_input_select" style="display: none">
               <label for="entity-department">Departamento</label>
               <input type="text" id="entity-department" class="input_select" readonly placeholder="cargando...">
               <div id="input-options" class="input_options">
@@ -217,7 +217,7 @@ export class SuperUsers {
             <br><br>
             <div class="material_input">
               <input type="password" id="tempPass" autocomplete="false">
-              <label for="tempPass">Contraseña temporal</label>
+              <label for="tempPass">Contraseña</label>
             </div>
 
           </div>
@@ -284,7 +284,7 @@ export class SuperUsers {
             registerEntity(raw, 'User')
                 .then(res => {
                 setTimeout(async () => {
-                  let data = await getUsers();
+                  let data = await getUsers(SUser);
                     const tableBody = document.getElementById('datatable-body');
                     const container = document.getElementById('entity-editor-container');
                     new CloseDialog().x(container);
@@ -361,11 +361,9 @@ export class SuperUsers {
               <label for="entity-username">Nombre de usuario</label>
             </div>
 
-            <div class="material_input_select">
+            <div class="material_input">
+              <input type="text" id="entity-type" class="input_filled" value="${verifyUserType(data.userType)}" readonly>
               <label for="entity-type">Tipo</label>
-              <input type="text" id="entity-type" class="input_select" readonly placeholder="cargando..." autocomplete="none">
-              <div id="input-options" class="input_options">
-              </div>
             </div>
 
             <div class="material_input_select">
@@ -396,7 +394,7 @@ export class SuperUsers {
               </div>
             </div>
 
-            <div class="material_input_select">
+            <div class="material_input_select" style="display: none">
               <label for="entity-department">Departamento</label>
               <input type="text" id="entity-department" class="input_select" readonly placeholder="cargando...">
               <div id="input-options" class="input_options">
@@ -404,9 +402,9 @@ export class SuperUsers {
             </div>
 
             <br><br><br>
-            <div class="material_input">
+            <div class="material_input" style="display: none">
               <input type="password" id="tempPass" >
-              <label for="tempPass">Clave temporal</label>
+              <label for="tempPass">Clave</label>
             </div>
 
           </div>
@@ -418,8 +416,8 @@ export class SuperUsers {
         </div>
       `;
             inputObserver();
-            inputSelectType('entity-type');
-            inputSelect('Business', 'entity-citadel');
+            //inputSelectType('entity-type',data.userType);
+            inputSelect('Citadel', 'entity-citadel');
             inputSelect('Customer', 'entity-customer');
             inputSelect('State', 'entity-state', data.state.name);
             inputSelect('Department', 'entity-department');
@@ -429,8 +427,66 @@ export class SuperUsers {
         };
         const UUpdate = async (entityId) => {
             const updateButton = document.getElementById('update-changes');
+            const $value = {
+              // @ts-ignore
+              firstName: document.getElementById('entity-firstname'),
+              // @ts-ignore
+              lastName: document.getElementById('entity-lastname'),
+              // @ts-ignore
+              secondLastName: document.getElementById('entity-secondlastname'),
+              // @ts-ignore
+              phone: document.getElementById('entity-phone'),
+              // @ts-ignore
+              status: document.getElementById('entity-state'),
+              // @ts-ignore
+              business: document.getElementById('entity-business'),
+              // @ts-ignore
+              citadel: document.getElementById('entity-citadel'),
+              // @ts-ignore
+              department: document.getElementById('entity-department'),
+              // @ts-ignore
+              customer: document.getElementById('entity-customer'),
+              //// @ts-ignore
+              //userType: document.getElementById('entity-type')
+          };
             updateButton.addEventListener('click', () => {
+              let raw = JSON.stringify({
+                  // @ts-ignore
+                  "lastName": `${$value.lastName?.value}`,
+                  // @ts-ignore
+                  "secondLastName": `${$value.secondLastName?.value}`,
+                  "active": true,
+                  // @ts-ignore
+                  "firstName": `${$value.firstName?.value}`,
+                  "state": {
+                      "id": `${$value.status?.dataset.optionid}`
+                  },
+                  "customer": {
+                      "id": `${$value.customer?.dataset.optionid}`
+                  },
+                  // @ts-ignore
+                  "phone": `${$value.phone?.value}`,
+                  // @ts-ignore
+                  //"userType": `${$value.userType?.dataset.optionid}`,
+              });
+              update(raw);
             });
+            const update = (raw) => {
+              updateEntity('User', entityId, raw)
+                  .then((res) => {
+                  setTimeout(async () => {
+                      let tableBody;
+                      let container;
+                      let data;
+                      data = await getUsers(SUser);
+                      new CloseDialog()
+                          .x(container =
+                          document.getElementById('entity-editor-container'));
+                      this.load(tableBody
+                          = document.getElementById('datatable-body'), currentPage, data);
+                  }, 100);
+              });
+          };
         };
     }
     remove() {
@@ -541,9 +597,15 @@ export async function setRole(SUser) {
   const filterByNewUsers = users.filter((data) => data.newUser === SUser);
   const data = filterByNewUsers;
   data.forEach((newUser) => {
+      let roleCode;
+      if(newUser.userType === 'GUARD'){
+        roleCode = 'app_web_guardias'
+      }else if(newUser.userType === 'CUSTOMER'){
+        roleCode = 'app_web_clientes'
+      }
       let raw = JSON.stringify({
           "id": `${newUser.id}`,
-          "roleCode": 'app_web_guardias'
+          "roleCode": `${roleCode}`
       });
       let updateNewUser = JSON.stringify({
           "newUser": false

@@ -387,7 +387,7 @@ export class Guards {
                     </div>
 
                     <br><br><br>
-                    <div class="material_input">
+                    <div class="material_input" style="display: none">
                     <input type="password" id="tempPass" >
                     <label for="tempPass">Contraseña</label>
                     </div>
