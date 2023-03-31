@@ -23,7 +23,7 @@ class CheckUser {
     checkType(userType, isNew, isSuper) {
         if (userType === 'CUSTOMER') {
             console.log('mensaje...');
-            //this.signOut();
+            this.signOut();
         }
         else {
             this.checkIfNew(isNew);

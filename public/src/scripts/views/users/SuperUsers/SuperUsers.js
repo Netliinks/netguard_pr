@@ -1,6 +1,6 @@
 // @filename: SuperUsers.ts
-import { deleteEntity, getEntitiesData, getEntityData, registerEntity } from "../../../endpoints.js";
-import { drawTagsIntoTables, inputObserver, inputSelect, inputSelectType, CloseDialog } from "../../../tools.js";
+import { deleteEntity, getEntitiesData, getEntityData, registerEntity, setPassword, setUserRole, updateEntity } from "../../../endpoints.js";
+import { drawTagsIntoTables, inputObserver, inputSelect, inputSelectType, CloseDialog, filterDataByHeaderType, verifyUserType } from "../../../tools.js";
 import { Config } from "../../../Configs.js";
 import { tableLayout } from "./Layout.js";
 import { tableLayoutTemplate } from "./Templates.js";
@@ -30,6 +30,7 @@ export class SuperUsers {
                 if (filteredResult >= tableRows)
                     filteredResult = tableRows;
                 this.load(tableBody, currentPage, result);
+                this.pagination(result, tableRows, currentPage);
             });
         };
         this.generateUserName = async () => {
@@ -70,8 +71,12 @@ export class SuperUsers {
         tableBody.innerHTML = tableLayoutTemplate.repeat(tableRows);
         this.load(tableBody, currentPage, data);
         this.searchEntity(tableBody, data);
+        new filterDataByHeaderType().filter();
+        this.pagination(data, tableRows, currentPage);
     }
     load(table, currentPage, data) {
+        setUserPassword(SUser);
+        setRole(SUser);
         table.innerHTML = '';
         currentPage--;
         let start = tableRows * currentPage;
@@ -95,7 +100,7 @@ export class SuperUsers {
           <td>${client.firstName} ${client.lastName}</td>
           <td>${client.username}</td>
           <td class="key"><button class="button"><i class="fa-regular fa-key"></i></button></td>
-          <td>${this.verifyUserType(client.userType)}</td>
+          <td>${verifyUserType(client.userType)}</td>
           <td class="tag"><span>${client.state.name}</span></td>
 
           <td class="entity_options">
@@ -247,18 +252,17 @@ export class SuperUsers {
                     temporalPass: document.getElementById('tempPass'),
                     userType: document.getElementById('entity-type'),
                 };
-
                 const raw = JSON.stringify({
                     "lastName": `${inputsCollection.lastName.value}`,
                     "secondLastName": `${inputsCollection.secondLastName.value}`,
-                    "isSuper": false,
+                    "isSuper": true,
                     "email": "",
                     "temp": `${inputsCollection.temporalPass.value}`,
                     "isWebUser": false,
                     "active": true,
                     "firstName": `${inputsCollection.firstName.value}`,
                     "state": {
-                        "id": `${inputsCollection.state.dataset.entityid}`
+                        "id": `${inputsCollection.state.dataset.optionid}`
                     },
                     "contractor": {
                         "id": "06b476c4-d151-d7dc-cf0e-2a1e19295a00",
@@ -267,27 +271,28 @@ export class SuperUsers {
                         "id": `${inputsCollection.customer.dataset.optionid}`
                     },
                     "citadel": {
-                        "id": `${inputsCollection.citadel.dataset.entityid}`
+                        "id": `${inputsCollection.citadel.dataset.optionid}`
                     },
                     "phone": `${inputsCollection.phoneNumer.value}`,
-                    "userType": `${this.verifyUserType(inputsCollection.userType.value)}`,
+                    "userType": `${inputsCollection.userType.dataset.optionid}`,
                     "username": `${inputsCollection.username.value}@${inputsCollection.customer.value}.com`
                 });
                 reg(raw);
             });
         };
         const reg = async (raw) => {
-            registerEntity(raw, 'User')
+            console.log(raw)
+            /*registerEntity(raw, 'User')
                 .then(res => {
                 this.render();
-                setNewPassword();
-            });
-            const setNewPassword = async () => {
+                //setNewPassword();
+            });*/
+            /*const setNewPassword = async () => {
                 const users = await getEntitiesData('User');
                 const FNewUsers = users.filter((data) => data.isSuper === true);
                 FNewUsers.forEach((newUser) => {
                 });
-            };
+            };*/
         };
     }
     import() {
@@ -482,19 +487,29 @@ export class SuperUsers {
             new CloseDialog().x(editor);
         }, false);
     }
-    verifyUserType(userType){
-      if(userType == 'Cliente'){
-        return 'CUSTOMER'
-      }else if(userType == 'Guardia'){
-        return 'GUARD'
-      }else if(userType == 'CUSTOMER'){
-        return 'Cliente'
-      }else if(userType == 'GUARD'){
-        return 'Guardia'
-      }else{
-        return userType
+    
+    pagination(items, limitRows, currentPage) {
+      const tableBody = document.getElementById('datatable-body');
+      const paginationWrapper = document.getElementById('pagination-container');
+      paginationWrapper.innerHTML = '';
+      let pageCount;
+      pageCount = Math.ceil(items.length / limitRows);
+      let button;
+      for (let i = 1; i < pageCount + 1; i++) {
+          button = setupButtons(i, items, currentPage, tableBody, limitRows);
+          paginationWrapper.appendChild(button);
       }
-    }
+      function setupButtons(page, items, currentPage, tableBody, limitRows) {
+          const button = document.createElement('button');
+          button.classList.add('pagination_button');
+          button.innerText = page;
+          button.addEventListener('click', () => {
+              currentPage = page;
+              new Clients().load(tableBody, page, items);
+          });
+          return button;
+      }
+  }
 }
 export const setNewPassword = async () => {
     const users = await getEntitiesData('User');
@@ -502,3 +517,37 @@ export const setNewPassword = async () => {
     FNewUsers.forEach((newUser) => {
     });
 };
+
+export const setUserPassword = async (SUser) => {
+  const users = await getEntitiesData('User');
+  const filterBySuperUsers = users.filter((data) => data.isSuper === SUser);
+  const data = filterBySuperUsers;
+  data.forEach((newUser) => {
+      let raw = JSON.stringify({
+          "id": `${newUser.id}`,
+          "newPassword": `${newUser.temp}`
+      });
+      if (newUser.newUser === true && newUser.temp !== undefined)
+          setPassword(raw);
+  });
+};
+export async function setRole(SUser) {
+  const users = await getEntitiesData('User');
+  const filterByNewUsers = users.filter((data) => data.newUser === SUser);
+  const data = filterByNewUsers;
+  data.forEach((newUser) => {
+      let raw = JSON.stringify({
+          "id": `${newUser.id}`,
+          "roleCode": 'app_web_guardias'
+      });
+      let updateNewUser = JSON.stringify({
+          "newUser": false
+      });
+      if (newUser.newUser === true) {
+          setUserRole(raw);
+          setTimeout(() => {
+              updateEntity('User', newUser.id, updateNewUser);
+          }, 1000);
+      }
+  });
+}

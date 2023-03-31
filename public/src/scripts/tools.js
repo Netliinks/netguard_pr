@@ -100,6 +100,20 @@ export const inputSelectType = (selectId) => {
     });
 } 
 
+export const verifyUserType = (userType) =>{
+    if(userType == 'CUSTOMER'){
+      return 'Cliente'
+    }else if(userType == 'GUARD'){
+      return 'Guardia'
+    }else if(userType == 'EMPLOYEE'){
+      return 'Empleado'
+    }else if(userType == 'CONTRACTOR'){
+      return 'Contratista'
+    }else{
+      return userType
+    }
+  }
+
 export class FixStatusElement {
     fix(element) {
         const elementTextValue = element.innerText;
