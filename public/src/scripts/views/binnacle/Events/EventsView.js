@@ -13,7 +13,7 @@ const getEvents = async () => {
     // notificationType.name
     //const removeVisitsFromList = events.filter((data) => data.notificationType.name !== "Visita");
     //const removeVehicularFromList = removeVisitsFromList.filter((data) => data.notificationType.name !== 'Vehicular');
-    //return removeVehicularFromList;
+    return events;
 };
 export class Events {
     constructor() {

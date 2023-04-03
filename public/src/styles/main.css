@@ -1371,6 +1371,38 @@ h1, h2, h3, h4, h5, h6 {
   margin-top: 24px;
 }
 
+.file_template {
+  display: flex;
+}
+.file_template .fa-file-csv {
+  font-size: 34px;
+  margin-right: 8px;
+}
+.file_template .filename {
+  font-weight: 700;
+  font-size: 16px;
+}
+.file_template .filelink {
+  color: #706F8E;
+  text-decoration: none;
+}
+.file_template .filelink:hover {
+  color: #6F7ADD;
+}
+
+.drop_zone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #8c8ba5;
+  width: 100%;
+  height: 200px;
+  background-color: rgba(112, 111, 142, 0.1);
+  border-radius: 8px;
+  border: 1px dashed #706F8E;
+}
+
 .section_title {
   font-size: 16px;
   margin-bottom: 16px;
