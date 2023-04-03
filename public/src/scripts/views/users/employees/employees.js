@@ -421,7 +421,11 @@ export class Employees {
                         <i class="fa-solid fa-file-csv"></i>
                         <div class="description">
                             <p class="filename">Plantilla de Empleados</p>
-                            <a href="#" class="filelink">Descargar</a>
+                            <a
+                            href="./public/src/templates/NetvisitorsEmpleados.csv"
+                            download="./public/src/templates/NetvisitorsEmpleados.csv"
+                            rel="noopener"
+                            target="_self" class="filelink">Descargar</a>
                         </div>
                     </div>
                 </div>

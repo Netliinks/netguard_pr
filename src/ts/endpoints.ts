@@ -114,7 +114,7 @@ export const getEntitiesData = async (entities: string): Endpoint => {
  * @returns all data of specified entity.
  */
 export const getEntityData = async (entities: string, entity: string): Endpoint => {
-    const URL: string = `${NetliinksUrl}${entities}/${entity}?fetchPlan=full&sort=-creationDate`
+    const URL: string = `${NetliinksUrl}${entities}/${entity}?fetchPlan=full&sort=-createdDate`
     return getData(URL)
 }
 
@@ -218,5 +218,4 @@ export const getFile = async (fileUrl: string): Endpoint => {
         })
 
     return file
-
 }

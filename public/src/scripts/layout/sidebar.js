@@ -173,4 +173,5 @@ const renders = () => {
 // new Clients().render()
 // new AssistControl().render()
 // new Notes().render()
-new Employees().render();
+//new Employees().render();
+// new Contractors().render()
