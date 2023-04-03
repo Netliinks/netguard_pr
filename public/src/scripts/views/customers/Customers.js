@@ -199,6 +199,22 @@ export class Customers {
               </div>
             </div>
 
+            <div class="material_input">
+              <input type="checkbox"
+                id="entity-marcation"
+                class="input_filled"
+                value="${data.permitMarcation}">
+              <label for="entity-marcation">Permite Marcación</label>
+            </div>
+
+            <div class="material_input">
+              <input type="checkbox"
+                id="entity-vehicular"
+                class="input_filled"
+                value="${data.permitVehicular}">
+              <label for="entity-vehicular">Permite Vehicular</label>
+            </div>
+
           </div>
           <!-- END EDITOR BODY -->
 
@@ -218,7 +234,11 @@ export class Customers {
               // @ts-ignore
               ruc: document.getElementById('entity-ruc'),
               // @ts-ignore
-              status: document.getElementById('entity-state')
+              status: document.getElementById('entity-state'),
+              // @ts-ignore
+              marcation: document.getElementById('entity-marcation'),
+              // @ts-ignore
+              vehicular: document.getElementById('entity-vehicular')
           };
             updateButton.addEventListener('click', () => {
               let raw = JSON.stringify({
@@ -227,6 +247,8 @@ export class Customers {
                   "state": {
                       "id": `${$value.status?.dataset.optionid}`
                   },
+                  "permitMarcation": `${$value.marcation.value}`,
+                  "permitVehicular": `${$value.permitVehicular.value}`,
               });
               update(raw);
             });
