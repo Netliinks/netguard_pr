@@ -12,7 +12,8 @@ const currentCustomer = await getEntityData('User', `${currentUser.attributes.id
 const getUsers = async (superUser) => {
     const users = await getEntitiesData('User');
     const FSuper = users.filter((data) => data.isSuper === superUser);
-    const FCustomer = FSuper.filter((data) => data.customer.id === `${currentCustomer.customer.id}`);
+    const admin = FSuper.filter((data) => data.username != `admin`);
+    const FCustomer = admin.filter((data) => data.customer.id === `${currentCustomer.customer.id}`);
     return FCustomer;
 };
 export class SuperUsers {
