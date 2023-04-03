@@ -168,6 +168,7 @@ export class Customers {
         });
         const RInterface = async (entities, entityID) => {
             const data = await getEntityData(entities, entityID);
+            console.log(data)
             this.entityDialogContainer.innerHTML = '';
             this.entityDialogContainer.style.display = 'flex';
             this.entityDialogContainer.innerHTML = `
@@ -199,18 +200,16 @@ export class Customers {
               </div>
             </div>
 
-            <div class="material_input">
+            <div class="material_input_check">
               <input type="checkbox"
                 id="entity-marcation"
-                class="input_filled"
                 value="${data.permitMarcation}">
               <label for="entity-marcation">Permite Marcación</label>
             </div>
 
-            <div class="material_input">
+            <div class="material_input_check">
               <input type="checkbox"
                 id="entity-vehicular"
-                class="input_filled"
                 value="${data.permitVehicular}">
               <label for="entity-vehicular">Permite Vehicular</label>
             </div>
