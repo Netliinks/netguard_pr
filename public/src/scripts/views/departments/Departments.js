@@ -1,14 +1,17 @@
 // @filename: Departments.ts
-import { deleteEntity, getEntitiesData, registerEntity } from "../../endpoints.js";
+import { deleteEntity, getEntitiesData, registerEntity, getUserInfo, getEntityData } from "../../endpoints.js";
 import { inputObserver, inputSelect, CloseDialog } from "../../tools.js";
 import { Config } from "../../Configs.js";
 import { tableLayout } from "./Layout.js";
 import { tableLayoutTemplate } from "./Template.js";
 const tableRows = Config.tableRows;
 const currentPage = Config.currentPage;
+const currentUser = await getUserInfo();
+const currentCustomer = await getEntityData('User', `${currentUser.attributes.id}`);
 const getDepartments = async () => {
     const department = await getEntitiesData('Department');
-    return department;
+    const FCustomer = department.filter((data) => data.customer.id === `${currentCustomer.customer.id}`);
+    return FCustomer;
 };
 export class Departments {
     constructor() {

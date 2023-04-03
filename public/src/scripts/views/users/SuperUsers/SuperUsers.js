@@ -1,5 +1,5 @@
 // @filename: SuperUsers.ts
-import { deleteEntity, getEntitiesData, getEntityData, registerEntity, setPassword, setUserRole, updateEntity } from "../../../endpoints.js";
+import { deleteEntity, getEntitiesData, getEntityData, registerEntity, setPassword, setUserRole, updateEntity, getUserInfo } from "../../../endpoints.js";
 import { drawTagsIntoTables, inputObserver, inputSelect, inputSelectType, CloseDialog, filterDataByHeaderType, verifyUserType } from "../../../tools.js";
 import { Config } from "../../../Configs.js";
 import { tableLayout } from "./Layout.js";
@@ -7,10 +7,13 @@ import { tableLayoutTemplate } from "./Templates.js";
 const tableRows = Config.tableRows;
 const currentPage = Config.currentPage;
 const SUser = true;
+const currentUser = await getUserInfo();
+const currentCustomer = await getEntityData('User', `${currentUser.attributes.id}`);
 const getUsers = async (superUser) => {
     const users = await getEntitiesData('User');
     const FSuper = users.filter((data) => data.isSuper === superUser);
-    return FSuper;
+    const FCustomer = FSuper.filter((data) => data.customer.id === `${currentCustomer.customer.id}`);
+    return FCustomer;
 };
 export class SuperUsers {
     constructor() {

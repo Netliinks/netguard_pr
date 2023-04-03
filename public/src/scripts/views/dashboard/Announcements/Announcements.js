@@ -1,5 +1,5 @@
 // @filename: announcements
-import { deleteEntity, getEntitiesData, getFile, getUserInfo, registerEntity } from "../../../endpoints.js";
+import { deleteEntity, getEntitiesData, getFile, getUserInfo, registerEntity, getEntityData } from "../../../endpoints.js";
 import { CloseDialog, inputObserver, userInfo } from "../../../tools.js";
 import { announcementCreatorController } from "./AnnouncementsCreatorControllers.js";
 export class Announcements {
@@ -13,27 +13,37 @@ export class Announcements {
         this._announcementCardControlsContainers.innerHTML = '';
         const announcementsList = await getEntitiesData('Announcement');
         let _userinfo = await getUserInfo();
+        const currentCustomer = await getEntityData('User', `${_userinfo.attributes.id}`);
         let prop;
+        /*const announcementsList = async () => {
+            const announcement = await getEntitiesData('Announcement');
+            const FCustomer = announcement.filter((data) => data.customer.id === `${currentCustomer.customer.id}`);
+            return FCustomer;
+        };*/
         console.log(announcementsList);
         announcementsList.forEach(async (announcement) => {
-            const _card = document.createElement('DIV');
-            let file;
-            if (announcement.attachment) {
-                file = await getFile(announcement.attachment);
+            const userCustomer = await getEntityData('User', `${announcement.user.id}`);// Obtener la empresa del usuario del anuncio
+            //console.log(`Usuario: ${announcement.user.id}, Empresa ${userCustomer.customer.id}`)
+            if(userCustomer.customer.id == `${currentCustomer.customer.id}`){ // Si la empresa coincide con el del usuario logueado
+                const _card = document.createElement('DIV');
+                let file;
+                if (announcement.attachment) {
+                    file = await getFile(announcement.attachment);
+                }
+                _card.classList.add('card');
+                _card.innerHTML = `
+                    <button class="btn btn_remove_announcement" data-announcementid="${announcement.id}" id="remove-announcement"><i class="fa-solid fa-trash"></i></button>
+                    <img src="${file}">
+                    <img src="${announcement.attachment ? await getFile(announcement.attachment) : null}">
+                    <h3 class="card_title">${announcement.title}</h3>
+                    <p class="card_content">${announcement.content}</p>
+                `;
+                let _currentUserId = _userinfo.attributes.id;
+                this._announcementCardContainer.appendChild(_card);
+                const _dotButton = document.createElement('BUTTON');
+                _dotButton.classList.add('card_dotbutton');
+                this._announcementCardControlsContainers.appendChild(_dotButton);
             }
-            _card.classList.add('card');
-            _card.innerHTML = `
-                <button class="btn btn_remove_announcement" data-announcementid="${announcement.id}" id="remove-announcement"><i class="fa-solid fa-trash"></i></button>
-                <img src="${file}">
-                <img src="${announcement.attachment ? await getFile(announcement.attachment) : null}">
-                <h3 class="card_title">${announcement.title}</h3>
-                <p class="card_content">${announcement.content}</p>
-            `;
-            let _currentUserId = _userinfo.attributes.id;
-            this._announcementCardContainer.appendChild(_card);
-            const _dotButton = document.createElement('BUTTON');
-            _dotButton.classList.add('card_dotbutton');
-            this._announcementCardControlsContainers.appendChild(_dotButton);
         }); // End Rendering
         this._newAnnouncementButton.addEventListener('click', () => {
             this.publish();

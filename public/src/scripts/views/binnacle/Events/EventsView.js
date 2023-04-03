@@ -1,6 +1,6 @@
 // @filename: EvetnsView.ts
 import { Config } from "../../../Configs.js";
-import { getEntityData, getEntitiesData } from "../../../endpoints.js";
+import { getEntityData, getEntitiesData, getUserInfo } from "../../../endpoints.js";
 import { CloseDialog, renderRightSidebar } from "../../../tools.js";
 import { UIContentLayout, UIRightSidebar } from "./Layout.js";
 import { UITableSkeletonTemplate } from "./Template.js";
@@ -8,12 +8,18 @@ import { UITableSkeletonTemplate } from "./Template.js";
 const tableRows = Config.tableRows;
 let currentPage = Config.currentPage;
 const pageName = 'Eventos';
+const currentUser = await getUserInfo();
+const currentCustomer = await getEntityData('User', `${currentUser.attributes.id}`);
 const getEvents = async () => {
     const events = await getEntitiesData('Notification');
+    const FCustomer = events.filter(async (data) => {
+        const userCustomer = await getEntityData('User', `${data.user.id}`);
+        userCustomer.customer.id === `${currentCustomer.customer.id}`
+    });
     // notificationType.name
     //const removeVisitsFromList = events.filter((data) => data.notificationType.name !== "Visita");
     //const removeVehicularFromList = removeVisitsFromList.filter((data) => data.notificationType.name !== 'Vehicular');
-    return events;
+    return FCustomer;
 };
 export class Events {
     constructor() {
