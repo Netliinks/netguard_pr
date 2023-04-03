@@ -168,7 +168,6 @@ export class Customers {
         });
         const RInterface = async (entities, entityID) => {
             const data = await getEntityData(entities, entityID);
-            console.log(data)
             this.entityDialogContainer.innerHTML = '';
             this.entityDialogContainer.style.display = 'flex';
             this.entityDialogContainer.innerHTML = `
@@ -203,14 +202,14 @@ export class Customers {
             <div class="material_input_check">
               <input type="checkbox"
                 id="entity-marcation"
-                value="${data.permitMarcation}">
+                value="marcation">
               <label for="entity-marcation">Permite Marcación</label>
             </div>
 
             <div class="material_input_check">
               <input type="checkbox"
                 id="entity-vehicular"
-                value="${data.permitVehicular}">
+                value="vehicular">
               <label for="entity-vehicular">Permite Vehicular</label>
             </div>
 
@@ -224,6 +223,15 @@ export class Customers {
       `;
             inputObserver();
             inputSelect('State', 'entity-state', data.state.name);
+            let marcation = false;
+            let vehicular = false;
+            if (data.permitMarcation === 'true') {
+              document.getElementById('entity-marcation').checked = true
+          }
+           
+          if (data.permitVehicular === 'true') {
+            document.getElementById('entity-vehicular').checked = true
+          }
             this.close();
             UUpdate(entityID);
         };
