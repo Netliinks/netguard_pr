@@ -248,7 +248,8 @@ export class SuperUsers {
             this.close();
             this.generateUserName();
             const registerButton = document.getElementById('register-entity');
-            registerButton.addEventListener('click', () => {
+            registerButton.addEventListener('click', async() => {
+                const currentUser = await currentUserData();
                 const inputsCollection = {
                     firstName: document.getElementById('entity-firstname'),
                     lastName: document.getElementById('entity-lastname'),
@@ -281,6 +282,9 @@ export class SuperUsers {
                     },
                     "citadel": {
                         "id": `${inputsCollection.citadel.dataset.optionid}`
+                    },
+                    "business":{
+                        "id": `${currentUser.business.id}`
                     },
                     "phone": `${inputsCollection.phoneNumer.value}`,
                     "userType": `${inputsCollection.userType.dataset.optionid}`,
