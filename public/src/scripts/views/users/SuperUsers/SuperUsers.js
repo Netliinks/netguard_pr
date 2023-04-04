@@ -684,7 +684,7 @@ export class SuperUsers {
           button.innerText = page;
           button.addEventListener('click', () => {
               currentPage = page;
-              new Clients().load(tableBody, page, items);
+              new SuperUsers().load(tableBody, page, items);
           });
           return button;
       }

@@ -612,7 +612,7 @@ export class Guards {
             button.innerText = page;
             button.addEventListener('click', () => {
                 currentPage = page;
-                new Clients().load(tableBody, page, items);
+                new Guards().load(tableBody, page, items);
             });
             return button;
         }

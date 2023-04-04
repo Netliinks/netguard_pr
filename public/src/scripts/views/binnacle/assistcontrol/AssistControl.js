@@ -5,7 +5,7 @@
 //
 import { Config } from "../../../Configs.js";
 import { getEntityData, getEntitiesData, getUserInfo } from "../../../endpoints.js";
-import { CloseDialog, drawTagsIntoTables, renderRightSidebar } from "../../../tools.js";
+import { CloseDialog, drawTagsIntoTables, renderRightSidebar, filterDataByHeaderType } from "../../../tools.js";
 import { UIContentLayout, UIRightSidebar } from "./Layout.js";
 import { UITableSkeletonTemplate } from "./Template.js";
 // Local configs
@@ -45,6 +45,8 @@ export class AssistControl {
             // Exec functions
             this.load(tableBody, currentPage, assistControlArray);
             this.searchVisit(tableBody, assistControlArray);
+            new filterDataByHeaderType().filter();
+            this.pagination(assistControlArray, tableRows, currentPage);
             // Rendering icons
         };
         this.load = (tableBody, currentPage, assistControl) => {
@@ -70,7 +72,7 @@ export class AssistControl {
                     let row = document.createElement('TR');
                     row.innerHTML += `
                     <td style="white-space: nowrap">${assistControl.user.firstName} ${assistControl.user.lastName} ${assistControl.user.secondLastName}</td>
-                    <td>${assistControl.dni}</td>
+                    <td>${assistControl.user.dni}</td>
                     <td id="table-date">${assistControl.ingressTime}</td>
                     <td id="table-date">${assistControl.egressTime}</td>
                     <td class="tag"><span>${assistControl.marcationState.name}</span></td>
@@ -88,10 +90,32 @@ export class AssistControl {
                 this.fixCreatedDate();
             }
         };
+        this.pagination = async (items, limitRows, currentPage) => {
+            const tableBody = document.getElementById('datatable-body');
+            const paginationWrapper = document.getElementById('pagination-container');
+            paginationWrapper.innerHTML = '';
+            let pageCount;
+            pageCount = Math.ceil(items.length / limitRows);
+            let button;
+            for (let i = 1; i < pageCount + 1; i++) {
+                button = setupButtons(i, items, currentPage, tableBody, limitRows);
+                paginationWrapper.appendChild(button);
+            }
+            function setupButtons(page, items, currentPage, tableBody, limitRows) {
+                const button = document.createElement('button');
+                button.classList.add('pagination_button');
+                button.innerText = page;
+                button.addEventListener('click', () => {
+                    currentPage = page;
+                    new AssistControl().load(tableBody, page, items);
+                });
+                return button;
+            }
+        }
         this.searchVisit = async (tableBody, visits) => {
             const search = document.getElementById('search');
             await search.addEventListener('keyup', () => {
-                const arrayVisits = visits.filter((visit) => `${visit.dni}${visit.firstName}${visit.firstLastName}${visit.secondLastName}${visit.createdDate}${visit.visitState.name}${visit.user.userType}${visit.creationTime}`
+                const arrayVisits = visits.filter((visit) => `${visit.user.dni}${visit.user.firstName}${visit.user.lastName}${visit.user.secondLastName}${visit.ingressTime}${visit.egressTime}${visit.marcationState.name}`
                     .toLowerCase()
                     .includes(search.value.toLowerCase()));
                 let filteredVisit = arrayVisits.length;
@@ -99,6 +123,7 @@ export class AssistControl {
                 if (filteredVisit >= Config.tableRows)
                     filteredVisit = Config.tableRows;
                 this.load(tableBody, currentPage, result);
+                this.pagination(result, tableRows, currentPage);
             });
         };
         this.previewAssist = async () => {

@@ -5,7 +5,7 @@
 //
 import { Config } from "../../../Configs.js";
 import { getEntityData, getEntitiesData, getFile, getUserInfo } from "../../../endpoints.js";
-import { CloseDialog, renderRightSidebar } from "../../../tools.js";
+import { CloseDialog, renderRightSidebar, filterDataByHeaderType } from "../../../tools.js";
 import { UIContentLayout, UIRightSidebar } from "./Layout.js";
 import { UITableSkeletonTemplate } from "./Template.js";
 // Local configs
@@ -44,6 +44,7 @@ export class Notes {
             // Exec functions
             this.load(tableBody, currentPage, notesArray);
             this.searchNotes(tableBody, notesArray);
+            new filterDataByHeaderType().filter();
             this.pagination(notesArray, tableRows, currentPage);
             // Rendering icons
         };

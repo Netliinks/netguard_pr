@@ -1,6 +1,6 @@
 // @filename: Departments.ts
 import { deleteEntity, getEntitiesData, registerEntity, getUserInfo, getEntityData } from "../../endpoints.js";
-import { inputObserver, inputSelect, CloseDialog } from "../../tools.js";
+import { inputObserver, inputSelect, CloseDialog, filterDataByHeaderType } from "../../tools.js";
 import { Config } from "../../Configs.js";
 import { tableLayout } from "./Layout.js";
 import { tableLayoutTemplate } from "./Template.js";
@@ -25,9 +25,7 @@ export class Departments {
         this.searchEntity = async (tableBody, data) => {
             const search = document.getElementById('search');
             await search.addEventListener('keyup', () => {
-                const arrayData = data.filter((user) => `${user.firstName}
-                 ${user.lastName}
-                 ${user.username}`
+                const arrayData = data.filter((user) => `${user.name}`
                     .toLowerCase()
                     .includes(search.value.toLowerCase()));
                 let filteredResult = arrayData.length;
@@ -35,9 +33,11 @@ export class Departments {
                 if (filteredResult >= tableRows)
                     filteredResult = tableRows;
                 this.load(tableBody, currentPage, result);
+                this.pagination(result, tableRows, currentPage);
             });
         };
     }
+    
     async render() {
         let data = await getDepartments();
         this.content.innerHTML = '';
@@ -46,7 +46,10 @@ export class Departments {
         tableBody.innerHTML = tableLayoutTemplate.repeat(tableRows);
         this.load(tableBody, currentPage, data);
         this.searchEntity(tableBody, data);
+        new filterDataByHeaderType().filter();
+        this.pagination(data, tableRows, currentPage);
     }
+
     load(table, currentPage, data) {
         table.innerHTML = '';
         currentPage--;
@@ -79,6 +82,28 @@ export class Departments {
         }
         this.register();
         this.remove();
+    }
+    pagination(items, limitRows, currentPage) {
+      const tableBody = document.getElementById('datatable-body');
+      const paginationWrapper = document.getElementById('pagination-container');
+      paginationWrapper.innerHTML = '';
+      let pageCount;
+      pageCount = Math.ceil(items.length / limitRows);
+      let button;
+      for (let i = 1; i < pageCount + 1; i++) {
+          button = setupButtons(i, items, currentPage, tableBody, limitRows);
+          paginationWrapper.appendChild(button);
+      }
+      function setupButtons(page, items, currentPage, tableBody, limitRows) {
+          const button = document.createElement('button');
+          button.classList.add('pagination_button');
+          button.innerText = page;
+          button.addEventListener('click', () => {
+              currentPage = page;
+              new Departments().load(tableBody, page, items);
+          });
+          return button;
+      }
     }
     register() {
         // register entity

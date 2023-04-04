@@ -1,6 +1,6 @@
 // @filename: Customers.ts
 import { deleteEntity, getEntitiesData, registerEntity, getUserInfo, getEntityData, updateEntity } from "../../endpoints.js";
-import { inputObserver, inputSelect, CloseDialog } from "../../tools.js";
+import { inputObserver, inputSelect, CloseDialog, filterDataByHeaderType } from "../../tools.js";
 import { Config } from "../../Configs.js";
 import { tableLayout } from "./Layout.js";
 import { tableLayoutTemplate } from "./Template.js";
@@ -35,6 +35,7 @@ export class Customers {
                 if (filteredResult >= tableRows)
                     filteredResult = tableRows;
                 this.load(tableBody, currentPage, result);
+                this.pagination(result, tableRows, currentPage);
             });
         };
     }
@@ -46,6 +47,8 @@ export class Customers {
         tableBody.innerHTML = tableLayoutTemplate.repeat(tableRows);
         this.load(tableBody, currentPage, data);
         this.searchEntity(tableBody, data);
+        new filterDataByHeaderType().filter();
+        this.pagination(data, tableRows, currentPage);
     }
     load(table, currentPage, data) {
         table.innerHTML = '';
@@ -81,6 +84,28 @@ export class Customers {
         }
         this.register();
         this.edit(this.entityDialogContainer, data);
+    }
+    pagination(items, limitRows, currentPage) {
+      const tableBody = document.getElementById('datatable-body');
+      const paginationWrapper = document.getElementById('pagination-container');
+      paginationWrapper.innerHTML = '';
+      let pageCount;
+      pageCount = Math.ceil(items.length / limitRows);
+      let button;
+      for (let i = 1; i < pageCount + 1; i++) {
+          button = setupButtons(i, items, currentPage, tableBody, limitRows);
+          paginationWrapper.appendChild(button);
+      }
+      function setupButtons(page, items, currentPage, tableBody, limitRows) {
+          const button = document.createElement('button');
+          button.classList.add('pagination_button');
+          button.innerText = page;
+          button.addEventListener('click', () => {
+              currentPage = page;
+              new Customers().load(tableBody, page, items);
+          });
+          return button;
+      }
     }
     register() {
         // register entity

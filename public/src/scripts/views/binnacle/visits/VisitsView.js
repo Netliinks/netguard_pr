@@ -5,7 +5,7 @@
 //
 import { Config } from "../../../Configs.js";
 import { getEntityData, getEntitiesData, getUserInfo } from "../../../endpoints.js";
-import { CloseDialog, drawTagsIntoTables, renderRightSidebar } from "../../../tools.js";
+import { CloseDialog, drawTagsIntoTables, renderRightSidebar, filterDataByHeaderType, verifyUserType } from "../../../tools.js";
 import { UIContentLayout, UIRightSidebar } from "./Layout.js";
 import { UITableSkeletonTemplate } from "./Template.js";
 // Local configs
@@ -44,6 +44,8 @@ export class Visits {
             // Exec functions
             this.load(tableBody, currentPage, visitsArray);
             this.searchVisit(tableBody, visitsArray);
+            new filterDataByHeaderType().filter();
+            this.pagination(visitsArray, tableRows, currentPage);
             // Rendering icons
         };
         this.load = (tableBody, currentPage, visits) => {
@@ -72,7 +74,7 @@ export class Visits {
                     <td>${visit.dni}</td>
                     <td id="table-date">${visit.createdDate}</td>
                     <td id="table-time" style="white-space: nowrap">${visit.creationTime}</td>
-                    <td>${visit.user.userType}</td>
+                    <td>${verifyUserType(visit.user.userType)}</td>
                     <td class="tag"><span>${visit.visitState.name}</span></td>
                     <td id="table-time">${visit.citadel.description}</td>
 
@@ -100,7 +102,30 @@ export class Visits {
                 if (filteredVisit >= Config.tableRows)
                     filteredVisit = Config.tableRows;
                 this.load(tableBody, currentPage, result);
+                this.pagination(result, tableRows, currentPage);
             });
+        };
+        this.pagination = async (items, limitRows, currentPage) => {
+            const tableBody = document.getElementById('datatable-body');
+            const paginationWrapper = document.getElementById('pagination-container');
+            paginationWrapper.innerHTML = '';
+            let pageCount;
+            pageCount = Math.ceil(items.length / limitRows);
+            let button;
+            for (let i = 1; i < pageCount + 1; i++) {
+                button = setupButtons(i, items, currentPage, tableBody, limitRows);
+                paginationWrapper.appendChild(button);
+            }
+            function setupButtons(page, items, currentPage, tableBody, limitRows) {
+                const button = document.createElement('button');
+                button.classList.add('pagination_button');
+                button.innerText = page;
+                button.addEventListener('click', () => {
+                    currentPage = page;
+                    new Visits().load(tableBody, page, items);
+                });
+                return button;
+            }
         };
         this.previewVisit = async () => {
             const openButtons = document.querySelectorAll('#entity-details');
