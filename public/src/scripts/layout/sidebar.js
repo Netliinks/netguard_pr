@@ -12,6 +12,7 @@ import { Departments } from "../views/departments/Departments.js";
 import { Customers } from "../views/customers/Customers.js";
 import { SuperUsers } from "../views/users/SuperUsers/SuperUsers.js";
 import { Events } from "../views/binnacle/Events/EventsView.js";
+import { Vehiculars } from "../views/binnacle/vehiculars/Vehiculars.js";
 export const renderSidebar = () => {
     const sidebar = document.getElementById('app-sidebar');
     sidebar.innerHTML = `
@@ -96,6 +97,12 @@ export const renderSidebar = () => {
                     <i class="fa-regular fa-megaphone"></i> <div class="label">Eventos</div>
                   </span>
                 </div>
+
+                <div class="sidebar_subitem" id="render-vehiculars">
+                  <span class="sidebar_subitem_label">
+                    <i class="fa-regular fa-car"></i> <div class="label">Ingreso Vehicular</div>
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -171,6 +178,10 @@ const renders = () => {
     document.getElementById('render-events')?.addEventListener('click', () => {
         new Events().render();
     });
+    // render AssistControl
+    document.getElementById('render-vehiculars')?.addEventListener('click', () => {
+      new Vehiculars().render();
+  });
     // render Deparments
     document.getElementById('render-deparments')?.addEventListener('click', () => {
         new Departments().render();
