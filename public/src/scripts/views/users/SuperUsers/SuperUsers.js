@@ -7,9 +7,11 @@ import { tableLayoutTemplate } from "./Templates.js";
 const tableRows = Config.tableRows;
 const currentPage = Config.currentPage;
 const SUser = true;
+let currentUserInfo; 
 const currentUserData = async() => {
   const currentUser = await getUserInfo();
   const user = await getEntityData('User', `${currentUser.attributes.id}`);
+  currentUserInfo = user;
   return user;
 }
 const getUsers = async (superUser) => {
@@ -177,6 +179,20 @@ export class SuperUsers {
             </div>
 
             <div class="material_input">
+              <input type="text"
+                id="entity-dni"
+                maxlength="10" autocomplete="none">
+              <label for="entity-dni">Cédula</label>
+            </div>
+
+            <div class="material_input">
+              <input type="email"
+                id="entity-email"
+                autocomplete="none">
+              <label for="entity-email">Email</label>
+            </div>
+
+            <div class="material_input">
               <input type="text" id="entity-username" class="input_filled" placeholder="john.doe@ejemplo.com" readonly>
               <label for="entity-username"><i class="input_locked fa-solid fa-lock"></i> Nombre de usuario</label>
             </div>
@@ -195,6 +211,7 @@ export class SuperUsers {
               </div>
             </div>
 
+            <!--
             <div class="material_input_select">
               <label for="entity-business">Empresa</label>
               <input type="text" id="entity-business" class="input_select" readonly placeholder="cargando..." autocomplete="none">
@@ -208,6 +225,7 @@ export class SuperUsers {
               <div id="input-options" class="input_options">
               </div>
             </div>
+            -->
 
             <div class="material_input_select">
               <label for="entity-customer">Cliente</label>
@@ -215,13 +233,14 @@ export class SuperUsers {
               <div id="input-options" class="input_options">
               </div>
             </div>
-
+            <!--
             <div class="material_input_select" style="display: none">
               <label for="entity-department">Departamento</label>
               <input type="text" id="entity-department" class="input_select" readonly placeholder="cargando...">
               <div id="input-options" class="input_options">
               </div>
             </div>
+            -->
 
             <br><br>
             <div class="material_input">
@@ -240,16 +259,15 @@ export class SuperUsers {
             // @ts-ignore
             inputObserver();
             inputSelectType('entity-type');
-            inputSelect('Citadel', 'entity-citadel');
+            //inputSelect('Citadel', 'entity-citadel');
             inputSelect('Customer', 'entity-customer');
             inputSelect('State', 'entity-state');
-            inputSelect('Department', 'entity-department');
-            inputSelect('Business', 'entity-business');
+            //inputSelect('Department', 'entity-department');
+            //inputSelect('Business', 'entity-business');
             this.close();
             this.generateUserName();
             const registerButton = document.getElementById('register-entity');
             registerButton.addEventListener('click', async() => {
-                const currentUser = await currentUserData();
                 const inputsCollection = {
                     firstName: document.getElementById('entity-firstname'),
                     lastName: document.getElementById('entity-lastname'),
@@ -258,15 +276,19 @@ export class SuperUsers {
                     state: document.getElementById('entity-state'),
                     customer: document.getElementById('entity-customer'),
                     username: document.getElementById('entity-username'),
-                    citadel: document.getElementById('entity-citadel'),
+                   // citadel: document.getElementById('entity-citadel'),
                     temporalPass: document.getElementById('tempPass'),
                     userType: document.getElementById('entity-type'),
+                    dni: document.getElementById('entity-dni'),
+                    email: document.getElementById('entity-email'),
                 };
                 const raw = JSON.stringify({
                     "lastName": `${inputsCollection.lastName.value}`,
                     "secondLastName": `${inputsCollection.secondLastName.value}`,
                     "isSuper": true,
-                    "email": "",
+                    "newUser": true,
+                    "dni": `${inputsCollection.dni.value}`,
+                    "email": `${inputsCollection.email.value}`,
                     "temp": `${inputsCollection.temporalPass.value}`,
                     "isWebUser": false,
                     "active": true,
@@ -275,16 +297,19 @@ export class SuperUsers {
                         "id": `${inputsCollection.state.dataset.optionid}`
                     },
                     "contractor": {
-                        "id": "06b476c4-d151-d7dc-cf0e-2a1e19295a00",
+                        "id": `${currentUserInfo.contractor.id}`,
                     },
                     "customer": {
                         "id": `${inputsCollection.customer.dataset.optionid}`
                     },
                     "citadel": {
-                        "id": `${inputsCollection.citadel.dataset.optionid}`
+                        "id": `${currentUserInfo.citadel.id}`
                     },
                     "business":{
-                        "id": `${currentUser.business.id}`
+                        "id": `${currentUserInfo.business.id}`
+                    },
+                    "department":{
+                      "id": `${currentUserInfo.department.id}`
                     },
                     "phone": `${inputsCollection.phoneNumer.value}`,
                     "userType": `${inputsCollection.userType.dataset.optionid}`,
@@ -369,6 +394,13 @@ export class SuperUsers {
               <label for="entity-phone">Teléfono</label>
             </div>
 
+            <div class="material_input_select">
+              <label for="entity-state">Estado</label>
+              <input type="text" id="entity-state" class="input_select" readonly placeholder="cargando...">
+              <div id="input-options" class="input_options">
+              </div>
+            </div>
+
             <div class="material_input">
               <input type="text" id="entity-username" class="input_filled" value="${data.username}" readonly>
               <label for="entity-username">Nombre de usuario</label>
@@ -379,13 +411,17 @@ export class SuperUsers {
               <label for="entity-type">Tipo</label>
             </div>
 
-            <div class="material_input_select">
-              <label for="entity-state">Estado</label>
-              <input type="text" id="entity-state" class="input_select" readonly placeholder="cargando...">
-              <div id="input-options" class="input_options">
-              </div>
+            <div class="material_input">
+              <input type="text" maxlength="10" id="entity-dni" class="input_filled" value="${data.dni}" readonly>
+              <label for="entity-dni">Cédula</label>
             </div>
 
+            <div class="material_input">
+              <input type="email" id="entity-email" class="input_filled" value="${data.email}" readonly>
+              <label for="entity-email">Email</label>
+            </div>
+
+            <!--
             <div class="material_input_select">
               <label for="entity-business">Empresa</label>
               <input type="text" id="entity-business" class="input_select" readonly placeholder="cargando...">
@@ -399,21 +435,20 @@ export class SuperUsers {
               <div id="input-options" class="input_options">
               </div>
             </div>
+            -->
 
-            <div class="material_input_select">
-              <label for="entity-customer">Cliente</label>
-              <input type="text" id="entity-customer" class="input_select" readonly placeholder="cargando...">
-              <div id="input-options" class="input_options">
-              </div>
+            <div class="material_input">
+              <input type="text" id="entity-customer" class="input_filled" value="${data.customer.name}" readonly>
+              <label for="entity-customer">Empresa</label>
             </div>
-
+            <!--
             <div class="material_input_select" style="display: none">
               <label for="entity-department">Departamento</label>
               <input type="text" id="entity-department" class="input_select" readonly placeholder="cargando...">
               <div id="input-options" class="input_options">
               </div>
             </div>
-
+            -->
             <br><br><br>
             <div class="material_input" style="display: none">
               <input type="password" id="tempPass" >
@@ -430,11 +465,11 @@ export class SuperUsers {
       `;
             inputObserver();
             //inputSelectType('entity-type',data.userType);
-            inputSelect('Citadel', 'entity-citadel');
-            inputSelect('Customer', 'entity-customer');
+            //inputSelect('Citadel', 'entity-citadel');
+            //inputSelect('Customer', 'entity-customer');
             inputSelect('State', 'entity-state', data.state.name);
-            inputSelect('Department', 'entity-department');
-            inputSelect('Business', 'entity-business');
+            //inputSelect('Department', 'entity-department');
+            //inputSelect('Business', 'entity-business');
             this.close();
             UUpdate(entityID);
         };
@@ -474,9 +509,9 @@ export class SuperUsers {
                   "state": {
                       "id": `${$value.status?.dataset.optionid}`
                   },
-                  "customer": {
-                      "id": `${$value.customer?.dataset.optionid}`
-                  },
+                  //"customer": {
+                  //    "id": `${$value.customer?.dataset.optionid}`
+                  //},
                   // @ts-ignore
                   "phone": `${$value.phone?.value}`,
                   // @ts-ignore
