@@ -154,7 +154,7 @@ export class Guards {
                 <div class="entity_editor_header">
                     <div class="user_info">
                     <div class="avatar"><i class="fa-regular fa-user"></i></div>
-                    <h1 class="entity_editor_title">Registrar <br><small>Cliente</small></h1>
+                    <h1 class="entity_editor_title">Registrar <br><small>Guardias</small></h1>
                     </div>
 
                     <button class="btn btn_close_editor" id="close"><i class="fa-regular fa-x"></i></button>
@@ -329,8 +329,127 @@ export class Guards {
         };
     }
     import() {
-        const importButton = document.getElementById('import-entities');
-        importButton.addEventListener('click', () => {
+        const importClients = document.getElementById('import-entities');
+        importClients.addEventListener('click', () => {
+            this.entityDialogContainer.innerHTML = '';
+            this.entityDialogContainer.style.display = 'flex';
+            this.entityDialogContainer.innerHTML = `
+            <div class="entity_editor" id="entity-editor">
+              <div class="entity_editor_header">
+                <div class="user_info">
+                  <div class="avatar"><i class="fa-regular fa-up-from-line"></i></div>
+                  <h1 class="entity_editor_title">Importar <br><small>Guardias</small></h1>
+                </div>
+
+                <button class="btn btn_close_editor" id="close"><i class="fa-solid fa-x"></i></button>
+              </div>
+
+              <!-- EDITOR BODY -->
+              <div class="entity_editor_body padding_t_8_important">
+                <div class="sidebar_section">
+                    <div class="file_template">
+                        <i class="fa-solid fa-file-csv"></i>
+                        <div class="description">
+                            <p class="filename">Plantilla de Guardias</p>
+                            <a
+                            href="./public/src/templates/NetguardGuards.csv"
+                            download="./public/src/templates/NetguardGuards.csv"
+                            rel="noopener"
+                            target="_self" class="filelink">Descargar</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar_section" style="display: none">
+                    <label class="drop_zone" id="drop-zone" draggable="true">
+                        Seleccione o arrastre <br>su archivo aquí
+                    </label>
+                </div>
+
+                <div class="sidebar_section">
+                    <input type="file" id="file-handler">
+                </div>
+              </div>
+              <!-- END EDITOR BODY -->
+
+              <div class="entity_editor_footer">
+                <button class="btn btn_primary btn_widder" id="button-import">Importar</button>
+              </div>
+            </div>
+          `;
+            const _fileHandler = document.getElementById('file-handler');
+            _fileHandler.addEventListener('change', () => {
+                readFile(_fileHandler.files[0]);
+            });
+            async function readFile(file) {
+                //const customer = await getEntitiesData('Customer');
+                //const citadel = await getEntitiesData('Citadel');
+                //const deparment = await getEntitiesData('Department');
+                //const contractor = await getEntitiesData('Contractor');
+                const fileReader = new FileReader();
+                fileReader.readAsText(file);
+                fileReader.addEventListener('load', (e) => {
+                    let result = e.srcElement.result;
+                    let resultSplit = result.split('\r');
+                    let rawFile;
+                    let elem = [];
+                    for (let i = 1; i < resultSplit.length; i++) {
+                        let userData = resultSplit[i].split(';');
+                        rawFile = JSON.stringify({
+                            "lastName": `${userData[1]?.replace(/\n/g, '')}`,
+                            "secondLastName": `${userData[2]?.replace(/\n/g, '')}`,
+                            "isSuper": false,
+                            "email": `${userData[6]?.replace(/\n/g, '')}`,
+                            "temp": `${userData[5]?.replace(/\n/g, '')}`,
+                            "isWebUser": false,
+                            "isActive": true,
+                            "newUser": true,
+                            "firstName": `${userData[0]?.replace(/\n/g, '')}`,
+                            "state": {
+                                "id": "60885987-1b61-4247-94c7-dff348347f93"
+                            },
+                            "contractor": {
+                                "id": `${currentUserInfo.contractor.id}`
+                            //    "id": `${contractor[0].id}`
+                            },
+                            "customer": {
+                                "id": `${currentUserInfo.customer.id}`
+                            },
+                            "citadel": {
+                                "id": `${currentUserInfo.citadel.id}`
+                            },
+                            "department": {
+                                "id": `${currentUserInfo.department.id}`
+                            },
+                            "business": {
+                                "id": `${currentUserInfo.business.id}`
+                            },
+                            "phone": `${userData[3]?.replace(/\n/g, '')}`,
+                            "dni": `${userData[4]?.replace(/\n/g, '')}`,
+                            "userType": "GUARD",
+                            "username": `${userData[0]?.toLowerCase().replace(/\n/g, '')}.${userData[1]?.toLowerCase().replace(/\n/g, '')}@${currentUserInfo.customer.name.toLowerCase()}.com`,
+                            "createVisit": false
+                        });
+                        elem.push(rawFile);
+                    }
+                    const importToBackend = document.getElementById('button-import');
+                    importToBackend.addEventListener('click', () => {
+                        elem.forEach((el) => {
+                            registerEntity(el, 'User')
+                                .then((res) => {
+                                setTimeout(async () => {
+                                    let data = await getUsers();
+                                    const tableBody = document.getElementById('datatable-body');
+                                    const container = document.getElementById('entity-editor-container');
+                                    new CloseDialog().x(container);
+                                    new Guards().load(tableBody, currentPage, data);
+                                }, 1000);
+                            });
+                        });
+                    });
+                });
+            }
+            this.close();
         });
     }
     edit(container, data) {

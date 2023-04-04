@@ -447,8 +447,8 @@ export class Employees {
                         <div class="description">
                             <p class="filename">Plantilla de Empleados</p>
                             <a
-                            href="./public/src/templates/NetvisitorsEmpleados.csv"
-                            download="./public/src/templates/NetvisitorsEmpleados.csv"
+                            href="./public/src/templates/NetguardEmpleados.csv"
+                            download="./public/src/templates/NetguardEmpleados.csv"
                             rel="noopener"
                             target="_self" class="filelink">Descargar</a>
                         </div>
@@ -491,17 +491,17 @@ export class Employees {
                     for (let i = 1; i < resultSplit.length; i++) {
                         let userData = resultSplit[i].split(';');
                         rawFile = JSON.stringify({
-                            "lastName": `${userData[1].replace(/\n/g, '')}`,
-                            "secondLastName": `${userData[2].replace(/\n/g, '')}`,
+                            "lastName": `${userData[1]?.replace(/\n/g, '')}`,
+                            "secondLastName": `${userData[2]?.replace(/\n/g, '')}`,
                             "isSuper": false,
-                            "email": `${userData[8].replace(/\n/g, '')}`,
-                            "temp": `${userData[5].replace(/\n/g, '')}`,
+                            "email": `${userData[8]?.replace(/\n/g, '')}`,
+                            "temp": `${userData[5]?.replace(/\n/g, '')}`,
                             "isWebUser": false,
                             "isActive": true,
                             "newUser": true,
-                            "firstName": `${userData[0].replace(/\n/g, '')}`,
-                            "ingressHour": `${userData[6].replace(/\n/g, '')}`,
-                            "turnChange": `${userData[7].replace(/\n/g, '')}`,
+                            "firstName": `${userData[0]?.replace(/\n/g, '')}`,
+                            "ingressHour": `${userData[6]?.replace(/\n/g, '')}`,
+                            "turnChange": `${userData[7]?.replace(/\n/g, '')}`,
                             "state": {
                                 "id": "60885987-1b61-4247-94c7-dff348347f93"
                             },
@@ -521,10 +521,10 @@ export class Employees {
                             "business": {
                                 "id": `${currentUserInfo.business.id}`
                             },
-                            "phone": `${userData[3].replace(/\n/g, '')}`,
-                            "dni": `${userData[4].replace(/\n/g, '')}`,
+                            "phone": `${userData[3]?.replace(/\n/g, '')}`,
+                            "dni": `${userData[4]?.replace(/\n/g, '')}`,
                             "userType": "EMPLOYEE",
-                            "username": `${userData[0].toLowerCase().replace(/\n/g, '')}.${userData[1].toLowerCase().replace(/\n/g, '')}@${customer[0].name.toLowerCase()}.com`,
+                            "username": `${userData[0]?.toLowerCase().replace(/\n/g, '')}.${userData[1]?.toLowerCase().replace(/\n/g, '')}@${currentUserInfo.customer.name.toLowerCase()}.com`,
                             "createVisit": false
                         });
                         elem.push(rawFile);

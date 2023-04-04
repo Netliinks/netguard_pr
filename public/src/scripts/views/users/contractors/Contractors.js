@@ -425,7 +425,7 @@ export class Contractors {
                                 <div class="avatar">
                                     <i class="fa-regular fa-up-from-line"></i>
                                 </div>
-                                <h1 class="entity_editor_title">Importar <br> <small>Empleados</small></h1>
+                                <h1 class="entity_editor_title">Importar <br> <small>Contratistas</small></h1>
                             </div>
                             <button class="btn btn_close_editor" id="close"><i class="fa-solid fa-x"></i></button>
                         </div>
@@ -436,7 +436,7 @@ export class Contractors {
                                     <i class="fa-solid fa-file-csv"></i>
                                     <div class="description">
                                         <p class="filename">Plantilla de Contratistas</p>
-                                        <a href="./public/src/templates/NetvisitorsEmpleados.csv" download="./public/src/templates/NetvisitorsContractors.csv" rel="noopener" target="_self" class="filelink">Descargar</a>
+                                        <a href="./public/src/templates/NetguardContractors.csv" download="./public/src/templates/NetguardContractors.csv" rel="noopener" target="_self" class="filelink">Descargar</a>
                                     </div>
                                 </div>
                             </div>
@@ -469,17 +469,17 @@ export class Contractors {
                     for (let i = 1; i < resultSplit.length; i++) {
                         let contractorData = resultSplit[i].split(';');
                         rawFile = JSON.stringify({
-                            "lastName": `${contractorData[1].replace(/\n/g, '')}`,
-                            "secondLastName": `${contractorData[2].replace(/\n/g, '')}`,
+                            "lastName": `${contractorData[1]?.replace(/\n/g, '')}`,
+                            "secondLastName": `${contractorData[2]?.replace(/\n/g, '')}`,
                             "isSuper": false,
-                            "email": `${userData[8].replace(/\n/g, '')}`,
-                            "temp": `${contractorData[5].replace(/\n/g, '')}`,
+                            "email": `${contractorData[8]?.replace(/\n/g, '')}`,
+                            "temp": `${contractorData[5]?.replace(/\n/g, '')}`,
                             "isWebUser": false,
                             "isActive": true,
                             "newUser": true,
-                            "firstName": `${contractorData[0].replace(/\n/g, '')}`,
-                            "ingressHour": `${contractorData[6].replace(/\n/g, '')}`,
-                            "turnChange": `${contractorData[7].replace(/\n/g, '')}`,
+                            "firstName": `${contractorData[0]?.replace(/\n/g, '')}`,
+                            "ingressHour": `${contractorData[6]?.replace(/\n/g, '')}`,
+                            "turnChange": `${contractorData[7]?.replace(/\n/g, '')}`,
                             "state": {
                                 "id": "60885987-1b61-4247-94c7-dff348347f93"
                             },
@@ -498,10 +498,10 @@ export class Contractors {
                             "business": {
                                 "id": `${currentUserInfo.business.id}`
                             },
-                            "phone": `${contractorData[3].replace(/\n/g, '')}`,
-                            "dni": `${contractorData[4].replace(/\n/g, '')}`,
+                            "phone": `${contractorData[3]?.replace(/\n/g, '')}`,
+                            "dni": `${contractorData[4]?.replace(/\n/g, '')}`,
                             "userType": "CONTRACTOR",
-                            "username": `${contractorData[0].toLowerCase().replace(/\n/g, '')}.${contractorData[1].toLowerCase().replace(/\n/g, '')}@${customer[0].name.toLowerCase()}.com`,
+                            "username": `${contractorData[0]?.toLowerCase().replace(/\n/g, '')}.${contractorData[1]?.toLowerCase().replace(/\n/g, '')}@${currentUserInfo.customer.name.toLowerCase()}.com`,
                             "createVisit": false,
                         });
                         stageUsers.push(rawFile);

@@ -1,5 +1,5 @@
 // @filename: announcements
-import { deleteEntity, getEntitiesData, getFile, getUserInfo, registerEntity, getEntityData } from "../../../endpoints.js";
+import { deleteEntity, getEntitiesData, getUserInfo, registerEntity, getEntityData } from "../../../endpoints.js";
 import { CloseDialog, inputObserver, userInfo } from "../../../tools.js";
 import { announcementCreatorController } from "./AnnouncementsCreatorControllers.js";
 export class Announcements {
@@ -8,6 +8,7 @@ export class Announcements {
         this._announcementCardContainer = document.getElementById('cards-container');
         this._announcementCardControlsContainers = document.getElementById('cards-controls-container');
     }
+    
     async render() {
         this._announcementCardContainer.innerHTML = '';
         this._announcementCardControlsContainers.innerHTML = '';
@@ -20,25 +21,18 @@ export class Announcements {
         let prop;
         const currentUser = await currentUserData(); //usuario logueado
         console.log(announcementsList);
+        const userAnnoun = async(announcement) => {
+            const data = await getEntityData('User', `${announcement.user.id}`);// Obtener la empresa del usuario del anuncio
+            return data;
+        }
         announcementsList.forEach(async (announcement) => {
-            
-            const userAnnoun = async() => {
-                const data = await getEntityData('User', `${announcement.user.id}`);// Obtener la empresa del usuario del anuncio
-                return data;
-            }
-            const userCustomer = await userAnnoun();
+            const userCustomer = await userAnnoun(announcement);
             //console.log(`Usuario: ${announcement.user.id}, Empresa ${userCustomer.customer.id}`)
             if(userCustomer.customer.id == `${currentUser.customer.id}`){ // Si la empresa coincide con el del usuario logueado
                 const _card = document.createElement('DIV');
-                let file;
-                if (announcement.attachment) {
-                    file = await getFile(announcement.attachment);
-                }
                 _card.classList.add('card');
                 _card.innerHTML = `
                     <button class="btn btn_remove_announcement" data-announcementid="${announcement.id}" id="remove-announcement"><i class="fa-solid fa-trash"></i></button>
-                    <img src="${file}">
-                    <img src="${announcement.attachment ? await getFile(announcement.attachment) : null}">
                     <h3 class="card_title">${announcement.title}</h3>
                     <p class="card_content">${announcement.content}</p>
                 `;
