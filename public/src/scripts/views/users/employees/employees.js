@@ -10,12 +10,16 @@ import { tableLayout } from "./Layout.js";
 import { tableLayoutTemplate } from "./Templates.js";
 const tableRows = Config.tableRows;
 const currentPage = Config.currentPage;
-const currentUser = await getUserInfo();
-const currentCustomer = await getEntityData('User', `${currentUser.attributes.id}`);
+const currentUserData = async() => {
+    const currentUser = await getUserInfo();
+    const user = await getEntityData('User', `${currentUser.attributes.id}`);
+    return user;
+}
 const getUsers = async () => {
+    const currentUser = await currentUserData(); //usuario logueado
     const users = await getEntitiesData('User');
     const FSuper = users.filter((data) => data.isSuper === false);
-    const FCustomer = FSuper.filter((data) => data.customer.id === `${currentCustomer.customer.id}`);
+    const FCustomer = FSuper.filter((data) => data.customer.id === `${currentUser.customer.id}`);
     const data = FCustomer.filter((data) => `${data.userType}`.includes('EMPLOYEE'));
     return data;
 };

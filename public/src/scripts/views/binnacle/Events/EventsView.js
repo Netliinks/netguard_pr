@@ -8,13 +8,17 @@ import { UITableSkeletonTemplate } from "./Template.js";
 const tableRows = Config.tableRows;
 let currentPage = Config.currentPage;
 const pageName = 'Eventos';
-const currentUser = await getUserInfo();
-const currentCustomer = await getEntityData('User', `${currentUser.attributes.id}`);
+const currentUserData = async() => {
+    const currentUser = await getUserInfo();
+    const user = await getEntityData('User', `${currentUser.attributes.id}`);
+    return user;
+}
 const getEvents = async () => {
+    const currentUser = await currentUserData(); //usuario logueado
     const events = await getEntitiesData('Notification');
     const FCustomer = events.filter(async (data) => {
         const userCustomer = await getEntityData('User', `${data.user.id}`);
-        userCustomer.customer.id === `${currentCustomer.customer.id}`
+        userCustomer.customer.id === `${currentUser.customer.id}`
     });
     // notificationType.name
     //const removeVisitsFromList = events.filter((data) => data.notificationType.name !== "Visita");

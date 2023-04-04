@@ -12,13 +12,18 @@ import { UITableSkeletonTemplate } from "./Template.js";
 const tableRows = Config.tableRows;
 let currentPage = Config.currentPage;
 const pageName = 'Control de asistencias';
-const currentUser = await getUserInfo();
-const currentCustomer = await getEntityData('User', `${currentUser.attributes.id}`);
+const currentUserData = async() => {
+    const currentUser = await getUserInfo();
+    const user = await getEntityData('User', `${currentUser.attributes.id}`);
+    return user;
+}
+ 
 const GetAssistControl = async () => {
+    const currentUser = await currentUserData(); //usuario logueado
     const assistControl = await getEntitiesData('Marcation');
     const FCustomer = assistControl.filter(async (data) => {
-        const userCustomer = await getEntityData('User', `${data.user.id}`);
-        userCustomer.customer.id === `${currentCustomer.customer.id}`
+        const userMarcation = await getEntityData('User', `${data.user.id}`); //Usuario de marcacion
+        userMarcation.customer.id === `${currentUser.customer.id}`
     });
     return FCustomer;
 };

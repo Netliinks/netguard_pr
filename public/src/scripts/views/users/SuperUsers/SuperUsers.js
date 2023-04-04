@@ -7,13 +7,17 @@ import { tableLayoutTemplate } from "./Templates.js";
 const tableRows = Config.tableRows;
 const currentPage = Config.currentPage;
 const SUser = true;
-const currentUser = await getUserInfo();
-const currentCustomer = await getEntityData('User', `${currentUser.attributes.id}`);
+const currentUserData = async() => {
+  const currentUser = await getUserInfo();
+  const user = await getEntityData('User', `${currentUser.attributes.id}`);
+  return user;
+}
 const getUsers = async (superUser) => {
+    const currentUser = await currentUserData(); //usuario logueado
     const users = await getEntitiesData('User');
     const FSuper = users.filter((data) => data.isSuper === superUser);
     const admin = FSuper.filter((data) => data.username != `admin`);
-    const FCustomer = admin.filter((data) => data.customer.id === `${currentCustomer.customer.id}`);
+    const FCustomer = admin.filter((data) => data.customer.id === `${currentUser.customer.id}`);
     return FCustomer;
 };
 export class SuperUsers {

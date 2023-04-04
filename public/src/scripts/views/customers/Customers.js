@@ -6,11 +6,16 @@ import { tableLayout } from "./Layout.js";
 import { tableLayoutTemplate } from "./Template.js";
 const tableRows = Config.tableRows;
 const currentPage = Config.currentPage;
-const currentUser = await getUserInfo();
-const currentBusiness = await getEntityData('User', `${currentUser.attributes.id}`);
+
+const currentBusiness = async() => {
+  const currentUser = await getUserInfo();
+  const business = await getEntityData('User', `${currentUser.attributes.id}`);
+  return business;
+}
 const getCustomers = async () => {
+    const businessData = await currentBusiness();
     const customer = await getEntitiesData('Customer');
-    const FCustomer = customer.filter((data) => data.business.id === `${currentBusiness.business.id}`);
+    const FCustomer = customer.filter((data) => data.business.id === `${businessData.business.id}`);
     return FCustomer;
 };
 export class Customers {
@@ -118,17 +123,14 @@ export class Customers {
               </div>
             </div>
 
-            <div class="material_input_check">
-              <input type="checkbox"
-                id="entity-marcation" checked>
-              <label for="entity-marcation">Permite Marcación</label>
+            <div class="input_checkbox">
+                <label><input type="checkbox" class="checkbox" id="entity-marcation" checked> Permitir Marcación</label>
             </div>
 
-            <div class="material_input_check">
-              <input type="checkbox"
-                id="entity-vehicular">
-              <label for="entity-vehicular">Permite Vehicular</label>
+            <div class="input_checkbox">
+                <label><input type="checkbox" class="checkbox" id="entity-vehicular"> Permitir Vehicular</label>
             </div>
+
           </div>
           <!-- END EDITOR BODY -->
 
@@ -142,7 +144,8 @@ export class Customers {
             inputSelect('State', 'entity-state');
             this.close();
             const registerButton = document.getElementById('register-entity');
-            registerButton.addEventListener('click', () => {
+            registerButton.addEventListener('click', async() => {
+                const businessData = await currentBusiness();
                 const inputsCollection = {
                     name: document.getElementById('entity-name'),
                     ruc: document.getElementById('entity-ruc'),
@@ -153,14 +156,14 @@ export class Customers {
                 const raw = JSON.stringify({
                     "name": `${inputsCollection.name.value}`,
                     "business": {
-                        "id": `${currentBusiness.business.id}`},
+                        "id": `${businessData.business.id}`},
                     "ruc": `${inputsCollection.ruc.value}`,
                     "state": {
                       "id": `${inputsCollection.state.dataset.optionid}`},
                     "firebaseId":`${inputsCollection.name.value}`,
-                    "associate":`${currentBusiness.business.name}`,
-                    "permitMarcation": `${inputsCollection.marcation.checked}`,
-                     "permitVehicular": `${inputsCollection.vehicular.checked}`,
+                    "associate":`${businessData.business.name}`,
+                    "permitMarcation": `${inputsCollection.marcation.checked ? true : false}`,
+                    "permitVehicular": `${inputsCollection.vehicular.checked ? true : false}`,
                 });
                 registerEntity(raw, 'Customer');
                 setTimeout(() => {
@@ -186,15 +189,6 @@ export class Customers {
             const data = await getEntityData(entities, entityID);
             this.entityDialogContainer.innerHTML = '';
             this.entityDialogContainer.style.display = 'flex';
-            let marcation = false;
-            let vehicular = false;
-            if (data.permitMarcation === true) {
-              marcation = true;
-            }
-             
-            if (data.permitVehicular === true) {
-              vehicular = true;
-            }
             this.entityDialogContainer.innerHTML = `
         <div class="entity_editor" id="entity-editor">
           <div class="entity_editor_header">
@@ -224,16 +218,12 @@ export class Customers {
               </div>
             </div>
 
-            <div class="material_input_check">
-              <input type="checkbox"
-                id="entity-marcation">
-              <label for="entity-marcation">Permite Marcación</label>
+            <div class="input_checkbox">
+                <label><input type="checkbox" class="checkbox" id="entity-marcation"> Permitir Marcación</label>
             </div>
 
-            <div class="material_input_check">
-              <input type="checkbox"
-                id="entity-vehicular">
-              <label for="entity-vehicular">Permite Vehicular</label>
+            <div class="input_checkbox">
+                <label><input type="checkbox" class="checkbox" id="entity-vehicular"> Permitir Vehicular</label>
             </div>
 
           </div>
@@ -244,10 +234,17 @@ export class Customers {
           </div>
         </div>
       `;
+            const checkboxMarcation = document.getElementById('entity-marcation');
+            if (data.permitMarcation === true) {
+              checkboxMarcation?.setAttribute('checked', 'true');
+            }
+
+            const checkboxVehicular = document.getElementById('entity-vehicular');
+            if (data.permitVehicular === true) {
+              checkboxVehicular?.setAttribute('checked', 'true');
+            }
             inputObserver();
             inputSelect('State', 'entity-state', data.state.name);
-            document.getElementById('entity-marcation').checked = marcation
-            document.getElementById('entity-vehicular').checked = vehicular
             this.close();
             UUpdate(entityID);
         };
@@ -270,8 +267,8 @@ export class Customers {
                   "state": {
                       "id": `${$value.status?.dataset.optionid}`
                   },
-                  "permitMarcation": `${$value.marcation.checked}`,
-                  "permitVehicular": `${$value.vehicular.checked}`,
+                  "permitMarcation": `${$value.marcation.checked ? true : false}`,
+                  "permitVehicular": `${$value.vehicular.checked ? true : false}`,
               });
               update(raw);
             });

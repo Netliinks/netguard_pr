@@ -12,19 +12,23 @@ export class Announcements {
         this._announcementCardContainer.innerHTML = '';
         this._announcementCardControlsContainers.innerHTML = '';
         const announcementsList = await getEntitiesData('Announcement');
-        let _userinfo = await getUserInfo();
-        const currentCustomer = await getEntityData('User', `${_userinfo.attributes.id}`);
+        const currentUserData = async() => {
+            const currentUser = await getUserInfo();
+            const user = await getEntityData('User', `${currentUser.attributes.id}`);
+            return user;
+        }
         let prop;
-        /*const announcementsList = async () => {
-            const announcement = await getEntitiesData('Announcement');
-            const FCustomer = announcement.filter((data) => data.customer.id === `${currentCustomer.customer.id}`);
-            return FCustomer;
-        };*/
+        const currentUser = await currentUserData(); //usuario logueado
         console.log(announcementsList);
         announcementsList.forEach(async (announcement) => {
-            const userCustomer = await getEntityData('User', `${announcement.user.id}`);// Obtener la empresa del usuario del anuncio
+            
+            const userAnnoun = async() => {
+                const data = await getEntityData('User', `${announcement.user.id}`);// Obtener la empresa del usuario del anuncio
+                return data;
+            }
+            const userCustomer = await userAnnoun();
             //console.log(`Usuario: ${announcement.user.id}, Empresa ${userCustomer.customer.id}`)
-            if(userCustomer.customer.id == `${currentCustomer.customer.id}`){ // Si la empresa coincide con el del usuario logueado
+            if(userCustomer.customer.id == `${currentUser.customer.id}`){ // Si la empresa coincide con el del usuario logueado
                 const _card = document.createElement('DIV');
                 let file;
                 if (announcement.attachment) {
@@ -38,7 +42,7 @@ export class Announcements {
                     <h3 class="card_title">${announcement.title}</h3>
                     <p class="card_content">${announcement.content}</p>
                 `;
-                let _currentUserId = _userinfo.attributes.id;
+                let _currentUserId = currentUser.id;
                 this._announcementCardContainer.appendChild(_card);
                 const _dotButton = document.createElement('BUTTON');
                 _dotButton.classList.add('card_dotbutton');
