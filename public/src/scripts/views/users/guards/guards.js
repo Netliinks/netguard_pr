@@ -10,9 +10,11 @@ import { tableLayout } from "./Layout.js";
 import { tableLayoutTemplate } from "./Templates.js";
 const tableRows = Config.tableRows;
 const currentPage = Config.currentPage;
+let currentUserInfo; 
 const currentUserData = async() => {
     const currentUser = await getUserInfo();
     const user = await getEntityData('User', `${currentUser.attributes.id}`);
+    currentUserInfo = user;
     return user;
 }
 const getUsers = async () => {
@@ -122,7 +124,7 @@ export class Guards {
               <i class="fa-solid fa-trash"></i>
             </button>
 
-            <button class="button" id="convert-entity" data-entityId="${client.id}">
+            <button class="button" id="convert-entity" data-entityId="${client.id}" style="display: none">
                 <i class="fa-solid fa-shield"></i>
             </button>
           </dt>
@@ -177,6 +179,20 @@ export class Guards {
 
                     <div class="material_input">
                     <input type="text"
+                        id="entity-dni"
+                        maxlength="10" autocomplete="none">
+                    <label for="entity-dni">Cédula</label>
+                    </div>
+
+                    <div class="material_input">
+                    <input type="email"
+                        id="entity-email"
+                        autocomplete="none">
+                    <label for="entity-email">Email</label>
+                    </div>
+
+                    <div class="material_input">
+                    <input type="text"
                         id="entity-phone"
                         maxlength="10" autocomplete="none">
                     <label for="entity-phone"><i class="fa-solid fa-phone"></i> Teléfono</label>
@@ -194,6 +210,7 @@ export class Guards {
                     </div>
                     </div>
 
+                    <!--
                     <div class="material_input_select" style="display: none">
                         <label for="entity-business"><i class="fa-solid fa-building"></i> Empresa</label>
                         <input type="text" id="entity-business" class="input_select" readonly placeholder="cargando..." autocomplete="none">
@@ -207,6 +224,7 @@ export class Guards {
                     <div id="input-options" class="input_options">
                     </div>
                     </div>
+                    -->
 
                     <div class="material_input_select" style="display: none">
                     <label for="entity-customer">Cliente</label>
@@ -215,12 +233,14 @@ export class Guards {
                     </div>
                     </div>
 
+                    <!--
                     <div class="material_input_select" style="display: none">
                     <label for="entity-department">Departamento</label>
                     <input type="text" id="entity-department" class="input_select" readonly placeholder="cargando...">
                     <div id="input-options" class="input_options">
                     </div>
                     </div>
+                    -->
 
                     <br>
                     <div class="material_input">
@@ -237,11 +257,11 @@ export class Guards {
                 </div>
             `;
             inputObserver();
-            inputSelect('Citadel', 'entity-citadel');
+            //inputSelect('Citadel', 'entity-citadel');
             inputSelect('Customer', 'entity-customer');
             inputSelect('State', 'entity-state');
-            inputSelect('Department', 'entity-department');
-            inputSelect('Business', 'entity-business');
+            //inputSelect('Department', 'entity-department');
+            //inputSelect('Business', 'entity-business');
             this.close();
             this.generateUserName();
             const registerButton = document.getElementById('register-entity');
@@ -254,14 +274,18 @@ export class Guards {
                     state: document.getElementById('entity-state'),
                     customer: document.getElementById('entity-customer'),
                     username: document.getElementById('entity-username'),
-                    citadel: document.getElementById('entity-citadel'),
-                    temporalPass: document.getElementById('tempPass')
+                    //citadel: document.getElementById('entity-citadel'),
+                    temporalPass: document.getElementById('tempPass'),
+                    dni: document.getElementById('entity-dni'),
+                    email: document.getElementById('entity-email'),
                 };
                 const raw = JSON.stringify({
                     "lastName": `${inputsCollection.lastName.value}`,
                     "secondLastName": `${inputsCollection.secondLastName.value}`,
                     "isSuper": false,
-                    "email": "",
+                    "newUser": true,
+                    "dni": `${inputsCollection.dni.value}`,
+                    "email": `${inputsCollection.email.value}`,
                     "temp": `${inputsCollection.temporalPass.value}`,
                     "isWebUser": false,
                     "active": true,
@@ -270,13 +294,19 @@ export class Guards {
                         "id": `${inputsCollection.state.dataset.optionid}`
                     },
                     "contractor": {
-                        "id": "06b476c4-d151-d7dc-cf0e-2a1e19295a00",
+                        "id": `${currentUserInfo.contractor.id}`,
                     },
                     "customer": {
                         "id": `${inputsCollection.customer.dataset.optionid}`
                     },
                     "citadel": {
-                        "id": `${inputsCollection.citadel.dataset.optionid}`
+                        "id": `${currentUserInfo.citadel.id}`
+                    },
+                    "business":{
+                        "id": `${currentUserInfo.business.id}`
+                    },
+                    "department":{
+                      "id": `${currentUserInfo.department.id}`
                     },
                     "phone": `${inputsCollection.phoneNumer.value}`,
                     "userType": "GUARD",
@@ -358,6 +388,16 @@ export class Guards {
                     <label for="entity-username">Nombre de usuario</label>
                     </div>
 
+                    <div class="material_input">
+                    <input type="text" maxlength="10" id="entity-dni" class="input_filled" value="${data.dni}" readonly>
+                    <label for="entity-dni">Cédula</label>
+                    </div>
+
+                    <div class="material_input">
+                    <input type="email" id="entity-email" class="input_filled" value="${data.email}">
+                    <label for="entity-email">Email</label>
+                    </div>
+
                     <div class="material_input_select">
                     <label for="entity-state">Estado</label>
                     <input type="text" id="entity-state" class="input_select" readonly placeholder="cargando...">
@@ -365,6 +405,12 @@ export class Guards {
                     </div>
                     </div>
 
+                    <div class="material_input">
+                    <input type="text" id="entity-customer" class="input_filled" value="${data.customer.name}" readonly>
+                    <label for="entity-customer">Empresa</label>
+                    </div>
+
+                    <!--
                     <div class="material_input_select" style="display: none">
                     <label for="entity-business">Empresa</label>
                     <input type="text" id="entity-business" class="input_select" readonly placeholder="cargando...">
@@ -392,6 +438,7 @@ export class Guards {
                     <div id="input-options" class="input_options">
                     </div>
                     </div>
+                    -->
 
                     <br><br><br>
                     <div class="material_input" style="display: none">
@@ -408,11 +455,11 @@ export class Guards {
                 </div>
             `;
             inputObserver();
-            inputSelect('Business', 'entity-citadel');
-            inputSelect('Customer', 'entity-customer');
+            //inputSelect('Citadel', 'entity-citadel');
+            //inputSelect('Customer', 'entity-customer');
             inputSelect('State', 'entity-state', data.state.name);
-            inputSelect('Department', 'entity-department');
-            inputSelect('Business', 'entity-business');
+            //inputSelect('Department', 'entity-department');
+            //inputSelect('Business', 'entity-business');
             this.close();
             UUpdate(entityID);
         };
@@ -420,41 +467,44 @@ export class Guards {
             const updateButton = document.getElementById('update-changes');
             const $value = {
                 // @ts-ignore
-                firstName: document.getElementById('entity-firstname'),
+                //firstName: document.getElementById('entity-firstname'),
                 // @ts-ignore
-                lastName: document.getElementById('entity-lastname'),
+                //lastName: document.getElementById('entity-lastname'),
                 // @ts-ignore
-                secondLastName: document.getElementById('entity-secondlastname'),
+                //secondLastName: document.getElementById('entity-secondlastname'),
                 // @ts-ignore
                 phone: document.getElementById('entity-phone'),
                 // @ts-ignore
+                email: document.getElementById('entity-email'),
+                // @ts-ignore
                 status: document.getElementById('entity-state'),
                 // @ts-ignore
-                business: document.getElementById('entity-business'),
+                //business: document.getElementById('entity-business'),
                 // @ts-ignore
-                client: document.getElementById('entity-customer'),
+                //client: document.getElementById('entity-customer'),
                 // @ts-ignore
-                department: document.getElementById('entity-department'),
+                //department: document.getElementById('entity-department'),
                 // @ts-ignore
-                customer: document.getElementById('entity-customer')
+                //customer: document.getElementById('entity-customer')
             };
             updateButton.addEventListener('click', () => {
                 let raw = JSON.stringify({
                     // @ts-ignore
-                    "lastName": `${$value.lastName?.value}`,
+                   // "lastName": `${$value.lastName?.value}`,
                     // @ts-ignore
-                    "secondLastName": `${$value.secondLastName?.value}`,
+                    //"secondLastName": `${$value.secondLastName?.value}`,
                     "active": true,
                     // @ts-ignore
-                    "firstName": `${$value.firstName?.value}`,
+                    //"firstName": `${$value.firstName?.value}`,
                     "state": {
                         "id": `${$value.status?.dataset.optionid}`
                     },
-                    "customer": {
-                        "id": `${$value.customer?.dataset.optionid}`
-                    },
+                    //"customer": {
+                    //    "id": `${$value.customer?.dataset.optionid}`
+                   // },
                     // @ts-ignore
-                    "phone": `${$value.phone?.value}`
+                    "phone": `${$value.phone?.value}`,
+                    "email": `${$value.email?.value}`,
                 });
                 update(raw);
             });

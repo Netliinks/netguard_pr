@@ -371,17 +371,17 @@ export class SuperUsers {
           <!-- EDITOR BODY -->
           <div class="entity_editor_body">
             <div class="material_input">
-              <input type="text" id="entity-firstname" class="input_filled" value="${data.firstName}">
+              <input type="text" id="entity-firstname" class="input_filled" value="${data.firstName}" readonly>
               <label for="entity-firstname">Nombre</label>
             </div>
 
             <div class="material_input">
-              <input type="text" id="entity-lastname" class="input_filled" value="${data.lastName}">
+              <input type="text" id="entity-lastname" class="input_filled" value="${data.lastName}" readonly>
               <label for="entity-lastname">Apellido</label>
             </div>
 
             <div class="material_input">
-              <input type="text" id="entity-secondlastname" class="input_filled" value="${data.secondLastName}">
+              <input type="text" id="entity-secondlastname" class="input_filled" value="${data.secondLastName}" readonly>
               <label for="entity-secondlastname">2do Apellido</label>
             </div>
 
@@ -417,7 +417,7 @@ export class SuperUsers {
             </div>
 
             <div class="material_input">
-              <input type="email" id="entity-email" class="input_filled" value="${data.email}" readonly>
+              <input type="email" id="entity-email" class="input_filled" value="${data.email}">
               <label for="entity-email">Email</label>
             </div>
 
@@ -477,35 +477,37 @@ export class SuperUsers {
             const updateButton = document.getElementById('update-changes');
             const $value = {
               // @ts-ignore
-              firstName: document.getElementById('entity-firstname'),
+              //firstName: document.getElementById('entity-firstname'),
               // @ts-ignore
-              lastName: document.getElementById('entity-lastname'),
+              //lastName: document.getElementById('entity-lastname'),
               // @ts-ignore
-              secondLastName: document.getElementById('entity-secondlastname'),
+              //secondLastName: document.getElementById('entity-secondlastname'),
               // @ts-ignore
               phone: document.getElementById('entity-phone'),
               // @ts-ignore
+              email: document.getElementById('entity-email'),
+              // @ts-ignore
               status: document.getElementById('entity-state'),
               // @ts-ignore
-              business: document.getElementById('entity-business'),
+              //business: document.getElementById('entity-business'),
               // @ts-ignore
-              citadel: document.getElementById('entity-citadel'),
+              //citadel: document.getElementById('entity-citadel'),
               // @ts-ignore
-              department: document.getElementById('entity-department'),
+              //department: document.getElementById('entity-department'),
               // @ts-ignore
-              customer: document.getElementById('entity-customer'),
+              //customer: document.getElementById('entity-customer'),
               //// @ts-ignore
               //userType: document.getElementById('entity-type')
           };
             updateButton.addEventListener('click', () => {
               let raw = JSON.stringify({
                   // @ts-ignore
-                  "lastName": `${$value.lastName?.value}`,
+                  //"lastName": `${$value.lastName?.value}`,
                   // @ts-ignore
-                  "secondLastName": `${$value.secondLastName?.value}`,
+                  //"secondLastName": `${$value.secondLastName?.value}`,
                   "active": true,
                   // @ts-ignore
-                  "firstName": `${$value.firstName?.value}`,
+                  //"firstName": `${$value.firstName?.value}`,
                   "state": {
                       "id": `${$value.status?.dataset.optionid}`
                   },
@@ -514,6 +516,8 @@ export class SuperUsers {
                   //},
                   // @ts-ignore
                   "phone": `${$value.phone?.value}`,
+                  // @ts-ignore
+                  "email": `${$value.email?.value}`,
                   // @ts-ignore
                   //"userType": `${$value.userType?.dataset.optionid}`,
               });

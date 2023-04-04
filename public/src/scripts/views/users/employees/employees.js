@@ -10,9 +10,11 @@ import { tableLayout } from "./Layout.js";
 import { tableLayoutTemplate } from "./Templates.js";
 const tableRows = Config.tableRows;
 const currentPage = Config.currentPage;
+let currentUserInfo; 
 const currentUserData = async() => {
     const currentUser = await getUserInfo();
     const user = await getEntityData('User', `${currentUser.attributes.id}`);
+    currentUserInfo = user;
     return user;
 }
 const getUsers = async () => {
@@ -264,6 +266,13 @@ export class Employees {
               <label for="entity-username"><i class="input_locked fa-solid fa-lock"></i> Nombre de usuario</label>
             </div>
 
+            <div class="material_input">
+                <input type="email"
+                    id="entity-email"
+                    autocomplete="none">
+                <label for="entity-email">Email</label>
+            </div>
+
             <div class="material_input_select">
               <label for="entity-state">Estado</label>
               <input type="text" id="entity-state" class="input_select" readonly placeholder="cargando..." autocomplete="none">
@@ -271,6 +280,7 @@ export class Employees {
               </div>
             </div>
 
+            <!--
             <div class="material_input_select" style="display: none">
               <label for="entity-business">Empresa</label>
               <input type="text" id="entity-business" class="input_select" readonly placeholder="cargando..." autocomplete="none">
@@ -284,6 +294,7 @@ export class Employees {
               <div id="input-options" class="input_options">
               </div>
             </div>
+            -->
 
             <div class="material_input_select" style="display: none">
               <label for="entity-customer">Cliente</label>
@@ -292,12 +303,14 @@ export class Employees {
               </div>
             </div>
 
+            <!--
             <div class="material_input_select">
               <label for="entity-department">Departamento</label>
               <input type="text" id="entity-department" class="input_select" readonly placeholder="cargando...">
               <div id="input-options" class="input_options">
               </div>
             </div>
+            -->
 
             <div class="form_group">
                 <div class="form_input">
@@ -331,11 +344,11 @@ export class Employees {
       `;
             // @ts-ignore
             inputObserver();
-            inputSelect('Citadel', 'entity-citadel');
+            //inputSelect('Citadel', 'entity-citadel');
             inputSelect('Customer', 'entity-customer');
             inputSelect('State', 'entity-state');
-            inputSelect('Department', 'entity-department');
-            inputSelect('Business', 'entity-business');
+            //inputSelect('Department', 'entity-department');
+            //inputSelect('Business', 'entity-business');
             this.close();
             this.generateUserName();
             const registerButton = document.getElementById('register-entity');
@@ -350,18 +363,20 @@ export class Employees {
                     state: document.getElementById('entity-state'),
                     customer: document.getElementById('entity-customer'),
                     username: document.getElementById('entity-username'),
-                    citadel: document.getElementById('entity-citadel'),
+                    //citadel: document.getElementById('entity-citadel'),
                     temporalPass: document.getElementById('tempPass'),
                     ingressHour: document.getElementById('start-time'),
                     turnChange: document.getElementById('end-time'),
-                    departments: document.getElementById('entity-department'),
+                    //departments: document.getElementById('entity-department'),
+                    email: document.getElementById('entity-email'),
                     allowVisits: document.getElementById('allow-visits')
                 };
                 const raw = JSON.stringify({
                     "lastName": `${_values.lastName.value}`,
                     "secondLastName": `${_values.secondLastName.value}`,
                     "isSuper": false,
-                    "email": "",
+                    "newUser": true,
+                    "email": `${inputsCollection.email.value}`,
                     "temp": `${_values.temporalPass.value}`,
                     "isWebUser": false,
                     "active": true,
@@ -372,16 +387,19 @@ export class Employees {
                         "id": `${_values.state.dataset.optionid}`
                     },
                     "contractor": {
-                        "id": "06b476c4-d151-d7dc-cf0e-2a1e19295a00",
+                        "id": `${currentUserInfo.contractor.id}`,
                     },
                     "customer": {
                         "id": `${_values.customer.dataset.optionid}`
                     },
                     "citadel": {
-                        "id": `${_values.citadel.dataset.optionid}`
+                        "id": `${currentUserInfo.citadel.id}`
+                    },
+                    "business":{
+                        "id": `${currentUserInfo.business.id}`
                     },
                     "department": {
-                        "id": `${_values.departments.dataset.optionid}`
+                        "id": `${currentUserInfo.department.id}`
                     },
                     "phone": `${_values.phoneNumer.value}`,
                     "dni": `${_values.dni.value}`,
@@ -459,10 +477,10 @@ export class Employees {
                 readFile(_fileHandler.files[0]);
             });
             async function readFile(file) {
-                const customer = await getEntitiesData('Customer');
-                const citadel = await getEntitiesData('Citadel');
-                const deparment = await getEntitiesData('Department');
-                const contractor = await getEntitiesData('Contractor');
+                //const customer = await getEntitiesData('Customer');
+                //const citadel = await getEntitiesData('Citadel');
+                //const deparment = await getEntitiesData('Department');
+                //const contractor = await getEntitiesData('Contractor');
                 const fileReader = new FileReader();
                 fileReader.readAsText(file);
                 fileReader.addEventListener('load', (e) => {
@@ -476,7 +494,7 @@ export class Employees {
                             "lastName": `${userData[1].replace(/\n/g, '')}`,
                             "secondLastName": `${userData[2].replace(/\n/g, '')}`,
                             "isSuper": false,
-                            "email": '',
+                            "email": `${userData[8].replace(/\n/g, '')}`,
                             "temp": `${userData[5].replace(/\n/g, '')}`,
                             "isWebUser": false,
                             "isActive": true,
@@ -488,16 +506,20 @@ export class Employees {
                                 "id": "60885987-1b61-4247-94c7-dff348347f93"
                             },
                             "contractor": {
-                                "id": `${contractor[0].id}`
+                                "id": `${currentUserInfo.contractor.id}`
+                            //    "id": `${contractor[0].id}`
                             },
                             "customer": {
-                                "id": `${customer[0].id}`
+                                "id": `${currentUserInfo.customer.id}`
                             },
                             "citadel": {
-                                "id": `${citadel[0].id}`
+                                "id": `${currentUserInfo.citadel.id}`
                             },
                             "department": {
-                                "id": `${deparment[0].id}`
+                                "id": `${currentUserInfo.department.id}`
+                            },
+                            "business": {
+                                "id": `${currentUserInfo.business.id}`
                             },
                             "phone": `${userData[3].replace(/\n/g, '')}`,
                             "dni": `${userData[4].replace(/\n/g, '')}`,
@@ -559,7 +581,7 @@ export class Employees {
                     </div>
 
                     <div class="material_input">
-                    <input type="text" id="entity-lastname" class="input_filled" value="${data.lastName}" reandonly>
+                    <input type="text" id="entity-lastname" class="input_filled" value="${data.lastName}" readonly>
                     <label for="entity-lastname">Apellido</label>
                     </div>
 
@@ -575,6 +597,11 @@ export class Employees {
                         maxlength="10"
                         value="${data.dni}" readonly>
                     <label for="entity-dni">Cédula</label>
+                    </div>
+
+                    <div class="material_input">
+                    <input type="email" id="entity-email" class="input_filled" value="${data.email}">
+                    <label for="entity-email">Email</label>
                     </div>
 
                     <div class="material_input">
@@ -598,6 +625,12 @@ export class Employees {
                     </div>
                     </div>
 
+                    <div class="material_input">
+                    <input type="text" id="entity-customer" class="input_filled" value="${data.customer.name}" readonly>
+                    <label for="entity-customer">Empresa</label>
+                    </div>
+
+                    <!--
                     <div class="material_input_select" style="display: none">
                     <label for="entity-business">Empresa</label>
                     <input type="text" id="entity-business" class="input_select" readonly placeholder="cargando...">
@@ -625,6 +658,7 @@ export class Employees {
                     <div id="input-options" class="input_options">
                     </div>
                     </div>
+                    -->
 
                     <div class="form_group">
                         <div class="form_input">
@@ -641,13 +675,14 @@ export class Employees {
                     <div class="input_checkbox">
                         <label><input type="checkbox" class="checkbox" id="allow-visits"> Permitir visitas</label>
                     </div>
-
+  
                     <br>
+                    <!--
                     <div class="material_input">
                     <input type="password" id="tempPass" >
                     <label for="tempPass">Contraseña:</label>
                     </div>
-
+                    -->
                 </div>
                 <!-- END EDITOR BODY -->
 
@@ -661,11 +696,11 @@ export class Employees {
                 checkbox?.setAttribute('checked', 'true');
             }
             inputObserver();
-            inputSelect('Business', 'entity-citadel');
-            inputSelect('Customer', 'entity-customer');
+            //inputSelect('Citadel', 'entity-citadel');
+            //inputSelect('Customer', 'entity-customer');
             inputSelect('State', 'entity-state', data.state.name);
-            inputSelect('Department', 'entity-department');
-            inputSelect('Business', 'entity-business');
+            //inputSelect('Department', 'entity-department');
+            //inputSelect('Business', 'entity-business');
             this.close();
             updateEmployee(entityID);
         };
@@ -673,31 +708,34 @@ export class Employees {
             let updateButton;
             updateButton = document.getElementById('update-changes');
             const _values = {
-                firstName: document.getElementById('entity-firstname'),
-                lastName: document.getElementById('entity-lastname'),
-                secondLastName: document.getElementById('entity-secondlastname'),
+                //firstName: document.getElementById('entity-firstname'),
+                //lastName: document.getElementById('entity-lastname'),
+                //secondLastName: document.getElementById('entity-secondlastname'),
                 phone: document.getElementById('entity-phone'),
                 status: document.getElementById('entity-state'),
-                department: document.getElementById('entity-department'),
+                //department: document.getElementById('entity-department'),
                 ingressHour: document.getElementById('start-time'),
                 turnChange: document.getElementById('end-time'),
-                allowVisits: document.getElementById('allow-visits')
+                allowVisits: document.getElementById('allow-visits'),
+                email: document.getElementById('entity-email'),
             };
             updateButton.addEventListener('click', () => {
                 let employeeRaw = JSON.stringify({
-                    "lastName": `${_values.lastName.value}`,
-                    "secondLastName": `${_values.secondLastName.value}`,
+                    //"lastName": `${_values.lastName.value}`,
+                    //"secondLastName": `${_values.secondLastName.value}`,
                     "active": true,
-                    "firstName": `${_values.firstName.value}`,
+                    //"firstName": `${_values.firstName.value}`,
                     "state": {
                         "id": `${_values.status.dataset.optionid}`
                     },
-                    "department": {
-                        "id": `${_values.department.dataset.optionid}`
-                    },
+                    //"department": {
+                    //    "id": `${_values.department.dataset.optionid}`
+                    //},
                     "ingressHour": `${_values.ingressHour.value}`,
                     "turnChange": `${_values.turnChange.value}`,
-                    "createVisit": `${_values.allowVisits.checked ? true : false}`
+                    "createVisit": `${_values.allowVisits.checked ? true : false}`,
+                    "email": `${_values.email.value}`,
+                    "phone": `${_values.phone.value}`,
                 });
                 update(employeeRaw);
             });
