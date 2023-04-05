@@ -46,6 +46,7 @@ export class Notes {
             this.searchNotes(tableBody, notesArray);
             new filterDataByHeaderType().filter();
             this.pagination(notesArray, tableRows, currentPage);
+            this.export();
             // Rendering icons
         };
         this.load = (tableBody, currentPage, notes) => {
@@ -83,6 +84,7 @@ export class Notes {
                 `;
                     tableBody.appendChild(row);
                     this.previewNote(note.id);
+                    
                     // TODO: Corret this fixer
                     // fixDate()
                 }
@@ -155,6 +157,12 @@ export class Notes {
                 new CloseDialog().x(editor);
             });
         };
+        this.export = () => {
+                const exportNotes = document.getElementById('export-entities');
+                exportNotes.addEventListener('click', () => {
+                    console.log("imprimiendo")
+                });
+        };
     }
     pagination(items, limitRows, currentPage) {
         const tableBody = document.getElementById('datatable-body');
@@ -177,5 +185,6 @@ export class Notes {
             });
             return button;
         }
-    }
+    };
+    
 }
