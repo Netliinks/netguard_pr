@@ -159,8 +159,40 @@ export class Notes {
         };
         this.export = () => {
                 const exportNotes = document.getElementById('export-entities');
-                exportNotes.addEventListener('click', () => {
-                    console.log("imprimiendo")
+                exportNotes.addEventListener('click', async() => {
+                    this.dialogContainer.style.display = 'block';
+                    this.dialogContainer.innerHTML = `
+                        <div class="dialog_content" id="dialog-content">
+                            <div class="dialog">
+                                <div class="dialog_container padding_8">
+                                    <div class="dialog_header">
+                                        <h2>Actualizar contraseña</h2>
+                                    </div>
+
+                                    <div class="dialog_message padding_8">
+                                        <div class="material_input">
+                                            <input type="password" id="password" autocomplete="none">
+                                            <label for="entity-lastname"><i class="fa-solid fa-lock"></i> Nueva contraseña</label>
+                                        </div>
+
+                                        <div class="material_input">
+                                            <input type="password" id="re-password" autocomplete="none">
+                                            <label for="entity-lastname"><i class="fa-solid fa-lock"></i> Repetir contraseña</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="dialog_footer">
+                                        <button class="btn btn_primary" id="cancel">Cancelar</button>
+                                        <button class="btn btn_danger" id="update-password">Actualizar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    inputObserver();
+                    //const headers = ['Título', 'Contenido', 'Autor', 'Fecha', 'Hora']
+                    //let notesArray = await GetNotes();
+                    //console.log(notesArray)
                 });
         };
     }
