@@ -229,8 +229,7 @@ export class Notes {
                                     "Fecha": `${noteCreationDate}`,
                                     "Hora": `${noteCreationTime}`,
                                     "Usuario": `${note.user.firstName} ${note.user.lastName}`,
-                                    "Contenido": `${note.content.split("\n").join("(salto)")}`,
-                                    "Hora": `${noteCreationTime}`
+                                    "Contenido": `${note.content.split("\n").join("(salto)")}`
                                   }
                                   rows.push(obj);
                             }
