@@ -5,16 +5,18 @@
 //
 import { Config } from "../../../Configs.js";
 import { getEntityData, getEntitiesData, getFile, getUserInfo } from "../../../endpoints.js";
-import { CloseDialog, renderRightSidebar, filterDataByHeaderType } from "../../../tools.js";
+import { CloseDialog, renderRightSidebar, filterDataByHeaderType, inputObserver, generateCsv } from "../../../tools.js";
 import { UIContentLayout, UIRightSidebar } from "./Layout.js";
 import { UITableSkeletonTemplate } from "./Template.js";
 // Local configs
 const tableRows = Config.tableRows;
 let currentPage = Config.currentPage;
 const pageName = 'Notas';
+let currentUserInfo;
 const currentUserData = async() => {
     const currentUser = await getUserInfo();
     const user = await getEntityData('User', `${currentUser.attributes.id}`);
+    currentUserInfo = user;
     return user;
 }
 const GetNotes = async () => {
@@ -23,7 +25,7 @@ const GetNotes = async () => {
     const FCustomer = notes.filter(async (data) => {
         const userCustomer = await getEntityData('User', `${data.user.id}`);
         userCustomer.customer.id === `${currentUser.customer.id}`
-    });;
+    });
     return FCustomer;
 };
 export class Notes {
@@ -166,35 +168,114 @@ export class Notes {
                             <div class="dialog">
                                 <div class="dialog_container padding_8">
                                     <div class="dialog_header">
-                                        <h2>Actualizar contraseña</h2>
+                                        <h2>Seleccionar la fecha</h2>
                                     </div>
 
                                     <div class="dialog_message padding_8">
-                                        <div class="material_input">
-                                            <input type="password" id="password" autocomplete="none">
-                                            <label for="entity-lastname"><i class="fa-solid fa-lock"></i> Nueva contraseña</label>
-                                        </div>
-
-                                        <div class="material_input">
-                                            <input type="password" id="re-password" autocomplete="none">
-                                            <label for="entity-lastname"><i class="fa-solid fa-lock"></i> Repetir contraseña</label>
+                                        <div class="form_group">
+                                            <div class="form_input">
+                                                <label class="form_label" for="start-date">Desde:</label>
+                                                <input type="date" class="input_date input_date-start" id="start-date" name="start-date">
+                                            </div>
+                            
+                                            <div class="form_input">
+                                                <label class="form_label" for="end-date">Hasta:</label>
+                                                <input type="date" class="input_date input_date-end" id="end-date" name="end-date">
+                                            </div>
                                         </div>
                                     </div>
 
                                     <div class="dialog_footer">
                                         <button class="btn btn_primary" id="cancel">Cancelar</button>
-                                        <button class="btn btn_danger" id="update-password">Actualizar</button>
+                                        <button class="btn btn_danger" id="export-data">Exportar</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     `;
+                    let fecha = new Date(); //Fecha actual
+                    let mes = fecha.getMonth()+1; //obteniendo mes
+                    let dia = fecha.getDate(); //obteniendo dia
+                    let anio = fecha.getFullYear(); //obteniendo año
+                    if(dia<10)
+                        dia='0'+dia; //agrega cero si el menor de 10
+                    if(mes<10)
+                        mes='0'+mes //agrega cero si el menor de 10
+
+                    document.getElementById("start-date").value = anio+"-"+mes+"-"+dia;
+                    document.getElementById("end-date").value = anio+"-"+mes+"-"+dia;
                     inputObserver();
-                    //const headers = ['Título', 'Contenido', 'Autor', 'Fecha', 'Hora']
-                    //let notesArray = await GetNotes();
-                    //console.log(notesArray)
+                    const _closeButton = document.getElementById('cancel');
+                    const exportButton = document.getElementById('export-data');
+                    const _dialog = document.getElementById('dialog-content');
+                    exportButton.addEventListener('click', async() => {
+                        let rows = [];
+                        const _values = {
+                            start: document.getElementById('start-date'),
+                            end: document.getElementById('end-date'),
+                        }
+                        //console.log(_values.start.value)
+                        //console.log(_values.end.value)
+                        //const headers = ['Título', 'Contenido', 'Autor', 'Fecha', 'Hora']
+                        const notes = await GetNotes(_values);
+                        for(let i=0; i < notes.length; i++){
+                            let note = notes[i]
+                            let noteCreationDateAndTime = note.creationDate.split('T');
+                            let noteCreationDate = noteCreationDateAndTime[0];
+                            let noteCreationTime = noteCreationDateAndTime[1];
+                            if(noteCreationDate >= _values.start.value && noteCreationDate <= _values.end.value){
+                                let obj = {
+                                    "Título": `${note.title.split("\n").join("(salto)")}`,
+                                    "Fecha": `${noteCreationDate}`,
+                                    "Hora": `${noteCreationTime}`,
+                                    "Usuario": `${note.user.firstName} ${note.user.lastName}`,
+                                    "Contenido": `${note.content.split("\n").join("(salto)")}`,
+                                    "Hora": `${noteCreationTime}`
+                                  }
+                                  rows.push(obj);
+                            }
+                            
+                        }
+                        generateCsv(rows, "Notas");
+                        
+                        
+                    });
+                    _closeButton.onclick = () => {
+                        new CloseDialog().x(_dialog);
+                    };
+                    /*const getFilteredNote = async(_values) =>{
+                        const notes = await getEntitiesData('Note');
+                        const FCustomer = notes.filter(async (data) => {
+                            let userCustomer = await getEntityData('User', `${data.user.id}`);
+                            userCustomer.customer.id === `${currentUserInfo.customer.id}`
+                        });
+                        //console.log(`_values.start.value ${_values.start.value}`)
+                            const Fdesde = FCustomer.filter((data) => {
+                            let noteCreationDateAndTime = data.creationDate.split('T');
+                            let noteCreationDate = noteCreationDateAndTime[0];
+                            //console.log(`noteCreationDate ${noteCreationDate}`)
+                            noteCreationDate >= _values.start.value
+                        });/*
+                        console.log(`Fdesde ${Fdesde}`)
+                        const Fhasta = Fdesde.filter((data) => {
+                            let noteCreationDateAndTime = data.creationDate.split('T');
+                            let noteCreationDate = noteCreationDateAndTime[0];
+                            noteCreationDate <= `${_values.end.value}`
+                        });
+                        //console.log(Fdesde)
+                        return FCustomer;
+                    }*/
+                        
+                    
                 });
         };
+        this.close = () => {
+            const closeButton = document.getElementById('close');
+            const editor = document.getElementById('entity-editor-container');
+            closeButton.addEventListener('click', () => {
+                new CloseDialog().x(editor);
+            }, false);
+        }
     }
     pagination(items, limitRows, currentPage) {
         const tableBody = document.getElementById('datatable-body');
