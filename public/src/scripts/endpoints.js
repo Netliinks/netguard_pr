@@ -59,9 +59,18 @@ export const getUserInfo = async () => {
         headers: headers,
         redirect: 'follow'
     };
-    return fetch(userInfo.url, options)
+    /*return fetch(userInfo.url, options)
         .then((req) => req.json())
-        .catch((err) => console.info(err));
+        .catch((err) => console.info(err));*/
+    let userData = await fetch(userInfo.url, options)
+    .then((req) => req.json());
+    // .then((req) => {
+    //     console.log(req)
+    //     // if (req.error === 'invalid_token') {
+    //     //     new SignIn().showLogin()
+    //     // }
+    // })
+    return userData;
 };
 // ===================================================
 /**

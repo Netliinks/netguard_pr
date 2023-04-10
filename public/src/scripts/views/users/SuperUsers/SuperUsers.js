@@ -158,31 +158,31 @@ export class SuperUsers {
           <div class="entity_editor_body">
             <div class="material_input">
               <input type="text" id="entity-firstname" autocomplete="none">
-              <label for="entity-firstname">Nombre</label>
+              <label for="entity-firstname"><i class="fa-solid fa-user"></i> Nombre</label>
             </div>
 
             <div class="material_input">
               <input type="text" id="entity-lastname" autocomplete="none">
-              <label for="entity-lastname">Apellido</label>
+              <label for="entity-lastname"><i class="fa-solid fa-user"></i> Apellido</label>
             </div>
 
             <div class="material_input">
               <input type="text" id="entity-secondlastname" autocomplete="none">
-              <label for="entity-secondlastname">2do Apellido</label>
+              <label for="entity-secondlastname"><i class="fa-solid fa-user"></i> 2do Apellido</label>
             </div>
 
             <div class="material_input">
               <input type="text"
                 id="entity-phone"
                 maxlength="10" autocomplete="none">
-              <label for="entity-phone">Teléfono</label>
+              <label for="entity-phone"><i class="fa-solid fa-phone"></i> Teléfono</label>
             </div>
 
             <div class="material_input">
               <input type="text"
                 id="entity-dni"
                 maxlength="10" autocomplete="none">
-              <label for="entity-dni">Cédula</label>
+              <label for="entity-dni"><i class="fa-solid fa-id-card"></i> DNI</label>
             </div>
 
             <div class="material_input">
@@ -651,15 +651,6 @@ export class SuperUsers {
                 cancelButton.onclick = () => {
                     new CloseDialog().x(dialogContent);
                 };
-            });
-        });
-    }
-    convertToSuper() {
-        const convert = document.querySelectorAll('#convert-entity');
-        convert.forEach((convert) => {
-            const entityId = convert.dataset.entityid;
-            convert.addEventListener('click', () => {
-                alert('Converting...');
             });
         });
     }

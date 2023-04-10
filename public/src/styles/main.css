@@ -923,6 +923,74 @@ table button:hover {
   margin-top: 8px;
 }
 
+.modal_title, .modal_body, .modal_footer {
+  padding: 16px;
+}
+.modal_container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100%;
+  background-color: rgba(38, 35, 58, 0.5);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 99999;
+}
+.modal_window {
+  display: block;
+  background-color: #FFFFFF;
+  width: 100%;
+  max-width: 400px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.modal_title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #FFFFFF;
+  font-weight: bolder;
+}
+.modal_title .title {
+  font-size: 22px;
+}
+.modal_title-info {
+  background-color: #F5F6FA;
+}
+.modal_title .counter {
+  color: #706F8E;
+  font-size: 12px;
+  font-weight: normal;
+}
+.modal_body {
+  padding-bottom: 8px;
+}
+.modal_body p {
+  text-align: center;
+  margin-top: 16px;
+}
+.modal_body .verification_code_result {
+  display: block;
+  text-align: center;
+  font-size: 18px;
+  color: #706F8E;
+  font-family: monospace;
+  margin-top: 16px;
+}
+.modal_view-isHidden {
+  display: none;
+}
+.modal_button_group-isHidden {
+  display: none;
+}
+.modal_footer-align_right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
 .entity_editor_container {
   display: none;
   align-items: flex-start;

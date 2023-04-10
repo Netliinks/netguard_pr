@@ -6,7 +6,7 @@
 import { deleteEntity, getEntitiesData, getEntityData, registerEntity, setPassword, setUserRole, updateEntity, getUserInfo } from "../../../endpoints.js";
 import { drawTagsIntoTables, inputObserver, inputSelect, CloseDialog, filterDataByHeaderType } from "../../../tools.js";
 import { Config } from "../../../Configs.js";
-import { tableLayout } from "./Layout.js";
+import { tableLayout, UIConvertToSU } from "./Layout.js";
 import { tableLayoutTemplate } from "./Templates.js";
 const tableRows = Config.tableRows;
 const currentPage = Config.currentPage;
@@ -124,7 +124,7 @@ export class Clients {
               <i class="fa-solid fa-trash"></i>
             </button>
 
-            <button class="button" id="convert-entity" data-entityId="${client.id}" style="display: none">
+            <button class="button" id="convert-entity" data-entityId="${client.id}">
                 <i class="fa-solid fa-shield"></i>
             </button>
           </dt>
@@ -758,9 +758,61 @@ export class Clients {
         const convert = document.querySelectorAll('#convert-entity');
         convert.forEach((convert) => {
             const entityId = convert.dataset.entityid;
-            convert.addEventListener('click', () => {
-                alert('Converting...');
-            });
+            convert.addEventListener('click', async () => {
+                const user = await getEntityData('User', entityId);
+                this.dialogContainer.style.display = 'block';
+                this.dialogContainer.innerHTML = UIConvertToSU;
+                const modalUsername = document.getElementById('username');
+                modalUsername.innerHTML = user.firstName;
+                inputObserver();
+                // modal functionality
+                const nextButton = document.getElementById('button-next-userconverter');
+                const cancelButton = document.getElementById('button-cancel');
+                const buttonBack = document.getElementById('button-back');
+                const buttonSubmit = document.getElementById('button-submit');
+                const modalViews = document.querySelectorAll('.modal_view');
+                const buttonGroups = document.querySelectorAll('.modal_button_group');
+                const stepCount = document.getElementById('stepCount');
+                const resultMail = document.getElementById('result-mail');
+                const inputMail = document.getElementById('input-email');
+                const confirmationCode = document.getElementById('confirmation-code');
+                const modalContainer = document.getElementById('modal_container');
+                let mailRaw = [];
+                let updateRaw = [];
+                nextButton.addEventListener('click', () => {
+                    const randomKey = { key: Math.floor(Math.random() * 999999) };
+                    if (inputMail.value === '') {
+                        alert('Debe ingresar un correo para continuar.');
+                    }
+                    else {
+                        modalViews.forEach((modalView) => {
+                            modalView.classList.toggle('modal_view-isHidden');
+                            stepCount.innerText = '2';
+                        });
+                        buttonGroups.forEach((buttonGroup) => {
+                            buttonGroup.classList.toggle('modal_button_group-isHidden');
+                        });
+                        resultMail.innerText = inputMail.value;
+                        confirmationCode.innerText = randomKey.key;
+                        mailRaw = JSON.stringify({
+                            "adress": inputMail.value,
+                            "subject": "Netliinks - Clave de validación.",
+                            "body": randomKey.key
+                        });
+                        updateRaw = JSON.stringify({
+                            //"username": inputMail.value,
+                            "isSuper": true,
+                            "hashSuper": randomKey.key,
+                            "verifiedSuper": false
+                        });
+                        console.log(mailRaw);
+                        console.log(updateRaw);
+                    }
+                });
+                cancelButton.onclick = () => {
+                    new CloseDialog().x(modalContainer);
+                };
+              });
         });
     }
     pagination(items, limitRows, currentPage) {

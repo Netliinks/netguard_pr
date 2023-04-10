@@ -13,9 +13,28 @@ import { Customers } from "../views/customers/Customers.js";
 import { SuperUsers } from "../views/users/SuperUsers/SuperUsers.js";
 import { Events } from "../views/binnacle/Events/EventsView.js";
 import { Vehiculars } from "../views/binnacle/vehiculars/Vehiculars.js";
-export const renderSidebar = () => {
-    const sidebar = document.getElementById('app-sidebar');
-    sidebar.innerHTML = `
+export class Sidebar {
+  constructor() {
+      this.sidebarContainer = document.getElementById('app-sidebar');
+      this.getSidebarItems = () => {
+          const sidebarItems = document.querySelectorAll('.sidebar_item');
+          const sidebarSubitems = document.querySelectorAll('.sidebar_subitem');
+          sidebarItems.forEach((sidebarItem) => {
+              sidebarItem.addEventListener('click', () => {
+                  sidebarItems.forEach((sidebarItem) => sidebarItem.classList.remove('isActive'));
+                  sidebarItem.classList.add('isActive');
+              });
+          });
+          sidebarSubitems.forEach((sidebarSubitem) => {
+              sidebarSubitem.addEventListener('click', () => {
+                  sidebarSubitems.forEach((sidebarSubitem) => sidebarSubitem.classList.remove('isActive'));
+                  sidebarSubitem.classList.add('isActive');
+              });
+          });
+      };
+  }
+  render() {
+      this.sidebarContainer.innerHTML = `
     <div class="app_sidebar_container">
       <div class="app_sidebar_container_menu">
         <div class="sidebar_top">
@@ -122,34 +141,22 @@ export const renderSidebar = () => {
       </div>
     </div>
   `;
-    //  @ts-ignore
-    feather.replace();
-    getSidebarItems();
-    renders();
-};
-const getSidebarItems = () => {
-    const sidebarItems = document.querySelectorAll('.sidebar_item');
-    const sidebarSubitems = document.querySelectorAll('.sidebar_subitem');
-    sidebarItems.forEach((sidebarItem) => {
-        sidebarItem.addEventListener('click', () => {
-            sidebarItems.forEach((sidebarItem) => sidebarItem.classList.remove('isActive'));
-            sidebarItem.classList.add('isActive');
-        });
+  this.getSidebarItems();
+  this.renders();
+}
+renders() {
+    document.getElementById('render-dashboard')?.addEventListener('click', () => {
+      new Dashboard().render();
     });
-    sidebarSubitems.forEach((sidebarSubitem) => {
-        sidebarSubitem.addEventListener('click', () => {
-            sidebarSubitems.forEach((sidebarSubitem) => sidebarSubitem.classList.remove('isActive'));
-            sidebarSubitem.classList.add('isActive');
-        });
+    document.getElementById('render-clients')?.addEventListener('click', () => {
+      new Clients().render();
     });
-};
-const renders = () => {
     document.getElementById('render-dashboard')?.addEventListener('click', () => {
         new Dashboard().render();
     });
     document.getElementById('render-customers')?.addEventListener('click', () => {
       new Customers().render();
-  });
+    });
     document.getElementById('render-guards')?.addEventListener('click', () => {
         new Guards().render();
     });
@@ -181,7 +188,7 @@ const renders = () => {
     // render AssistControl
     document.getElementById('render-vehiculars')?.addEventListener('click', () => {
       new Vehiculars().render();
-  });
+    });
     // render Deparments
     document.getElementById('render-deparments')?.addEventListener('click', () => {
         new Departments().render();
@@ -190,7 +197,8 @@ const renders = () => {
     document.getElementById('render-superusers')?.addEventListener('click', () => {
         new SuperUsers().render();
     });
-};
+  }
+}
 // new Clients().render()
 // new AssistControl().render()
 // new Notes().render()
