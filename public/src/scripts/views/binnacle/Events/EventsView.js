@@ -1,7 +1,7 @@
 // @filename: EvetnsView.ts
 import { Config } from "../../../Configs.js";
 import { getEntityData, getEntitiesData, getUserInfo } from "../../../endpoints.js";
-import { CloseDialog, renderRightSidebar } from "../../../tools.js";
+import { CloseDialog, renderRightSidebar, filterDataByHeaderType, inputObserver, generateCsv } from "../../../tools.js";
 import { UIContentLayout, UIRightSidebar } from "./Layout.js";
 import { UITableSkeletonTemplate } from "./Template.js";
 // Local configs
@@ -43,7 +43,9 @@ export class Events {
             // Exec functions
             this.load(tableBody, currentPage, eventsArray);
             this.searchNotes(tableBody, eventsArray);
+            new filterDataByHeaderType().filter();
             this.pagination(eventsArray, tableRows, currentPage);
+            this.export();
             // Rendering icons
         };
         this.load = (tableBody, currentPage, events) => {
@@ -142,6 +144,85 @@ export class Events {
             const editor = document.getElementById('entity-editor-container');
             closeButton.addEventListener('click', () => {
                 new CloseDialog().x(editor);
+            });
+        };
+        this.export = () => {
+            const exportNotes = document.getElementById('export-entities');
+            exportNotes.addEventListener('click', async() => {
+                this.dialogContainer.style.display = 'block';
+                this.dialogContainer.innerHTML = `
+                    <div class="dialog_content" id="dialog-content">
+                        <div class="dialog">
+                            <div class="dialog_container padding_8">
+                                <div class="dialog_header">
+                                    <h2>Seleccionar la fecha</h2>
+                                </div>
+
+                                <div class="dialog_message padding_8">
+                                    <div class="form_group">
+                                        <div class="form_input">
+                                            <label class="form_label" for="start-date">Desde:</label>
+                                            <input type="date" class="input_date input_date-start" id="start-date" name="start-date">
+                                        </div>
+                        
+                                        <div class="form_input">
+                                            <label class="form_label" for="end-date">Hasta:</label>
+                                            <input type="date" class="input_date input_date-end" id="end-date" name="end-date">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="dialog_footer">
+                                    <button class="btn btn_primary" id="cancel">Cancelar</button>
+                                    <button class="btn btn_danger" id="export-data">Exportar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                let fecha = new Date(); //Fecha actual
+                let mes = fecha.getMonth()+1; //obteniendo mes
+                let dia = fecha.getDate(); //obteniendo dia
+                let anio = fecha.getFullYear(); //obteniendo año
+                if(dia<10)
+                    dia='0'+dia; //agrega cero si el menor de 10
+                if(mes<10)
+                    mes='0'+mes //agrega cero si el menor de 10
+
+                document.getElementById("start-date").value = anio+"-"+mes+"-"+dia;
+                document.getElementById("end-date").value = anio+"-"+mes+"-"+dia;
+                inputObserver();
+                const _closeButton = document.getElementById('cancel');
+                const exportButton = document.getElementById('export-data');
+                const _dialog = document.getElementById('dialog-content');
+                exportButton.addEventListener('click', async() => {
+                    let rows = [];
+                    const _values = {
+                        start: document.getElementById('start-date'),
+                        end: document.getElementById('end-date'),
+                    }
+                    const events = await getEvents();
+                    for(let i=0; i < events.length; i++){
+                        let event = events[i]
+                        if(event.creationDate >= _values.start.value && event.creationDate <= _values.end.value){
+                            let obj = {
+                                "Título": `${event.title.split("\n").join("(salto)")}`,
+                                "Fecha": `${event.creationDate}`,
+                                "Hora": `${event.creationTime}`,
+                                "Usuario": `${event.user.firstName} ${event.user.lastName}`,
+                                "Descripción": `${event.description.split("\n").join("(salto)")}`
+                              }
+                              rows.push(obj);
+                        }
+                        
+                    }
+                    generateCsv(rows, "Eventos");
+                    
+                    
+                });
+                _closeButton.onclick = () => {
+                    new CloseDialog().x(_dialog);
+                };
             });
         };
     }

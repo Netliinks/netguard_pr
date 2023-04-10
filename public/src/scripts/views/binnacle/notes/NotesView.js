@@ -217,7 +217,7 @@ export class Notes {
                         //console.log(_values.start.value)
                         //console.log(_values.end.value)
                         //const headers = ['Título', 'Contenido', 'Autor', 'Fecha', 'Hora']
-                        const notes = await GetNotes(_values);
+                        const notes = await GetNotes();
                         for(let i=0; i < notes.length; i++){
                             let note = notes[i]
                             let noteCreationDateAndTime = note.creationDate.split('T');
