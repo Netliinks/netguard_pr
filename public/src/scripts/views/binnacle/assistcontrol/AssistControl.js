@@ -143,16 +143,11 @@ export class AssistControl {
             inputObserver();
             inputSelectFilter(currentUserInfo.business.id, 'entity-customer');
             let customer = document.getElementById('entity-customer');
-            let tools = document.getElementById('datatable-tools');
+            let tools = document.getElementById('datatable');
             //let rawMarcations = await getEntitiesData('Marcation');
-            
-            await tools.addEventListener('mouseover', async() => {
-                //const arrayMarcations = arryCustomers.filter((value) => `${value.customer.id}`
-                //    .toLowerCase()
-                //    .includes(customer.dataset.optionid));
+            await tools.addEventListener('click', async() => {
                 console.log(`${customer.value} ${customer.dataset.optionid}`)
-                //console.log(arrayMarcations)
-                let arrayMarcations = [];
+                const arrayMarcations = [];
                 for(let i = 0; i < marcations.length; i++){
                     let marcation = marcations[i];
                     //console.log(marcation)
@@ -169,9 +164,7 @@ export class AssistControl {
                 this.load(tableBody, currentPage, result);
                 this.searchVisit(tableBody, result);
                 this.pagination(result, tableRows, currentPage);
-                
-                
-            });
+            },false);
         };
         this.previewAssist = async () => {
             const openButtons = document.querySelectorAll('#entity-details');
