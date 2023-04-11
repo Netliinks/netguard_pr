@@ -315,3 +315,54 @@ export function generateCsv(ar, title){
       alert("Su navegador no permite esta acción");
     }
   }
+
+  export const inputSelectFilter = async (businessId, selectId, currentStatus) => {
+    const data = await getEntitiesData('Customer');
+    const dataFiltered = data.filter(async (data) => data.business.id === `${businessId}`);
+    const state = await currentStatus;
+    const select = document.querySelector(`#${selectId}`);
+    const inputParent = select.parentNode;
+    const optionsContent = inputParent.querySelector('#input-options');
+    const optionsContainer = document.createElement('div');
+    optionsContainer.classList.add('input_options_container');
+    optionsContent.appendChild(optionsContainer);
+    for (let i = 0; i < dataFiltered.length; i++) {
+        const inputOption = document.createElement('div');
+        select.setAttribute('data-optionid', dataFiltered[0].id);
+        select.setAttribute('value', dataFiltered[0].name);
+        inputOption.classList.add('input_option');
+        inputOption.setAttribute('id', dataFiltered[i].id);
+        let nameData = dataFiltered[i].name;
+        if (nameData === 'Enabled') {
+            nameData = 'Activo';
+        }
+        else if (nameData === 'Disabled') {
+            nameData = 'Inactivo';
+        }
+        inputOption.innerHTML = nameData;
+        optionsContainer.appendChild(inputOption);
+    }
+    const options = optionsContainer.querySelectorAll('.input_option');
+    if (state === "Enabled") {
+        select.value = "Activo";
+        select.setAttribute('data-optionid', '60885987-1b61-4247-94c7-dff348347f93');
+    }
+    else if (state === 'Disabled') {
+        select.value = "Inactivo";
+        select.setAttribute('data-optionid', '225b5e5d-9bb1-469a-b2d9-ca85d53db47b');
+    }
+    else {
+        select.value = dataFiltered[0].name;
+    }
+    select.addEventListener('click', () => {
+        inputParent.classList.toggle('select_active');
+    });
+    options.forEach((option) => {
+        option.addEventListener('click', () => {
+            select.value = option.innerText;
+            select.removeAttribute('data-optionid');
+            select.setAttribute('data-optionid', option.getAttribute('id'));
+            inputParent.classList.remove('select_active');
+        });
+    });
+};
