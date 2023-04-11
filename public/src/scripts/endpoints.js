@@ -61,9 +61,9 @@ export const getUserInfo = async () => {
     };
     /*return fetch(userInfo.url, options)
         .then((req) => req.json())
-        .catch((err) => console.info(err));*/
+        .catch((err: Error) => console.info(err))*/
     let userData = await fetch(userInfo.url, options)
-    .then((req) => req.json());
+        .then((req) => req.json());
     // .then((req) => {
     //     console.log(req)
     //     // if (req.error === 'invalid_token') {
