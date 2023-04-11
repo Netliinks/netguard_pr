@@ -238,7 +238,7 @@ export class Visits {
                                 "Fecha Creación": `${visit.creationDate}`,
                                 "Hora Creación": `${visit.creationTime}`,
                                 "Usuario": `${visit.user.firstName} ${visit.user.lastName}`,
-                                "Tipo": `${visit.type}`,
+                                "Tipo": `${verifyUserType(visit.type)}`,
                                 "Departamento": `${visit.department.name}`,
                                 "Estado": `${visit.visitState.name}`,
                                 "Verificado": `${visit.verifiedDocument ? 'Si' : 'No'}`,
