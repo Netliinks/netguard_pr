@@ -145,11 +145,11 @@ export class AssistControl {
             
 
             let customer = document.getElementById('entity-customer');
-            await customer.addEventListener('click', async() => {
+            await customer.addEventListener('mouseover', async() => {
                 //const arrayMarcations = arryCustomers.filter((value) => `${value.customer.id}`
                 //    .toLowerCase()
                 //    .includes(customer.dataset.optionid));
-                console.log(customer.dataset.optionid)
+                console.log(`${customer.value} ${customer.dataset.optionid}`)
                 //console.log(arrayMarcations)
                 let arrayMarcations = [];
                 let rawMarcations = await getEntitiesData('Marcation');
@@ -171,7 +171,7 @@ export class AssistControl {
                 this.pagination(result, tableRows, currentPage);
                 
                 
-            }, true);
+            });
         };
         this.previewAssist = async () => {
             const openButtons = document.querySelectorAll('#entity-details');
