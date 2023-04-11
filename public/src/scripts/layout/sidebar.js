@@ -1,6 +1,7 @@
 // Views
 import { Dashboard } from "../views/dashboard/dashboard.js";
 import { Notes } from "../views/binnacle/notes/NotesView.js";
+import { Guards } from "../views/users/guards/guards.js";
 import { Clients } from "../views/users/clients/clients.js";
 import { Visits } from "../views/binnacle/visits/VisitsView.js";
 import { Employees } from "../views/users/employees/employees.js";
@@ -8,30 +9,32 @@ import { Employees } from "../views/users/employees/employees.js";
 import { Contractors } from "../views/users/contractors/Contractors.js";
 import { AssistControl } from "../views/binnacle/assistcontrol/AssistControl.js";
 import { Departments } from "../views/departments/Departments.js";
+import { Customers } from "../views/customers/Customers.js";
 import { SuperUsers } from "../views/users/SuperUsers/SuperUsers.js";
 import { Events } from "../views/binnacle/Events/EventsView.js";
+import { Vehiculars } from "../views/binnacle/vehiculars/Vehiculars.js";
 export class Sidebar {
-    constructor() {
-        this.sidebarContainer = document.getElementById('app-sidebar');
-        this.getSidebarItems = () => {
-            const sidebarItems = document.querySelectorAll('.sidebar_item');
-            const sidebarSubitems = document.querySelectorAll('.sidebar_subitem');
-            sidebarItems.forEach((sidebarItem) => {
-                sidebarItem.addEventListener('click', () => {
-                    sidebarItems.forEach((sidebarItem) => sidebarItem.classList.remove('isActive'));
-                    sidebarItem.classList.add('isActive');
-                });
-            });
-            sidebarSubitems.forEach((sidebarSubitem) => {
-                sidebarSubitem.addEventListener('click', () => {
-                    sidebarSubitems.forEach((sidebarSubitem) => sidebarSubitem.classList.remove('isActive'));
-                    sidebarSubitem.classList.add('isActive');
-                });
-            });
-        };
-    }
-    render() {
-        this.sidebarContainer.innerHTML = `
+  constructor() {
+      this.sidebarContainer = document.getElementById('app-sidebar');
+      this.getSidebarItems = () => {
+          const sidebarItems = document.querySelectorAll('.sidebar_item');
+          const sidebarSubitems = document.querySelectorAll('.sidebar_subitem');
+          sidebarItems.forEach((sidebarItem) => {
+              sidebarItem.addEventListener('click', () => {
+                  sidebarItems.forEach((sidebarItem) => sidebarItem.classList.remove('isActive'));
+                  sidebarItem.classList.add('isActive');
+              });
+          });
+          sidebarSubitems.forEach((sidebarSubitem) => {
+              sidebarSubitem.addEventListener('click', () => {
+                  sidebarSubitems.forEach((sidebarSubitem) => sidebarSubitem.classList.remove('isActive'));
+                  sidebarSubitem.classList.add('isActive');
+              });
+          });
+      };
+  }
+  render() {
+      this.sidebarContainer.innerHTML = `
     <div class="app_sidebar_container">
       <div class="app_sidebar_container_menu">
         <div class="sidebar_top">
@@ -44,12 +47,25 @@ export class Sidebar {
               </span>
             </div>
 
+            <div class="sidebar_item" id="render-customers">
+              <span class="sidebar_item_label">
+                <i class="fa-regular fa-briefcase"></i> <div class="label">Empresas</div>
+              </span>
+            </div>
+
             <div class="sidebar_item">
               <span class="sidebar_item_label">
               <i class="fa-regular fa-user"></i> <div class="label">Usuarios</div>
               </span>
 
               <div class="sidebar_subitems">
+
+                <div class="sidebar_subitem" id="render-guards">
+                  <span class="sidebar_subitem_label">
+                    <i class="fa-regular fa-person-military-pointing"></i> <div class="label">Guardias</div>
+                  </span>
+                </div>
+
                 <div class="sidebar_subitem" id="render-clients">
                   <span class="sidebar_subitem_label">
                     <i class="fa-regular fa-user-group"></i> <div class="label">Clientes</div>
@@ -100,6 +116,12 @@ export class Sidebar {
                     <i class="fa-regular fa-megaphone"></i> <div class="label">Eventos</div>
                   </span>
                 </div>
+
+                <div class="sidebar_subitem" id="render-vehiculars">
+                  <span class="sidebar_subitem_label">
+                    <i class="fa-regular fa-car"></i> <div class="label">Ingreso Vehicular</div>
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -119,52 +141,66 @@ export class Sidebar {
       </div>
     </div>
   `;
-        this.getSidebarItems();
-        this.renders();
-    }
-    renders() {
-        document.getElementById('render-dashboard')?.addEventListener('click', () => {
-            new Dashboard().render();
-        });
-        document.getElementById('render-clients')?.addEventListener('click', () => {
-            new Clients().render();
-        });
-        document.getElementById('render-employees')?.addEventListener('click', () => {
-            new Employees().render();
-        });
-        document.getElementById('render-contractors')?.addEventListener('click', () => {
-            new Contractors().render();
-        });
-        // render notes
-        document.getElementById('render-notes')?.addEventListener('click', () => {
-            new Notes().render();
-        });
-        // render visits
-        document.getElementById('render-visits')?.addEventListener('click', () => {
-            new Visits().render();
-        });
-        // render AssistControl
-        document.getElementById('render-assistControl')?.addEventListener('click', () => {
-            new AssistControl().render();
-        });
-        // render AssistControl
-        document.getElementById('render-events')?.addEventListener('click', () => {
-            new Events().render();
-        });
-        // render Deparments
-        document.getElementById('render-deparments')?.addEventListener('click', () => {
-            new Departments().render();
-        });
-        // render Superusers
-        document.getElementById('render-superusers')?.addEventListener('click', () => {
-            new SuperUsers().render();
-        });
-    }
+  this.getSidebarItems();
+  this.renders();
 }
-//new Clients().render()
+renders() {
+    document.getElementById('render-dashboard')?.addEventListener('click', () => {
+      new Dashboard().render();
+    });
+    document.getElementById('render-clients')?.addEventListener('click', () => {
+      new Clients().render();
+    });
+    document.getElementById('render-dashboard')?.addEventListener('click', () => {
+        new Dashboard().render();
+    });
+    document.getElementById('render-customers')?.addEventListener('click', () => {
+      new Customers().render();
+    });
+    document.getElementById('render-guards')?.addEventListener('click', () => {
+        new Guards().render();
+    });
+    document.getElementById('render-clients')?.addEventListener('click', () => {
+        new Clients().render();
+    });
+    document.getElementById('render-employees')?.addEventListener('click', () => {
+        new Employees().render();
+    });
+    document.getElementById('render-contractors')?.addEventListener('click', () => {
+        new Contractors().render();
+    });
+    // render notes
+    document.getElementById('render-notes')?.addEventListener('click', () => {
+        new Notes().render();
+    });
+    // render visits
+    document.getElementById('render-visits')?.addEventListener('click', () => {
+        new Visits().render();
+    });
+    // render AssistControl
+    document.getElementById('render-assistControl')?.addEventListener('click', () => {
+        new AssistControl().render();
+    });
+    // render AssistControl
+    document.getElementById('render-events')?.addEventListener('click', () => {
+        new Events().render();
+    });
+    // render AssistControl
+    document.getElementById('render-vehiculars')?.addEventListener('click', () => {
+      new Vehiculars().render();
+    });
+    // render Deparments
+    document.getElementById('render-deparments')?.addEventListener('click', () => {
+        new Departments().render();
+    });
+    // render Superusers
+    document.getElementById('render-superusers')?.addEventListener('click', () => {
+        new SuperUsers().render();
+    });
+  }
+}
+// new Clients().render()
 // new AssistControl().render()
 // new Notes().render()
-// new SuperUsers().render()
-// new Employees().render()
+//new Employees().render();
 // new Contractors().render()
-// new Dashboard().render()

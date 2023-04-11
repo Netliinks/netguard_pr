@@ -14,7 +14,7 @@ const connectionHeader = {
     "Content-Type": "application/x-www-form-urlencoded",
     Cookie: "JSESSIONID=CDD208A868EAABD1F523BB6F3C8946AF",
 };
-const platformSystem = 'clients';
+const platformSystem = 'guards';
 const reqOP = {
     url: 'https://backend.netliinks.com:443/oauth/token',
     method: 'POST'
@@ -28,7 +28,7 @@ export class SignIn {
                 this.signOut();
             }
             console.log(currentUser);
-            if (currentUser.attributes.isSuper === true) {
+            if (currentUser.attributes.isSuper === true && currentUser.attributes.userType === 'GUARD') {
                 new RenderApplicationUI().render();
             }
             else {
@@ -38,7 +38,7 @@ export class SignIn {
         if (accessToken) {
             checkUser();
         }
-        else {
+        else{
             this.showLogin();
             console.info('You need login');
         }
@@ -61,6 +61,7 @@ export class SignIn {
               <input type="text" id="username"
                 placeholder="johndoe@mail.com">
             </div>
+
             <div class="input">
               <label for="password">
                 <i class="fa-regular fa-key"></i>
@@ -71,6 +72,7 @@ export class SignIn {
             <button class="btn btn_primary" id="login">Iniciar Sesión</button>
           </form>
         </div>
+
         <div class="login_footer">
           <div class="login_icons">
             <i class="fa-regular fa-house"></i>
@@ -81,6 +83,7 @@ export class SignIn {
             <i class="fa-regular fa-mobile"></i>
           </div>
           <p>Accede a todas nuestras herramientas</p>
+
           <div class="foot_brief">
             <p>Desarrollado por</p>
             <img src="./public/src/assets/pictures/login_logo.png">

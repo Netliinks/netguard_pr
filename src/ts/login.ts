@@ -5,7 +5,7 @@
 //
 
 import { getUserInfo, _userAgent } from "./endpoints.js"
-import { RenderApplicationUI } from "./layout/interface.js"
+import { renderLayout } from "./layout/interface.js"
 import { InterfaceElement, Request } from "./types.js"
 
 const loginContainer: InterfaceElement = document.getElementById('login-container')
@@ -26,37 +26,57 @@ const reqOP: Request = {
     method: 'POST'
 }
 
-export class SignIn {
-    public async checkSignIn(): Promise<void> {
-        const accessToken = localStorage.getItem('access_token')
-
-        const checkUser = async (): Promise<void> => {
-            let currentUser = await getUserInfo()
-
-            if (currentUser.error === 'invalid_token') {
-                this.signOut()
-            }
-
-            console.log(currentUser)
-            if (currentUser.attributes.isSuper === true) {
-                new RenderApplicationUI().render()
-            } else {
-                this.signOut()
-            }
-
+class CheckUser {
+    public checkType(userType: string, isNew: boolean, isSuper: boolean): void {
+        if (userType === 'GUARD') {
+            console.log('mensaje...')
         }
-
-        if (accessToken) {
-            checkUser()
-        } else {
-            this.showLogin()
-            console.info('You need login')
+        else {
+            this.checkIfNew(isNew)
+            this.checkIfIsSuper(isSuper)
         }
-
     }
 
-    public showLogin(): void {
-        loginContainer.style.display = 'flex !important'
+    private checkIfIsSuper(isSuper: boolean): void {
+        if (isSuper === false) {
+            console.log('Ocultando controles...')
+        }
+    }
+
+    private checkIfNew(isNew: boolean): void {
+        if (isNew === true) {
+            app.style.display = 'block'
+            loginContainer.style.display = 'none'
+            renderLayout()
+            console.log('es nuevo usuario')
+        }
+        else {
+            app.style.display = 'block'
+            loginContainer.style.display = 'none'
+            renderLayout()
+        }
+    }
+}
+
+export class SignIn extends CheckUser {
+    public async checkSignIn(): Promise<void> {
+        const currentUser = await getUserInfo()
+        console.log(currentUser)
+
+        // validate token
+        if (currentUser.error == "invalid_token") {
+            this.showLogin()
+        }
+        else {
+            let userType = currentUser.attributes.userType
+            let isNew = currentUser.attributes.newUser
+            let isSuper = currentUser.attributes.isSuper
+            this.checkType(userType, isNew, isSuper)
+        }
+    }
+
+    private showLogin(): void {
+        loginContainer.style.display = 'flex'
         loginContainer.innerHTML = `
         <div class="login_window">
         <div class="login_header">
@@ -73,6 +93,7 @@ export class SignIn {
               <input type="text" id="username"
                 placeholder="johndoe@mail.com">
             </div>
+
             <div class="input">
               <label for="password">
                 <i class="fa-regular fa-key"></i>
@@ -83,6 +104,7 @@ export class SignIn {
             <button class="btn btn_primary" id="login">Iniciar Sesión</button>
           </form>
         </div>
+
         <div class="login_footer">
           <div class="login_icons">
             <i class="fa-regular fa-house"></i>
@@ -93,6 +115,7 @@ export class SignIn {
             <i class="fa-regular fa-mobile"></i>
           </div>
           <p>Accede a todas nuestras herramientas</p>
+
           <div class="foot_brief">
             <p>Desarrollado por</p>
             <img src="./public/src/assets/pictures/login_logo.png">
@@ -100,6 +123,8 @@ export class SignIn {
         </div>
       </div>
         `
+        // @ts-ignore
+        feather.replace()
         this.signIn()
     }
 
