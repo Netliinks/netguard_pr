@@ -142,19 +142,19 @@ export class AssistControl {
         this.filterCustomer = async (tableBody, marcations) => {
             inputObserver();
             inputSelectFilter(currentUserInfo.business.id, 'entity-customer');
-            
-
             let customer = document.getElementById('entity-customer');
-            await customer.addEventListener('mouseover', async() => {
+            let tools = document.getElementById('datatable-tools');
+            //let rawMarcations = await getEntitiesData('Marcation');
+            
+            await tools.addEventListener('mouseover', async() => {
                 //const arrayMarcations = arryCustomers.filter((value) => `${value.customer.id}`
                 //    .toLowerCase()
                 //    .includes(customer.dataset.optionid));
                 console.log(`${customer.value} ${customer.dataset.optionid}`)
                 //console.log(arrayMarcations)
                 let arrayMarcations = [];
-                let rawMarcations = await getEntitiesData('Marcation');
-                for(let i = 0; i < rawMarcations.length; i++){
-                    let marcation = rawMarcations[i];
+                for(let i = 0; i < marcations.length; i++){
+                    let marcation = marcations[i];
                     //console.log(marcation)
                     let userMarcation = await getEntityData('User', `${marcation.user.id}`); //Usuario de marcacion
                     if(userMarcation.customer.id == customer.dataset.optionid){
