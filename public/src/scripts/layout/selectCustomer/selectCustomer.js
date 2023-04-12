@@ -98,7 +98,15 @@ export class SelectCustomer {
             openButtons.forEach((openButton) => {
                 const entityId = openButton.dataset.entityid;
                 openButton.addEventListener('click', () => {
-                    localStorage.setItem('customer_id', entityId);
+                    const customerId = localStorage.getItem('customer_id');
+                    //console.log(`customerId ${customerId}`)
+                    if (customerId === '') {
+                        localStorage.setItem('customer_id', entityId);
+                    }
+                    else {
+                        localStorage.removeItem('customer_id');
+                        localStorage.setItem('customer_id', entityId);
+                    }
                 });
             });
         };

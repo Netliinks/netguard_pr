@@ -116,7 +116,14 @@ export class SelectCustomer {
         openButtons.forEach((openButton: InterfaceElement) => {
             const entityId: string = openButton.dataset.entityid
             openButton.addEventListener('click', (): void => {
-                localStorage.setItem('customer_id', entityId);
+                const customerId = localStorage.getItem('customer_id');
+                //console.log(`customerId ${customerId}`)
+                if(customerId === ''){
+                    localStorage.setItem('customer_id', entityId);
+                }else{
+                    localStorage.removeItem('customer_id');
+                    localStorage.setItem('customer_id', entityId);
+                }
             })
         })
 

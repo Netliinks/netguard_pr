@@ -7,6 +7,7 @@ import { getEntityData, getUserInfo } from "../endpoints.js";
 import { SelectCustomer } from "./selectCustomer/selectCustomer.js";
 import { SignIn } from "../login.js";
 import { Sidebar } from "./sidebar.js";
+import { CloseDialog } from "../tools.js";
 export class RenderApplicationUI {
     constructor() {
         this.loginContainer = document.getElementById('login-container');
@@ -45,6 +46,7 @@ export class RenderApplicationUI {
              </button>
            </div>
            <div class="user_settings" id="user-settings">
+             <button class="btn btn_transparent btn_widder" id="change-customer">Cambiar Empresa</button>
              <button class="btn btn_transparent btn_widder">Preferencias</button>
              <button class="btn btn_transparent btn_widder">Cambiar Contraseña</button>
              <br>
@@ -56,8 +58,13 @@ export class RenderApplicationUI {
     const options = document.getElementById('settings-button');
     options.addEventListener('click', () => {
         const settingOptions = document.getElementById('user-settings');
+        const changeCustomer = document.getElementById('change-customer');
         const logoutButton = document.getElementById('logout-button');
         settingOptions.classList.toggle("user_settings_visible");
+        changeCustomer.addEventListener("click", () => {
+            new SelectCustomer().render();
+            //new CloseDialog().x(settingOptions);
+        });
         logoutButton.addEventListener("click", () => {
             new SignIn().signOut();
         });

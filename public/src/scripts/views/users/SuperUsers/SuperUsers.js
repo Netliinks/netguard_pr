@@ -15,11 +15,13 @@ const currentUserData = async() => {
   return user;
 }
 const getUsers = async (superUser) => {
+    const customerId = localStorage.getItem('customer_id');
     const currentUser = await currentUserData(); //usuario logueado
     const users = await getEntitiesData('User');
     const FSuper = users.filter((data) => data.isSuper === superUser);
     const admin = FSuper.filter((data) => data.username != `admin`);
-    const FCustomer = admin.filter((data) => data.customer.id === `${currentUser.customer.id}`);
+    const consulta = admin.filter((data) => data.username != `consulta`);
+    const FCustomer = consulta.filter((data) => data.customer.id == `${customerId}`);
     return FCustomer;
 };
 export class SuperUsers {
@@ -131,7 +133,7 @@ export class SuperUsers {
         this.import();
         this.edit(this.entityDialogContainer, data);
         this.remove();
-        this.convertToSuper();
+        //this.convertToSuper();
         this.changeUserPassword();
     }
     register() {
