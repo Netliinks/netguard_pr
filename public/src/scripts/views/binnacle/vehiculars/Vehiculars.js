@@ -12,18 +12,13 @@ import { UITableSkeletonTemplate } from "./Template.js";
 const tableRows = Config.tableRows;
 let currentPage = Config.currentPage;
 const pageName = 'Ingreso Vehicular';
-const currentUserData = async() => {
-    const currentUser = await getUserInfo();
-    const user = await getEntityData('User', `${currentUser.attributes.id}`);
-    return user;
-}
  
 const GetVehiculars = async () => {
-    const currentUser = await currentUserData(); //usuario logueado
+    const customerId = localStorage.getItem('customer_id');
     const vehicular = await getEntitiesData('Vehicular');
     const FCustomer = vehicular.filter(async (data) => {
         const userVehicular = await getEntityData('User', `${data.ingressIssued.id}`); //Usuario vehicular
-        userVehicular.customer.id === `${currentUser.customer.id}`
+        userVehicular.customer.id === `${customerId}`
     });
     return FCustomer;
 };
