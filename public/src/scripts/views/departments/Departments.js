@@ -6,15 +6,10 @@ import { tableLayout } from "./Layout.js";
 import { tableLayoutTemplate } from "./Template.js";
 const tableRows = Config.tableRows;
 const currentPage = Config.currentPage;
-const currentUserData = async() => {
-  const currentUser = await getUserInfo();
-  const user = await getEntityData('User', `${currentUser.attributes.id}`);
-  return user;
-}
 const getDepartments = async () => {
-    const currentUser = await currentUserData(); //usuario logueado
+    const customerId = localStorage.getItem('customer_id');
     const department = await getEntitiesData('Department');
-    const FCustomer = department.filter((data) => data.customer.id === `${currentUser.customer.id}`);
+    const FCustomer = department.filter((data) => data.customer.id === `${customerId}`);
     return FCustomer;
 };
 export class Departments {
