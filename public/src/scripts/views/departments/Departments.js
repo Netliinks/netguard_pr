@@ -9,7 +9,7 @@ const currentPage = Config.currentPage;
 const customerId = localStorage.getItem('customer_id');
 const getDepartments = async () => {
     const department = await getEntitiesData('Department');
-    const FCustomer = department.filter((data) => data.customer.id === `${customerId}`);
+    const FCustomer = department.filter((data) => `${data.customer.id}` === `${customerId}`);
     return FCustomer;
 };
 export class Departments {
@@ -53,7 +53,7 @@ export class Departments {
         let paginatedItems = data.slice(start, end);
         if (data.length === 0) {
             let mensaje = 'No existen datos';
-            if(customerId == ''){mensaje = 'Seleccione una empresa';}
+            if(customerId == null){mensaje = 'Seleccione una empresa';}
             let row = document.createElement('tr');
             row.innerHTML = `
         <td>${mensaje}</td>

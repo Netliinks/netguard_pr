@@ -17,7 +17,7 @@ const GetVisits = async () => {
     const visits = await getEntitiesData('Visit');
     const FCustomer = visits.filter(async (data) => {
         const userCustomer = await getEntityData('User', `${data.user.id}`);
-        userCustomer.customer.id === `${customerId}`
+        `${userCustomer.customer.id}` === `${customerId}`
     });
     return FCustomer;
 };
@@ -54,7 +54,7 @@ export class Visits {
             // Show message if page is empty
             if (visits.length === 0) {
                 let mensaje = 'No existen datos';
-                if(customerId == ''){mensaje = 'Seleccione una empresa';}
+                if(customerId == null){mensaje = 'Seleccione una empresa';}
                 let row = document.createElement('TR');
                 row.innerHTML = `
             <td>${mensaje}<td>

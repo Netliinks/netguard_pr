@@ -13,7 +13,7 @@ const getEvents = async () => {
     const events = await getEntitiesData('Notification');
     const Fcustomer = events.filter(async (data) => {
         const userBusiness = await getEntityData('User', `${data.user.id}`);
-        userBusiness.business.id === `${customerId}`
+        `${userBusiness.business.id}` === `${customerId}`
     });
     // notificationType.name
     //const removeVisitsFromList = events.filter((data) => data.notificationType.name !== "Visita");
@@ -53,7 +53,7 @@ export class Events {
             // Show message if page is empty
             if (events.length === 0) {
                 let mensaje = 'No existen datos';
-                if(customerId == ''){mensaje = 'Seleccione una empresa';}
+                if(customerId == null){mensaje = 'Seleccione una empresa';}
                 let row = document.createElement('TR');
                 row.innerHTML = `
             <td>${mensaje}<td>

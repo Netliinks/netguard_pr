@@ -100,13 +100,14 @@ export class SelectCustomer {
                 openButton.addEventListener('click', () => {
                     const customerId = localStorage.getItem('customer_id');
                     //console.log(`customerId ${customerId}`)
-                    if (customerId === '') {
+                    if (customerId == null) {
                         localStorage.setItem('customer_id', entityId);
                     }
                     else {
                         localStorage.removeItem('customer_id');
                         localStorage.setItem('customer_id', entityId);
                     }
+                    window.location.reload();
                 });
             });
         };

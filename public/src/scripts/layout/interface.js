@@ -25,8 +25,10 @@ export class RenderApplicationUI {
       new SelectCustomer().render();
   }
   async renderTopbar() {
+    const customerId = localStorage.getItem('customer_id')
     const currentUser = await getUserInfo();
     const user = await getEntityData('User', currentUser.attributes.id);
+    let customer = await getEntityData('Customer', customerId);
     let topbar = this.topbar.innerHTML = `
         <div class="user">
             <span class="welcome">Bienvenido</span>
@@ -39,6 +41,7 @@ export class RenderApplicationUI {
                 ${user.firstName} ${user.lastName}
                 </p>
                 <p id="current-user-customer" class="customer">${user.username}</p>
+                <p >${customer.name ? customer.name : 'Seleccione una empresa'}</p>
             </div>
            <div class="settings_button">
              <button id="settings-button">

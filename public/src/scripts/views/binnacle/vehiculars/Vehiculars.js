@@ -17,7 +17,7 @@ const GetVehiculars = async () => {
     const vehicular = await getEntitiesData('Vehicular');
     const FCustomer = vehicular.filter(async (data) => {
         const userVehicular = await getEntityData('User', `${data.ingressIssued.id}`); //Usuario vehicular
-        userVehicular.customer.id === `${customerId}`
+        `${userVehicular.customer.id}` === `${customerId}`
     });
     return FCustomer;
 };
@@ -54,7 +54,7 @@ export class Vehiculars {
             // Show message if page is empty
             if (assistControl.length === 0) {
                 let mensaje = 'No existen datos';
-                if(customerId == ''){mensaje = 'Seleccione una empresa';}
+                if(customerId == null){mensaje = 'Seleccione una empresa';}
                 let row = document.createElement('TR');
                 row.innerHTML = `
             <td>${mensaje}<td>

@@ -17,7 +17,7 @@ const GetAssistControl = async () => {
     const assistControl = await getEntitiesData('Marcation');
     const FCustomer = assistControl.filter(async (data) => {
         const userMarcation = await getEntityData('User', `${data.user.id}`); //Usuario de marcacion
-        userMarcation.customer.id === `${customerId}`
+        `${userMarcation.customer.id}` === `${customerId}`
     });
     return FCustomer;
 };
@@ -55,7 +55,7 @@ export class AssistControl {
             // Show message if page is empty
             if (assistControl.length === 0) {
                 let mensaje = 'No existen datos';
-                if(customerId == ''){mensaje = 'Seleccione una empresa';}
+                if(customerId == null){mensaje = 'Seleccione una empresa';}
                 let row = document.createElement('TR');
                 row.innerHTML = `
             <td>${mensaje}<td>

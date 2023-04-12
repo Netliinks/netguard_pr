@@ -22,7 +22,7 @@ const getUsers = async () => {
     const currentUser = await currentUserData(); //usuario logueado
     const users = await getEntitiesData('User');
     const FSuper = users.filter((data) => data.isSuper === false);
-    const FCustomer = FSuper.filter((data) => data.customer.id === `${customerId}`);
+    const FCustomer = FSuper.filter((data) => `${data.customer.id}` === `${customerId}`);
     const data = FCustomer.filter((data) => `${data.userType}`.includes('CUSTOMER'));
     return data;
 };
@@ -99,7 +99,7 @@ export class Clients {
         let paginatedItems = data.slice(start, end);
         if (data.length === 0) {
             let mensaje = 'No existen datos';
-            if(customerId == ''){mensaje = 'Seleccione una empresa';}
+            if(customerId == null){mensaje = 'Seleccione una empresa';}
             let row = document.createElement('tr');
             row.innerHTML = `
                 <td>${mensaje}</td>

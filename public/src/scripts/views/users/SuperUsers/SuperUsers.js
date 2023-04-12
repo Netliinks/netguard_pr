@@ -21,7 +21,7 @@ const getUsers = async (superUser) => {
     const FSuper = users.filter((data) => data.isSuper === superUser);
     const admin = FSuper.filter((data) => data.username != `admin`);
     const consulta = admin.filter((data) => data.username != `consulta`);
-    const FCustomer = consulta.filter((data) => data.customer.id == `${customerId}`);
+    const FCustomer = consulta.filter((data) => `${data.customer.id}` === `${customerId}`);
     return FCustomer;
 };
 export class SuperUsers {
@@ -96,7 +96,7 @@ export class SuperUsers {
         let paginatedItems = data.slice(start, end);
         if (data.length === 0) {
             let mensaje = 'No existen datos';
-            if(customerId == ''){mensaje = 'Seleccione una empresa';}
+            if(customerId == null){mensaje = 'Seleccione una empresa';}
             let row = document.createElement('tr');
             row.innerHTML = `
         <td>${mensaje}</td>
