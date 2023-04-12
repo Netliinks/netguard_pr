@@ -7,6 +7,7 @@ import { tableLayoutTemplate } from "./Templates.js";
 const tableRows = Config.tableRows;
 const currentPage = Config.currentPage;
 let currentUserInfo; 
+let currentCustomer;
 const customerId = localStorage.getItem('customer_id');
 const currentUserData = async() => {
     const currentUser = await getUserInfo();
@@ -14,8 +15,13 @@ const currentUserData = async() => {
     currentUserInfo = user;
     return user;
 }
+const currentCustomerData = async() => {
+    const customer = await getEntityData('Customer', `${customerId}`);
+    return customer;
+}
 const getUsers = async () => {
     const currentUser = await currentUserData(); //usuario logueado
+    currentCustomer = await currentCustomerData();
     const users = await getEntitiesData('User');
     const FSuper = users.filter((data) => data.isSuper === false);
     const FCustomer = FSuper.filter((data) => `${data.customer.id}` === `${customerId}`);
@@ -293,7 +299,6 @@ export class Contractors {
               <div id="input-options" class="input_options">
               </div>
             </div>
-            -->
 
             <div class="material_input_select" style="display: none">
               <label for="entity-customer">Cliente</label>
@@ -302,7 +307,6 @@ export class Contractors {
               </div>
             </div>
 
-            <!--
             <div class="material_input_select" style="display: none">
               <label for="entity-department">Departamento</label>
               <input type="text" id="entity-department" class="input_select" readonly placeholder="cargando...">
@@ -340,7 +344,7 @@ export class Contractors {
             // @ts-ignore
             inputObserver();
             //inputSelect('Citadel', 'entity-citadel');
-            inputSelect('Customer', 'entity-customer');
+            //inputSelect('Customer', 'entity-customer');
             inputSelect('State', 'entity-state');
             //inputSelect('Department', 'entity-department');
             //inputSelect('Business', 'entity-business');
@@ -356,7 +360,7 @@ export class Contractors {
                     dni: document.getElementById('entity-dni'),
                     phoneNumer: document.getElementById('entity-phone'),
                     state: document.getElementById('entity-state'),
-                    customer: document.getElementById('entity-customer'),
+                    //customer: document.getElementById('entity-customer'),
                     username: document.getElementById('entity-username'),
                     //citadel: document.getElementById('entity-citadel'),
                     temporalPass: document.getElementById('tempPass'),
@@ -370,7 +374,7 @@ export class Contractors {
                     "secondLastName": `${_values.secondLastName.value}`,
                     "isSuper": false,
                     "newUser": true,
-                    "email": `${inputsCollection.email.value}`,
+                    "email": `${_values.email.value}`,
                     "temp": `${_values.temporalPass.value}`,
                     "isWebUser": false,
                     "active": true,
@@ -384,7 +388,7 @@ export class Contractors {
                         "id": `${currentUserInfo.contractor.id}`,
                     },
                     "customer": {
-                        "id": `${_values.customer.dataset.optionid}`
+                        "id": `${customerId}`
                     },
                     "citadel": {
                         "id": `${currentUserInfo.citadel.id}`
@@ -398,7 +402,7 @@ export class Contractors {
                     "phone": `${_values.phoneNumer.value}`,
                     "dni": `${_values.dni.value}`,
                     "userType": "CONTRACTOR",
-                    "username": `${_values.username.value}@${_values.customer.value.toLowerCase()}.com`,
+                    "username": `${_values.username.value}@${currentCustomer.name.toLowerCase()}.com`,
                 });
                 reg(contractorRaw);
             });
@@ -490,7 +494,7 @@ export class Contractors {
                                 "id": `${currentUserInfo.contractor.id}`
                             },
                             "customer": {
-                                "id": `${currentUserInfo.customer.id}`
+                                "id": `${customerId}`
                             },
                             "citadel": {
                                 "id": `${currentUserInfo.citadel.id}`
@@ -504,7 +508,7 @@ export class Contractors {
                             "phone": `${contractorData[3]?.replace(/\n/g, '')}`,
                             "dni": `${contractorData[4]?.replace(/\n/g, '')}`,
                             "userType": "CONTRACTOR",
-                            "username": `${contractorData[0]?.toLowerCase().replace(/\n/g, '')}.${contractorData[1]?.toLowerCase().replace(/\n/g, '')}@${currentUserInfo.customer.name.toLowerCase()}.com`,
+                            "username": `${contractorData[0]?.toLowerCase().replace(/\n/g, '')}.${contractorData[1]?.toLowerCase().replace(/\n/g, '')}@${currentCustomer.name.toLowerCase()}.com`,
                             "createVisit": false,
                         });
                         stageUsers.push(rawFile);

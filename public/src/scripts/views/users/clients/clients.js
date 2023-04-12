@@ -11,6 +11,7 @@ import { tableLayoutTemplate } from "./Templates.js";
 const tableRows = Config.tableRows;
 const currentPage = Config.currentPage;
 let currentUserInfo; 
+let currentCustomer;
 const customerId = localStorage.getItem('customer_id');
 const currentUserData = async() => {
     const currentUser = await getUserInfo();
@@ -18,8 +19,13 @@ const currentUserData = async() => {
     currentUserInfo = user;
     return user;
 }
+const currentCustomerData = async() => {
+    const customer = await getEntityData('Customer', `${customerId}`);
+    return customer;
+}
 const getUsers = async () => {
     const currentUser = await currentUserData(); //usuario logueado
+    currentCustomer = await currentCustomerData();
     const users = await getEntitiesData('User');
     const FSuper = users.filter((data) => data.isSuper === false);
     const FCustomer = FSuper.filter((data) => `${data.customer.id}` === `${customerId}`);
@@ -227,7 +233,6 @@ export class Clients {
                     <div id="input-options" class="input_options">
                     </div>
                     </div>
-                    -->
 
                     <div class="material_input_select">
                     <label for="entity-customer">Cliente</label>
@@ -236,7 +241,6 @@ export class Clients {
                     </div>
                     </div>
 
-                    <!--
                     <div class="material_input_select" style="display: none">
                     <label for="entity-department">Departamento</label>
                     <input type="text" id="entity-department" class="input_select" readonly placeholder="cargando...">
@@ -261,7 +265,7 @@ export class Clients {
             `;
             inputObserver();
             //inputSelect('Citadel', 'entity-citadel');
-            inputSelect('Customer', 'entity-customer');
+            //inputSelect('Customer', 'entity-customer');
             inputSelect('State', 'entity-state');
             //inputSelect('Department', 'entity-department');
             //inputSelect('Business', 'entity-business');
@@ -275,7 +279,7 @@ export class Clients {
                     secondLastName: document.getElementById('entity-secondlastname'),
                     phoneNumer: document.getElementById('entity-phone'),
                     state: document.getElementById('entity-state'),
-                    customer: document.getElementById('entity-customer'),
+                    //customer: document.getElementById('entity-customer'),
                     username: document.getElementById('entity-username'),
                     //citadel: document.getElementById('entity-citadel'),
                     temporalPass: document.getElementById('tempPass'),
@@ -300,7 +304,7 @@ export class Clients {
                         "id": `${currentUserInfo.contractor.id}`,
                     },
                     "customer": {
-                        "id": `${inputsCollection.customer.dataset.optionid}`
+                        "id": `${customerId}`
                     },
                     "citadel": {
                         "id": `${currentUserInfo.citadel.id}`
@@ -313,7 +317,7 @@ export class Clients {
                     },
                     "phone": `${inputsCollection.phoneNumer.value}`,
                     "userType": "CUSTOMER",
-                    "username": `${inputsCollection.username.value}@${inputsCollection.customer.value.toLowerCase()}.com`
+                    "username": `${inputsCollection.username.value}@${currentCustomer.name.toLowerCase()}.com`
                 });
                 reg(raw);
             });
@@ -416,7 +420,7 @@ export class Clients {
                             //    "id": `${contractor[0].id}`
                             },
                             "customer": {
-                                "id": `${currentUserInfo.customer.id}`
+                                "id": `${customerId}`
                             },
                             "citadel": {
                                 "id": `${currentUserInfo.citadel.id}`
@@ -430,7 +434,7 @@ export class Clients {
                             "phone": `${userData[3]?.replace(/\n/g, '')}`,
                             "dni": `${userData[4]?.replace(/\n/g, '')}`,
                             "userType": "CUSTOMER",
-                            "username": `${userData[0]?.toLowerCase().replace(/\n/g, '')}.${userData[1]?.toLowerCase().replace(/\n/g, '')}@${currentUserInfo.customer.name.toLowerCase()}.com`,
+                            "username": `${userData[0]?.toLowerCase().replace(/\n/g, '')}.${userData[1]?.toLowerCase().replace(/\n/g, '')}@${currentCustomer.name.toLowerCase()}.com`,
                             "createVisit": false
                         });
                         elem.push(rawFile);

@@ -8,6 +8,7 @@ const tableRows = Config.tableRows;
 const currentPage = Config.currentPage;
 const SUser = true;
 let currentUserInfo; 
+let currentCustomer;
 const customerId = localStorage.getItem('customer_id');
 const currentUserData = async() => {
   const currentUser = await getUserInfo();
@@ -15,8 +16,13 @@ const currentUserData = async() => {
   currentUserInfo = user;
   return user;
 }
+const currentCustomerData = async() => {
+  const customer = await getEntityData('Customer', `${customerId}`);
+  return customer;
+}
 const getUsers = async (superUser) => {
     const currentUser = await currentUserData(); //usuario logueado
+    currentCustomer = await currentCustomerData();
     const users = await getEntitiesData('User');
     const FSuper = users.filter((data) => data.isSuper === superUser);
     const admin = FSuper.filter((data) => data.username != `admin`);
@@ -229,7 +235,6 @@ export class SuperUsers {
               <div id="input-options" class="input_options">
               </div>
             </div>
-            -->
 
             <div class="material_input_select">
               <label for="entity-customer">Cliente</label>
@@ -237,7 +242,7 @@ export class SuperUsers {
               <div id="input-options" class="input_options">
               </div>
             </div>
-            <!--
+
             <div class="material_input_select" style="display: none">
               <label for="entity-department">Departamento</label>
               <input type="text" id="entity-department" class="input_select" readonly placeholder="cargando...">
@@ -278,7 +283,7 @@ export class SuperUsers {
                     secondLastName: document.getElementById('entity-secondlastname'),
                     phoneNumer: document.getElementById('entity-phone'),
                     state: document.getElementById('entity-state'),
-                    customer: document.getElementById('entity-customer'),
+                    //customer: document.getElementById('entity-customer'),
                     username: document.getElementById('entity-username'),
                    // citadel: document.getElementById('entity-citadel'),
                     temporalPass: document.getElementById('tempPass'),
@@ -304,7 +309,7 @@ export class SuperUsers {
                         "id": `${currentUserInfo.contractor.id}`,
                     },
                     "customer": {
-                        "id": `${inputsCollection.customer.dataset.optionid}`
+                        "id": `${customerId}`
                     },
                     "citadel": {
                         "id": `${currentUserInfo.citadel.id}`
@@ -317,7 +322,7 @@ export class SuperUsers {
                     },
                     "phone": `${inputsCollection.phoneNumer.value}`,
                     "userType": `${inputsCollection.userType.dataset.optionid}`,
-                    "username": `${inputsCollection.username.value}@${inputsCollection.customer.value}.com`
+                    "username": `${inputsCollection.username.value}@${currentCustomer.name.toLowerCase()}.com`
                 });
                 reg(raw);
             });
