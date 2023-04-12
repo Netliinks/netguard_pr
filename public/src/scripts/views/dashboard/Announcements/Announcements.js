@@ -13,14 +13,15 @@ export class Announcements {
         this._announcementCardContainer.innerHTML = '';
         this._announcementCardControlsContainers.innerHTML = '';
         const announcementsList = await getEntitiesData('Announcement');
-        const currentUserData = async() => {
+        const customerId = localStorage.getItem('customer_id');
+        /*const currentUserData = async() => {
             const currentUser = await getUserInfo();
             const user = await getEntityData('User', `${currentUser.attributes.id}`);
             return user;
-        }
+        }*/
         let prop;
         const currentUser = await currentUserData(); //usuario logueado
-        console.log(announcementsList);
+        //console.log(announcementsList);
         const userAnnoun = async(announcement) => {
             const data = await getEntityData('User', `${announcement.user.id}`);// Obtener la empresa del usuario del anuncio
             return data;
@@ -28,7 +29,7 @@ export class Announcements {
         announcementsList.forEach(async (announcement) => {
             const userCustomer = await userAnnoun(announcement);
             //console.log(`Usuario: ${announcement.user.id}, Empresa ${userCustomer.customer.id}`)
-            if(userCustomer.customer.id == `${currentUser.customer.id}`){ // Si la empresa coincide con el del usuario logueado
+            if(`${userCustomer.customer.id}` == `${customerId}`){ // Si la empresa coincide con el del usuario logueado
                 const _card = document.createElement('DIV');
                 _card.classList.add('card');
                 _card.innerHTML = `
