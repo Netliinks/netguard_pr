@@ -90,7 +90,6 @@ export class SelectCustomer {
                 drawTagsIntoTables()
             }
             this.previewVisit()
-            this.fixCreatedDate()
         }
     }
 
@@ -118,60 +117,9 @@ export class SelectCustomer {
         openButtons.forEach((openButton: InterfaceElement) => {
             const entityId: string = openButton.dataset.entityid
             openButton.addEventListener('click', (): void => {
-                renderInterface(entityId)
+                
             })
         })
 
-        const renderInterface = async (entity: string): Promise<void> => {
-            let entityData = await getEntityData('Visit', entity)
-            console.log(entityData)
-
-
-            const visitName: InterfaceElement = document.getElementById('visit-name')
-            visitName.value = `${entityData.firstName} ${entityData.firstLastName}`
-
-            const visitReason: InterfaceElement = document.getElementById('visit-reason')
-            visitReason.value = entityData.reason
-
-            const visitAutorizedBy: InterfaceElement = document.getElementById('visit-authorizedby')
-            visitAutorizedBy.value = entityData.authorizer
-
-            const visitStatus: InterfaceElement = document.getElementById('visit-status')
-            visitStatus.innerText = entityData.visitState.name
-
-            const visitCitadel: InterfaceElement = document.getElementById('visit-citadel')
-            visitCitadel.value = entityData.citadel.description
-
-            const visitCitadelID: InterfaceElement = document.getElementById('visit-citadelid')
-            visitCitadelID.value = entityData.citadel.name
-
-            const visitDepartment: InterfaceElement = document.getElementById('visit-department')
-            visitDepartment.value = entityData.department.name
-
-            console.log(entityData.citadel.name)
-
-            this.closeRightSidebar()
-            drawTagsIntoTables()
-        }
-
-    }
-
-    private closeRightSidebar = (): void => {
-        const closeButton: InterfaceElement = document.getElementById('close')
-
-        const editor: InterfaceElement = document.getElementById('entity-editor-container')
-
-        closeButton.addEventListener('click', (): void => {
-            new CloseDialog().x(editor)
-        })
-    }
-
-    private fixCreatedDate = (): void => {
-        const tableDate: InterfaceElementCollection = document.querySelectorAll('#table-date')
-
-        tableDate.forEach((date: InterfaceElement) => {
-            const separateDateAndTime = date.innerText.split('T')
-            date.innerText = separateDateAndTime[0]
-        })
     }
 }

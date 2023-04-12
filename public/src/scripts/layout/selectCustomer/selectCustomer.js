@@ -5,7 +5,7 @@
 //
 import { Config } from "../../Configs.js";
 import { getEntityData, getEntitiesData, getUserInfo } from "../../endpoints.js";
-import { CloseDialog, drawTagsIntoTables } from "../../tools.js";
+import { drawTagsIntoTables } from "../../tools.js";
 import { tableLayout, tableLayoutTemplate } from "./Layout.js";
 // Local configs
 const tableRows = Config.tableRows;
@@ -79,7 +79,6 @@ export class SelectCustomer {
                     drawTagsIntoTables();
                 }
                 this.previewVisit();
-                this.fixCreatedDate();
             }
         };
         this.searchCustomer = async (tableBody, customers) => {
@@ -100,43 +99,7 @@ export class SelectCustomer {
             openButtons.forEach((openButton) => {
                 const entityId = openButton.dataset.entityid;
                 openButton.addEventListener('click', () => {
-                    renderInterface(entityId);
                 });
-            });
-            const renderInterface = async (entity) => {
-                let entityData = await getEntityData('Visit', entity);
-                console.log(entityData);
-                const visitName = document.getElementById('visit-name');
-                visitName.value = `${entityData.firstName} ${entityData.firstLastName}`;
-                const visitReason = document.getElementById('visit-reason');
-                visitReason.value = entityData.reason;
-                const visitAutorizedBy = document.getElementById('visit-authorizedby');
-                visitAutorizedBy.value = entityData.authorizer;
-                const visitStatus = document.getElementById('visit-status');
-                visitStatus.innerText = entityData.visitState.name;
-                const visitCitadel = document.getElementById('visit-citadel');
-                visitCitadel.value = entityData.citadel.description;
-                const visitCitadelID = document.getElementById('visit-citadelid');
-                visitCitadelID.value = entityData.citadel.name;
-                const visitDepartment = document.getElementById('visit-department');
-                visitDepartment.value = entityData.department.name;
-                console.log(entityData.citadel.name);
-                this.closeRightSidebar();
-                drawTagsIntoTables();
-            };
-        };
-        this.closeRightSidebar = () => {
-            const closeButton = document.getElementById('close');
-            const editor = document.getElementById('entity-editor-container');
-            closeButton.addEventListener('click', () => {
-                new CloseDialog().x(editor);
-            });
-        };
-        this.fixCreatedDate = () => {
-            const tableDate = document.querySelectorAll('#table-date');
-            tableDate.forEach((date) => {
-                const separateDateAndTime = date.innerText.split('T');
-                date.innerText = separateDateAndTime[0];
             });
         };
     }
