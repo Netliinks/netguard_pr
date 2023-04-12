@@ -8,12 +8,7 @@ export const UIContentLayout = `
         <div class="datatable_header">
             <div class="datatable_title"><h1 id="view-title"></h1></div>
             <div class="datatable_tools" id="datatable-tools">
-                <div class="material_input_select">
-                    <input type="text" id="entity-customer" class="search_input" readonly placeholder="cargando...">
-                    <div id="input-options" class="input_options">
-                    </div>
-                    <input type="search" class="search_input" placeholder="Buscar" id="search">
-                </div>
+                <input type="search" class="search_input" placeholder="Buscar" id="search">
 
                 <button class="datatable_button import_user" id="export-entities">Exportar</button>
             </div>

@@ -1,31 +1,24 @@
 // @filename: EvetnsView.ts
 import { Config } from "../../../Configs.js";
 import { getEntityData, getEntitiesData, getUserInfo } from "../../../endpoints.js";
-import { CloseDialog, renderRightSidebar, filterDataByHeaderType, inputObserver, generateCsv, inputSelectFilter } from "../../../tools.js";
+import { CloseDialog, renderRightSidebar, filterDataByHeaderType, inputObserver, generateCsv } from "../../../tools.js";
 import { UIContentLayout, UIRightSidebar } from "./Layout.js";
 import { UITableSkeletonTemplate } from "./Template.js";
 // Local configs
 const tableRows = Config.tableRows;
 let currentPage = Config.currentPage;
 const pageName = 'Eventos';
-let currentUserInfo;
-const currentUserData = async() => {
-    const currentUser = await getUserInfo();
-    const user = await getEntityData('User', `${currentUser.attributes.id}`);
-    currentUserInfo = user;
-    return user;
-}
 const getEvents = async () => {
-    const currentUser = await currentUserData(); //usuario logueado
+    const customerId = localStorage.getItem('customer_id');
     const events = await getEntitiesData('Notification');
-    const FBusiness = events.filter(async (data) => {
+    const Fcustomer = events.filter(async (data) => {
         const userBusiness = await getEntityData('User', `${data.user.id}`);
-        userBusiness.business.id === `${currentUser.business.id}`
+        userBusiness.business.id === `${customerId}`
     });
     // notificationType.name
     //const removeVisitsFromList = events.filter((data) => data.notificationType.name !== "Visita");
     //const removeVehicularFromList = removeVisitsFromList.filter((data) => data.notificationType.name !== 'Vehicular');
-    return FBusiness;
+    return Fcustomer;
 };
 export class Events {
     constructor() {
@@ -44,8 +37,7 @@ export class Events {
             tableBody.innerHTML = UITableSkeletonTemplate.repeat(tableRows);
             // Exec functions
             this.load(tableBody, currentPage, eventsArray);
-            //this.searchNotes(tableBody, eventsArray);
-            this.filterCustomer(tableBody, eventsArray);
+            this.searchNotes(tableBody, eventsArray);
             new filterDataByHeaderType().filter();
             this.pagination(eventsArray, tableRows, currentPage);
             this.export();
@@ -105,33 +97,6 @@ export class Events {
                 this.pagination(result, tableRows, currentPage);
                 // Rendering icons
             });
-        };
-        this.filterCustomer = async (tableBody, events) => {
-            inputObserver();
-            inputSelectFilter(currentUserInfo.business.id, 'entity-customer');
-            let customer = document.getElementById('entity-customer');
-            let tools = document.getElementById('datatable');
-            //let rawMarcations = await getEntitiesData('Marcation');
-            await tools.addEventListener('click', async() => {
-                console.log(`${customer.value} ${customer.dataset.optionid}`)
-                const arrayEvents = [];
-                for(let i = 0; i < events.length; i++){
-                    let event = events[i];
-                    //console.log(event)
-                    let userEvent = await getEntityData('User', `${event.user.id}`); //Usuario de marcacion
-                    if(userEvent.customer.id == customer.dataset.optionid){
-                        arrayEvents.push(event);
-                    }
-                }
-                console.log(arrayEvents)
-                let filteredEvent = arrayEvents.length;
-                let result = arrayEvents;
-                if (filteredEvent >= Config.tableRows)
-                filteredEvent = Config.tableRows;
-                this.load(tableBody, currentPage, result);
-                this.searchNotes(tableBody, result);
-                this.pagination(result, tableRows, currentPage);
-            },false);
         };
         this.previewEvent = async (noteID) => {
             const openPreview = document.querySelectorAll('#entity-details');

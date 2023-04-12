@@ -5,32 +5,15 @@
 //
 import { Config } from "../../../Configs.js";
 import { getEntityData, getEntitiesData, getUserInfo } from "../../../endpoints.js";
-import { CloseDialog, drawTagsIntoTables, renderRightSidebar, filterDataByHeaderType, inputSelect, inputObserver, generateCsv, inputSelectFilter} from "../../../tools.js";
+import { CloseDialog, drawTagsIntoTables, renderRightSidebar, filterDataByHeaderType, inputObserver, generateCsv} from "../../../tools.js";
 import { UIContentLayout, UIRightSidebar } from "./Layout.js";
 import { UITableSkeletonTemplate } from "./Template.js";
 // Local configs
 const tableRows = Config.tableRows;
 let currentPage = Config.currentPage;
 const pageName = 'Control de asistencias';
-let currentUserInfo;
-const currentUserData = async() => {
-    const currentUser = await getUserInfo();
-    const user = await getEntityData('User', `${currentUser.attributes.id}`);
-    currentUserInfo = user;
-    return user;
-}
- 
 const GetAssistControl = async () => {
-    const currentUser = await currentUserData(); //usuario logueado
-    const assistControl = await getEntitiesData('Marcation');
-    const FBusiness = assistControl.filter(async (data) => {
-        const userMarcation = await getEntityData('User', `${data.user.id}`); //Usuario de marcacion
-        userMarcation.business.id === `${currentUser.business.id}`
-    });
-    return FBusiness;
-};
-
-const getMarcations = async (customerId) => {
+    const customerId = localStorage.getItem('customer_id');
     const assistControl = await getEntitiesData('Marcation');
     const FCustomer = assistControl.filter(async (data) => {
         const userMarcation = await getEntityData('User', `${data.user.id}`); //Usuario de marcacion
@@ -38,6 +21,7 @@ const getMarcations = async (customerId) => {
     });
     return FCustomer;
 };
+
 export class AssistControl {
     constructor() {
         this.dialogContainer = document.getElementById('app-dialogs');
@@ -55,8 +39,7 @@ export class AssistControl {
             tableBody.innerHTML = UITableSkeletonTemplate.repeat(tableRows);
             // Exec functions
             this.load(tableBody, currentPage, assistControlArray);
-            //this.searchVisit(tableBody, assistControlArray);
-            this.filterCustomer(tableBody, assistControlArray);
+            this.searchVisit(tableBody, assistControlArray);
             new filterDataByHeaderType().filter();
             this.pagination(assistControlArray, tableRows, currentPage);
             this.export();
@@ -138,33 +121,6 @@ export class AssistControl {
                 this.load(tableBody, currentPage, result);
                 this.pagination(result, tableRows, currentPage);
             });
-        };
-        this.filterCustomer = async (tableBody, marcations) => {
-            inputObserver();
-            inputSelectFilter(currentUserInfo.business.id, 'entity-customer');
-            let customer = document.getElementById('entity-customer');
-            let tools = document.getElementById('datatable');
-            //let rawMarcations = await getEntitiesData('Marcation');
-            await tools.addEventListener('click', async() => {
-                console.log(`${customer.value} ${customer.dataset.optionid}`)
-                const arrayMarcations = [];
-                for(let i = 0; i < marcations.length; i++){
-                    let marcation = marcations[i];
-                    //console.log(marcation)
-                    let userMarcation = await getEntityData('User', `${marcation.user.id}`); //Usuario de marcacion
-                    if(userMarcation.customer.id == customer.dataset.optionid){
-                        arrayMarcations.push(marcation);
-                    }
-                }
-                console.log(arrayMarcations)
-                let filteredMarcation = arrayMarcations.length;
-                let result = arrayMarcations;
-                if (filteredMarcation >= Config.tableRows)
-                filteredMarcation = Config.tableRows;
-                this.load(tableBody, currentPage, result);
-                this.searchVisit(tableBody, result);
-                this.pagination(result, tableRows, currentPage);
-            },false);
         };
         this.previewAssist = async () => {
             const openButtons = document.querySelectorAll('#entity-details');

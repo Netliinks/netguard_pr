@@ -99,8 +99,6 @@ export class SelectCustomer {
                 const entityId = openButton.dataset.entityid;
                 openButton.addEventListener('click', () => {
                     localStorage.setItem('customer_id', entityId);
-                    const businessId = localStorage.getItem('customer_id');
-                    console.log(businessId)
                 });
             });
         };
