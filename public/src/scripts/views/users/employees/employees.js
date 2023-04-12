@@ -19,9 +19,10 @@ const currentUserData = async() => {
 }
 const getUsers = async () => {
     const currentUser = await currentUserData(); //usuario logueado
+    const customerId = localStorage.getItem('customer_id');
     const users = await getEntitiesData('User');
     const FSuper = users.filter((data) => data.isSuper === false);
-    const FCustomer = FSuper.filter((data) => data.customer.id === `${currentUser.customer.id}`);
+    const FCustomer = FSuper.filter((data) => data.customer.id === `${customerId}`);
     const data = FCustomer.filter((data) => `${data.userType}`.includes('EMPLOYEE'));
     return data;
 };
