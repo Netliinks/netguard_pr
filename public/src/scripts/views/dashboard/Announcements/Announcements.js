@@ -2,6 +2,21 @@
 import { deleteEntity, getEntitiesData, getUserInfo, registerEntity, getEntityData } from "../../../endpoints.js";
 import { CloseDialog, inputObserver, userInfo } from "../../../tools.js";
 import { announcementCreatorController } from "./AnnouncementsCreatorControllers.js";
+
+const customerId = localStorage.getItem('customer_id');
+const currentUserData = async() => {
+    const currentUser = await getUserInfo();
+    const user = await getEntityData('User', `${currentUser.attributes.id}`);
+    return user;
+}
+const announcementData = async() => {
+    const anuncios = await getEntitiesData('Announcement');
+    const FAnuncios = anuncios.filter(async(data) => {
+        let userCustomer = await getEntityData('User', `${data.user.id}`);
+        `${userCustomer.customer.id}` === `${customerId}`;
+    });
+    return FAnuncios;
+}
 export class Announcements {
     constructor() {
         this._newAnnouncementButton = document.getElementById('new-announcement');
@@ -12,24 +27,13 @@ export class Announcements {
     async render() {
         this._announcementCardContainer.innerHTML = '';
         this._announcementCardControlsContainers.innerHTML = '';
-        const announcementsList = await getEntitiesData('Announcement');
-        const customerId = localStorage.getItem('customer_id');
-        /*const currentUserData = async() => {
-            const currentUser = await getUserInfo();
-            const user = await getEntityData('User', `${currentUser.attributes.id}`);
-            return user;
-        }*/
+        //const announcementsList = await getEntitiesData('Announcement');
+        
         let prop;
         const currentUser = await currentUserData(); //usuario logueado
+        const announcementsList = await announcementData();
         //console.log(announcementsList);
-        const userAnnoun = async(announcement) => {
-            const data = await getEntityData('User', `${announcement.user.id}`);// Obtener la empresa del usuario del anuncio
-            return data;
-        }
-        announcementsList.forEach(async (announcement) => {
-            const userCustomer = await userAnnoun(announcement);
-            //console.log(`Usuario: ${announcement.user.id}, Empresa ${userCustomer.customer.id}`)
-            if(`${userCustomer.customer.id}` == `${customerId}`){ // Si la empresa coincide con el del usuario logueado
+        announcementsList.forEach((announcement) => {
                 const _card = document.createElement('DIV');
                 _card.classList.add('card');
                 _card.innerHTML = `
@@ -42,7 +46,6 @@ export class Announcements {
                 const _dotButton = document.createElement('BUTTON');
                 _dotButton.classList.add('card_dotbutton');
                 this._announcementCardControlsContainers.appendChild(_dotButton);
-            }
         }); // End Rendering
         this._newAnnouncementButton.addEventListener('click', () => {
             this.publish();
