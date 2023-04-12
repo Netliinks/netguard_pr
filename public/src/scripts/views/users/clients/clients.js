@@ -807,7 +807,7 @@ export class Clients {
                             "body": randomKey.key
                         });
                         updateRaw = JSON.stringify({
-                            //"username": inputMail.value,
+                            "email": inputMail.value,
                             "isSuper": true,
                             "hashSuper": randomKey.key,
                             "verifiedSuper": false
