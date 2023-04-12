@@ -8,8 +8,8 @@ import { UITableSkeletonTemplate } from "./Template.js";
 const tableRows = Config.tableRows;
 let currentPage = Config.currentPage;
 const pageName = 'Eventos';
+const customerId = localStorage.getItem('customer_id');
 const getEvents = async () => {
-    const customerId = localStorage.getItem('customer_id');
     const events = await getEntitiesData('Notification');
     const Fcustomer = events.filter(async (data) => {
         const userBusiness = await getEntityData('User', `${data.user.id}`);
@@ -52,9 +52,11 @@ export class Events {
             let paginatedItems = events.slice(start, end);
             // Show message if page is empty
             if (events.length === 0) {
+                let mensaje = 'No existen datos';
+                if(customerId == ''){mensaje = 'Seleccione una empresa';}
                 let row = document.createElement('TR');
                 row.innerHTML = `
-            <td>No existen datos<td>
+            <td>${mensaje}<td>
             <td></td>
             <td></td>
             `;

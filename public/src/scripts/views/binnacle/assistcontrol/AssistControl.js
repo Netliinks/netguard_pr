@@ -12,8 +12,8 @@ import { UITableSkeletonTemplate } from "./Template.js";
 const tableRows = Config.tableRows;
 let currentPage = Config.currentPage;
 const pageName = 'Control de asistencias';
+const customerId = localStorage.getItem('customer_id');
 const GetAssistControl = async () => {
-    const customerId = localStorage.getItem('customer_id');
     const assistControl = await getEntitiesData('Marcation');
     const FCustomer = assistControl.filter(async (data) => {
         const userMarcation = await getEntityData('User', `${data.user.id}`); //Usuario de marcacion
@@ -54,9 +54,11 @@ export class AssistControl {
             let paginatedItems = assistControl.slice(start, end);
             // Show message if page is empty
             if (assistControl.length === 0) {
+                let mensaje = 'No existen datos';
+                if(customerId == ''){mensaje = 'Seleccione una empresa';}
                 let row = document.createElement('TR');
                 row.innerHTML = `
-            <td>No existen datos<td>
+            <td>${mensaje}<td>
             <td></td>
             <td></td>
             `;

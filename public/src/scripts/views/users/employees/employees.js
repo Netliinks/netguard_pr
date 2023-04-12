@@ -11,6 +11,7 @@ import { tableLayoutTemplate } from "./Templates.js";
 const tableRows = Config.tableRows;
 const currentPage = Config.currentPage;
 let currentUserInfo; 
+const customerId = localStorage.getItem('customer_id');
 const currentUserData = async() => {
     const currentUser = await getUserInfo();
     const user = await getEntityData('User', `${currentUser.attributes.id}`);
@@ -19,7 +20,6 @@ const currentUserData = async() => {
 }
 const getUsers = async () => {
     const currentUser = await currentUserData(); //usuario logueado
-    const customerId = localStorage.getItem('customer_id');
     const users = await getEntitiesData('User');
     const FSuper = users.filter((data) => data.isSuper === false);
     const FCustomer = FSuper.filter((data) => data.customer.id === `${customerId}`);
@@ -103,9 +103,11 @@ export class Employees {
         let end = start + tableRows;
         let paginatedItems = data.slice(start, end);
         if (data.length === 0) {
+            let mensaje = 'No existen datos';
+            if(customerId == ''){mensaje = 'Seleccione una empresa';}
             let row = document.createElement('tr');
             row.innerHTML = `
-        <td>los datos no coinciden con su búsqueda</td>
+        <td>${mensaje}</td>
         <td></td>
         <td></td>
       `;

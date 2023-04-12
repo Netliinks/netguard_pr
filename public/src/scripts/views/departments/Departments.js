@@ -6,8 +6,8 @@ import { tableLayout } from "./Layout.js";
 import { tableLayoutTemplate } from "./Template.js";
 const tableRows = Config.tableRows;
 const currentPage = Config.currentPage;
+const customerId = localStorage.getItem('customer_id');
 const getDepartments = async () => {
-    const customerId = localStorage.getItem('customer_id');
     const department = await getEntitiesData('Department');
     const FCustomer = department.filter((data) => data.customer.id === `${customerId}`);
     return FCustomer;
@@ -52,9 +52,11 @@ export class Departments {
         let end = start + tableRows;
         let paginatedItems = data.slice(start, end);
         if (data.length === 0) {
+            let mensaje = 'No existen datos';
+            if(customerId == ''){mensaje = 'Seleccione una empresa';}
             let row = document.createElement('tr');
             row.innerHTML = `
-        <td>los datos no coinciden con su búsqueda</td>
+        <td>${mensaje}</td>
         <td></td>
         <td></td>
       `;

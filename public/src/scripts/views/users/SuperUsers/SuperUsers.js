@@ -8,6 +8,7 @@ const tableRows = Config.tableRows;
 const currentPage = Config.currentPage;
 const SUser = true;
 let currentUserInfo; 
+const customerId = localStorage.getItem('customer_id');
 const currentUserData = async() => {
   const currentUser = await getUserInfo();
   const user = await getEntityData('User', `${currentUser.attributes.id}`);
@@ -15,7 +16,6 @@ const currentUserData = async() => {
   return user;
 }
 const getUsers = async (superUser) => {
-    const customerId = localStorage.getItem('customer_id');
     const currentUser = await currentUserData(); //usuario logueado
     const users = await getEntitiesData('User');
     const FSuper = users.filter((data) => data.isSuper === superUser);
@@ -95,9 +95,11 @@ export class SuperUsers {
         let end = start + tableRows;
         let paginatedItems = data.slice(start, end);
         if (data.length === 0) {
+            let mensaje = 'No existen datos';
+            if(customerId == ''){mensaje = 'Seleccione una empresa';}
             let row = document.createElement('tr');
             row.innerHTML = `
-        <td>los datos no coinciden con su búsqueda</td>
+        <td>${mensaje}</td>
         <td></td>
         <td></td>
         <td></td>

@@ -12,9 +12,8 @@ import { UITableSkeletonTemplate } from "./Template.js";
 const tableRows = Config.tableRows;
 let currentPage = Config.currentPage;
 const pageName = 'Ingreso Vehicular';
- 
+const customerId = localStorage.getItem('customer_id');
 const GetVehiculars = async () => {
-    const customerId = localStorage.getItem('customer_id');
     const vehicular = await getEntitiesData('Vehicular');
     const FCustomer = vehicular.filter(async (data) => {
         const userVehicular = await getEntityData('User', `${data.ingressIssued.id}`); //Usuario vehicular
@@ -54,9 +53,11 @@ export class Vehiculars {
             let paginatedItems = assistControl.slice(start, end);
             // Show message if page is empty
             if (assistControl.length === 0) {
+                let mensaje = 'No existen datos';
+                if(customerId == ''){mensaje = 'Seleccione una empresa';}
                 let row = document.createElement('TR');
                 row.innerHTML = `
-            <td>No existen datos<td>
+            <td>${mensaje}<td>
             <td></td>
             <td></td>
             `;

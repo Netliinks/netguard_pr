@@ -12,8 +12,8 @@ import { UITableSkeletonTemplate } from "./Template.js";
 const tableRows = Config.tableRows;
 let currentPage = Config.currentPage;
 const pageName = 'Visitas';
+const customerId = localStorage.getItem('customer_id');
 const GetVisits = async () => {
-    const customerId = localStorage.getItem('customer_id');
     const visits = await getEntitiesData('Visit');
     const FCustomer = visits.filter(async (data) => {
         const userCustomer = await getEntityData('User', `${data.user.id}`);
@@ -53,9 +53,11 @@ export class Visits {
             let paginatedItems = visits.slice(start, end);
             // Show message if page is empty
             if (visits.length === 0) {
+                let mensaje = 'No existen datos';
+                if(customerId == ''){mensaje = 'Seleccione una empresa';}
                 let row = document.createElement('TR');
                 row.innerHTML = `
-            <td>No existen datos<td>
+            <td>${mensaje}<td>
             <td></td>
             <td></td>
             `;
