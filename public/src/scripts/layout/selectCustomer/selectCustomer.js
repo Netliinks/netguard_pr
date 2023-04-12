@@ -35,7 +35,6 @@ export class SelectCustomer {
             const viewTitle = document.getElementById('view-title');
             const tableBody = document.getElementById('datatable-body');
             // Changing interface element content
-            viewTitle.innerText = pageName;
             tableBody.innerHTML = tableLayoutTemplate.repeat(tableRows);
             // Exec functions
             this.load(tableBody, currentPage, customersArray);
@@ -71,7 +70,7 @@ export class SelectCustomer {
                     <td>${customer.permitVehicular ? 'Si' : 'No'}</td>
                     <td>
                         <button class="button" id="entity-details" data-entityId="${customer.id}">
-                            <i class="table_icon fa-regular fa-magnifying-glass"></i>
+                            <i class="table_icon fa-regular fa-check"></i>
                         </button>
                     </td>
                 `;
@@ -99,6 +98,9 @@ export class SelectCustomer {
             openButtons.forEach((openButton) => {
                 const entityId = openButton.dataset.entityid;
                 openButton.addEventListener('click', () => {
+                    localStorage.setItem('customer_id', entityId);
+                    const businessId = localStorage.getItem('customer_id');
+                    console.log(businessId)
                 });
             });
         };

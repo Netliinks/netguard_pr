@@ -7,15 +7,11 @@ import { tableLayoutTemplate } from "./Template.js";
 const tableRows = Config.tableRows;
 const currentPage = Config.currentPage;
 
-const currentBusiness = async() => {
-  const currentUser = await getUserInfo();
-  const business = await getEntityData('User', `${currentUser.attributes.id}`);
-  return business;
-}
+
 const getCustomers = async () => {
-    const businessData = await currentBusiness();
+    const businessId = localStorage.getItem('customer_id');
     const customer = await getEntitiesData('Customer');
-    const FCustomer = customer.filter((data) => data.business.id === `${businessData.business.id}`);
+    const FCustomer = customer.filter((data) => data.business.id === `${businessId}`);
     return FCustomer;
 };
 export class Customers {
