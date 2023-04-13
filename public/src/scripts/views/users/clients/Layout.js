@@ -78,16 +78,17 @@ export const tableLayout = `
 
             <div class="modal_body">
                 <div id="modal-view-one" class="modal_view">
-                    <p>Asignar a <span id="username"></span> como superusuario</p>
+                    <p>Asignar a <span id="username"></span> como superusuario, se enviará un código de verificación al correo</p>
                     <br>
 
                     <form>
-                        <div class="material_input">
-                            <input type="email" id="input-email">
-                            <label for="input-email">email</label>
+                        <div>
+                            <label for="input-email">
+                              Email <input type="email" id="input-email">
+                            </label>
                         </div>
 
-                        <div class="material_input">
+                        <div class="material_input" style="display: none">
                             <input type="password" id="input-password">
                             <label for="input-password">Contraseña</label>
                         </div>
@@ -96,8 +97,8 @@ export const tableLayout = `
 
                 <div id="modal-view-two" class="modal_view modal_view-isHidden">
                     <p>Se enviará un código de verificación al correo de <br> <b><span id="result-mail"></span></b></p>
-                    <p>Su código de verificación es:</p>
-                    <b class="verification_code_result"><span id="confirmation-code"></span></b>
+                    <p style="display: none">Su código de verificación es:</p>
+                    <b class="verification_code_result" style="display: none"><span id="confirmation-code"></span></b>
                 </div>
             </div>
 
@@ -105,7 +106,7 @@ export const tableLayout = `
                 <div class="modal_footer-align_right">
                     <div class="modal_button_group align_right">
                         <button class="btn btn_default" id="button-cancel">Cancelar</button>
-                        <button class="btn btn_primary" id="button-next-userconverter">Siguiente</button>
+                        <button class="btn btn_primary" id="button-next-userconverter">Enviar</button>
                     </div>
                     <div class="modal_button_group modal_button_group-isHidden align_right">
                         <button class="btn btn_default" id="button-back">Atrás</button>

@@ -84,7 +84,7 @@ export const tableLayout = `
                   <form>
                       <div>
                           <label for="input-email">
-                            Confirmar email <input type="email" id="input-email">
+                            Email <input type="email" id="input-email">
                           </label>
                       </div>
 
