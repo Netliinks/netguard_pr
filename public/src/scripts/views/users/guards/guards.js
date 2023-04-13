@@ -23,6 +23,13 @@ const currentCustomerData = async() => {
     const customer = await getEntityData('Customer', `${customerId}`);
     return customer;
 }
+const getVerifyEmail = async (email) => {
+    const users = await getEntitiesData('User');
+    console.log(users)
+    const data = users.filter((data) => `${data.email}`.includes(`${email}`));
+    console.log(data)
+    return data;
+};
 const getUsers = async () => {
     const currentUser = await currentUserData(); //usuario logueado
     currentCustomer = await currentCustomerData();
@@ -272,7 +279,7 @@ export class Guards {
             this.close();
             this.generateUserName();
             const registerButton = document.getElementById('register-entity');
-            registerButton.addEventListener('click', () => {
+            registerButton.addEventListener('click', async() => {
                 const inputsCollection = {
                     firstName: document.getElementById('entity-firstname'),
                     lastName: document.getElementById('entity-lastname'),
@@ -319,7 +326,18 @@ export class Guards {
                     "userType": "GUARD",
                     "username": `${inputsCollection.username.value}@${currentCustomer.name.toLowerCase()}.com`
                 });
-                reg(raw);
+                let existEmail;
+                if(inputsCollection.email.value != ""){
+                    existEmail = await getVerifyEmail(inputsCollection.email.value);
+                    if(existEmail.length === 0){
+                        reg(raw);
+                    }else{
+                        console.log(`Correo ${existEmail} existe`);
+                    }
+                }else{
+                    reg(raw);
+                }
+                
             });
         };
         const reg = async (raw) => {
