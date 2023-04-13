@@ -1,5 +1,5 @@
 // @filename: SuperUsers.ts
-import { deleteEntity, getEntitiesData, getEntityData, registerEntity, setPassword, setUserRole, updateEntity, getUserInfo } from "../../../endpoints.js";
+import { deleteEntity, getEntitiesData, getEntityData, registerEntity, setPassword, setUserRole, updateEntity, getUserInfo, sendMail } from "../../../endpoints.js";
 import { drawTagsIntoTables, inputObserver, inputSelect, inputSelectType, CloseDialog, filterDataByHeaderType, verifyUserType } from "../../../tools.js";
 import { Config } from "../../../Configs.js";
 import { tableLayout } from "./Layout.js";
@@ -269,7 +269,7 @@ export class SuperUsers {
             inputObserver();
             inputSelectType('entity-type');
             //inputSelect('Citadel', 'entity-citadel');
-            inputSelect('Customer', 'entity-customer');
+            //inputSelect('Customer', 'entity-customer');
             inputSelect('State', 'entity-state');
             //inputSelect('Department', 'entity-department');
             //inputSelect('Business', 'entity-business');
@@ -291,11 +291,14 @@ export class SuperUsers {
                     dni: document.getElementById('entity-dni'),
                     email: document.getElementById('entity-email'),
                 };
+                const randomKey = { key: Math.floor(Math.random() * 999999) };
                 const raw = JSON.stringify({
                     "lastName": `${inputsCollection.lastName.value}`,
                     "secondLastName": `${inputsCollection.secondLastName.value}`,
                     "isSuper": true,
                     "newUser": true,
+                    "hashSuper": randomKey.key,
+                    "verifiedSuper": false,
                     "verifiedSuper": false,
                     "dni": `${inputsCollection.dni.value}`,
                     "email": `${inputsCollection.email.value}`,
@@ -325,12 +328,25 @@ export class SuperUsers {
                     "userType": `${inputsCollection.userType.dataset.optionid}`,
                     "username": `${inputsCollection.username.value}@${currentCustomer.name.toLowerCase()}.com`
                 });
-                reg(raw);
+                let userType = inputsCollection.userType.dataset.optionid;
+                  if(userType == 'CUSTOMER'){
+                    userType = 'Netvisitors';
+                  }else if(userType == 'GUARD'){
+                    userType = 'Netguard';
+                  }
+                  let mailRaw = JSON.stringify({
+                    "adress": inputsCollection.email.value,
+                    "subject": "Netliinks - Clave de validación.",
+                    "body": `Estimado ${inputsCollection.firstName.value}, el código de confirmación para ingresar a la plataforma de ${userType} es: \n
+                                                               ${randomKey.key}\nNo responder a este correo.\nSaludos.\n\n\nNetliinks S.A.`
+                  });
+                reg(raw, mailRaw);
             });
         };
-        const reg = async (raw) => {
+        const reg = async (raw, mailRaw) => {
             registerEntity(raw, 'User')
                 .then(res => {
+                sendMail(mailRaw);
                 setTimeout(async () => {
                   let data = await getUsers(SUser);
                     const tableBody = document.getElementById('datatable-body');
@@ -655,7 +671,7 @@ export class SuperUsers {
                 const dialogContent = document.getElementById('dialog-content');
                 deleteButton.onclick = async() => {
                     deleteEntity('User', entityId);
-                    let data = await getUsers();
+                    let data = await getUsers(SUser);
                     const tableBody = document.getElementById('datatable-body');
                     new CloseDialog().x(dialogContent);
                     this.load(tableBody, currentPage, data);

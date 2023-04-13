@@ -907,30 +907,3 @@ export async function setRole() {
         }
     });
 }
-
-export async function setRoleSuper() {
-    const users = await getEntitiesData('User');
-    const filterByNewUsers = users.filter((data) => data.newUser === true);
-    const data = filterByNewUsers;
-    data.forEach((newUser) => {
-        let roleCode;
-        if(newUser.userType === 'GUARD'){
-          roleCode = 'app_web_guardias'
-        }else if(newUser.userType === 'CUSTOMER'){
-          roleCode = 'app_web_clientes'
-        }
-        let raw = JSON.stringify({
-            "id": `${newUser.id}`,
-            "roleCode": `${roleCode}`
-        });
-        let updateNewUser = JSON.stringify({
-            "newUser": false
-        });
-        if (newUser.newUser === true) {
-            setUserRole(raw);
-            setTimeout(() => {
-                updateEntity('User', newUser.id, updateNewUser);
-            }, 1000);
-        }
-    });
-  }
