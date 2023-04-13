@@ -296,6 +296,7 @@ export class SuperUsers {
                     "secondLastName": `${inputsCollection.secondLastName.value}`,
                     "isSuper": true,
                     "newUser": true,
+                    "verifiedSuper": false,
                     "dni": `${inputsCollection.dni.value}`,
                     "email": `${inputsCollection.email.value}`,
                     "temp": `${inputsCollection.temporalPass.value}`,
@@ -652,10 +653,12 @@ export class SuperUsers {
                 const deleteButton = document.getElementById('delete');
                 const cancelButton = document.getElementById('cancel');
                 const dialogContent = document.getElementById('dialog-content');
-                deleteButton.onclick = () => {
+                deleteButton.onclick = async() => {
                     deleteEntity('User', entityId);
+                    let data = await getUsers();
+                    const tableBody = document.getElementById('datatable-body');
                     new CloseDialog().x(dialogContent);
-                    this.render();
+                    this.load(tableBody, currentPage, data);
                 };
                 cancelButton.onclick = () => {
                     new CloseDialog().x(dialogContent);

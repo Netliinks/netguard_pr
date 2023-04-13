@@ -751,10 +751,12 @@ export class Guards {
                 const deleteButton = document.getElementById('delete');
                 const cancelButton = document.getElementById('cancel');
                 const dialogContent = document.getElementById('dialog-content');
-                deleteButton.onclick = () => {
+                deleteButton.onclick = async() => {
                     deleteEntity('User', entityId);
+                    let data = await getUsers();
+                    const tableBody = document.getElementById('datatable-body');
                     new CloseDialog().x(dialogContent);
-                    this.render();
+                    this.load(tableBody, currentPage, data);
                 };
                 cancelButton.onclick = () => {
                     new CloseDialog().x(dialogContent);
@@ -823,10 +825,13 @@ export class Guards {
                         sendMail(mailRaw);
                         updateEntity('User', entityId, updateRaw);
                         setUserRole(roleRaw);
-                        console.log(mailRaw);
-                        console.log(updateRaw);
+                        //console.log(mailRaw);
+                        //console.log(updateRaw);
                         setTimeout(async () => {
+                            let data = await getUsers();
+                            const tableBody = document.getElementById('datatable-body');
                             new CloseDialog().x(modalContainer);
+                            this.load(tableBody, currentPage, data);
                         },100);
                     }
                 });
