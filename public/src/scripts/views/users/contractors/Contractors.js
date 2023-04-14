@@ -404,7 +404,7 @@ export class Contractors {
                     "userType": "CONTRACTOR",
                     "username": `${_values.username.value}@${currentCustomer.name.toLowerCase()}.com`,
                 });
-                const existEmail = await getVerifyEmail(inputsCollection.email.value);
+                const existEmail = await getVerifyEmail(_values.email.value);
                 if(existEmail == true){
                     alert("¡Correo electrónico ya existe!");
                 }else{
@@ -717,7 +717,7 @@ export class Contractors {
                     //    "id": `${_values.contractor.optionid}`
                     //}
                 });
-                const existEmail = await getVerifyEmail(inputsCollection.email.value);
+                const existEmail = await getVerifyEmail(_values.email.value);
                 if(existEmail == true){
                     alert("¡Correo electrónico ya existe!");
                 }else{
