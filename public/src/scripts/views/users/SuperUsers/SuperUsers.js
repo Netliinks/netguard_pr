@@ -1,6 +1,6 @@
 // @filename: SuperUsers.ts
 import { deleteEntity, getEntitiesData, getEntityData, registerEntity, setPassword, setUserRole, updateEntity, getUserInfo, sendMail } from "../../../endpoints.js";
-import { drawTagsIntoTables, inputObserver, inputSelect, inputSelectType, CloseDialog, filterDataByHeaderType, verifyUserType } from "../../../tools.js";
+import { drawTagsIntoTables, inputObserver, inputSelect, inputSelectType, CloseDialog, filterDataByHeaderType, verifyUserType, getVerifyEmail } from "../../../tools.js";
 import { Config } from "../../../Configs.js";
 import { tableLayout } from "./Layout.js";
 import { tableLayoutTemplate } from "./Templates.js";
@@ -340,7 +340,13 @@ export class SuperUsers {
                     "body": `Estimado ${inputsCollection.firstName.value}, el código de confirmación para ingresar a la plataforma de ${userType} es: \n
                                                                ${randomKey.key}\nNo responder a este correo.\nSaludos.\n\n\nNetliinks S.A.`
                   });
-                reg(raw, mailRaw);
+                const existEmail = await getVerifyEmail(inputsCollection.email.value);
+                if(existEmail == true){
+                    alert("¡Correo electrónico ya existe!");
+                }else{
+                    reg(raw, mailRaw);
+                }       
+                
             });
         };
         const reg = async (raw, mailRaw) => {
@@ -525,7 +531,7 @@ export class SuperUsers {
               //// @ts-ignore
               //userType: document.getElementById('entity-type')
           };
-            updateButton.addEventListener('click', () => {
+            updateButton.addEventListener('click', async() => {
               let raw = JSON.stringify({
                   // @ts-ignore
                   //"lastName": `${$value.lastName?.value}`,
@@ -547,7 +553,12 @@ export class SuperUsers {
                   // @ts-ignore
                   //"userType": `${$value.userType?.dataset.optionid}`,
               });
-              update(raw);
+              const existEmail = await getVerifyEmail($value.email?.value);
+              if(existEmail == true){
+                  alert("¡Correo electrónico ya existe!");
+              }else{
+                  update(raw);
+              } 
             });
             const update = (raw) => {
               updateEntity('User', entityId, raw)
