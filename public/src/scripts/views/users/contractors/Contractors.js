@@ -1,6 +1,6 @@
 // @filename: Contractors.ts
 import { deleteEntity, getEntitiesData, getEntityData, registerEntity, setPassword, setUserRole, updateEntity, getUserInfo } from "../../../endpoints.js";
-import { drawTagsIntoTables, inputObserver, inputSelect, CloseDialog } from "../../../tools.js";
+import { drawTagsIntoTables, inputObserver, inputSelect, CloseDialog, getVerifyEmail } from "../../../tools.js";
 import { Config } from "../../../Configs.js";
 import { tableLayout } from "./Layout.js";
 import { tableLayoutTemplate } from "./Templates.js";
@@ -351,7 +351,7 @@ export class Contractors {
             this.close();
             this.generateContractorName();
             const registerButton = document.getElementById('register-entity');
-            registerButton.addEventListener('click', () => {
+            registerButton.addEventListener('click', async() => {
                 let _values;
                 _values = {
                     firstName: document.getElementById('entity-firstname'),
@@ -404,7 +404,12 @@ export class Contractors {
                     "userType": "CONTRACTOR",
                     "username": `${_values.username.value}@${currentCustomer.name.toLowerCase()}.com`,
                 });
-                reg(contractorRaw);
+                const existEmail = await getVerifyEmail(inputsCollection.email.value);
+                if(existEmail == true){
+                    alert("¡Correo electrónico ya existe!");
+                }else{
+                    reg(contractorRaw);
+                }
             });
         };
         const reg = async (raw) => {
@@ -479,7 +484,6 @@ export class Contractors {
                             "lastName": `${contractorData[1]?.replace(/\n/g, '')}`,
                             "secondLastName": `${contractorData[2]?.replace(/\n/g, '')}`,
                             "isSuper": false,
-                            "email": `${contractorData[8]?.replace(/\n/g, '')}`,
                             "temp": `${contractorData[5]?.replace(/\n/g, '')}`,
                             "isWebUser": false,
                             "isActive": true,
@@ -695,7 +699,7 @@ export class Contractors {
                 //contractor: document.getElementById('entity-contractor'),
                 email: document.getElementById('entity-email'),
             };
-            updateButton.addEventListener('click', () => {
+            updateButton.addEventListener('click', async() => {
                 let contractorRaw = JSON.stringify({
                     //"lastName": `${_values.lastName.value}`,
                     //"secondLastName": `${_values.secondLastName.value}`,
@@ -713,7 +717,12 @@ export class Contractors {
                     //    "id": `${_values.contractor.optionid}`
                     //}
                 });
-                update(contractorRaw);
+                const existEmail = await getVerifyEmail(inputsCollection.email.value);
+                if(existEmail == true){
+                    alert("¡Correo electrónico ya existe!");
+                }else{
+                    update(contractorRaw);
+                }
             });
             /**
              * Update entity and execute functions to finish defying user
