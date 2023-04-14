@@ -15,11 +15,13 @@ const pageName = 'Notas';
 const customerId = localStorage.getItem('customer_id');
 const GetNotes = async () => {
     const notes = await getEntitiesData('Note');
-    console.log(customerId)
-    const FCustomer = notes.filter(async (data) => {
-        const userCustomer = await getEntityData('User', `${data.user.id}`);
-        `${userCustomer.customer.id}` === `${customerId}`
-    });
+    let FCustomer = [];
+    for(let i = 0; i < notes.length; i++){
+        let userNotes = await getEntityData('User', `${notes[i].user.id}`);
+        if(`${userNotes.customer.id}` === `${customerId}`){
+            FCustomer.push(notes[i]);
+        }   
+    }
     return FCustomer;
 };
 export class Notes {

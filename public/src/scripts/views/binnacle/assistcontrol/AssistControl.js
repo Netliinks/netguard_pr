@@ -15,10 +15,13 @@ const pageName = 'Control de asistencias';
 const customerId = localStorage.getItem('customer_id');
 const GetAssistControl = async () => {
     const assistControl = await getEntitiesData('Marcation');
-    const FCustomer = assistControl.filter(async (data) => {
-        const userMarcation = await getEntityData('User', `${data.user.id}`); //Usuario de marcacion
-        `${userMarcation.customer.id}` === `${customerId}`
-    });
+    let FCustomer = [];
+    for(let i = 0; i < assistControl.length; i++){
+        let userMarcation = await getEntityData('User', `${assistControl[i].user.id}`);
+        if(`${userMarcation.customer.id}` === `${customerId}`){
+            FCustomer.push(assistControl[i]);
+        }   
+    }
     return FCustomer;
 };
 

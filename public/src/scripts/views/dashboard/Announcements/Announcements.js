@@ -11,11 +11,14 @@ const currentUserData = async() => {
 }
 const announcementData = async() => {
     const anuncios = await getEntitiesData('Announcement');
-    const FAnuncios = anuncios.filter(async(data) => {
-        let userCustomer = await getEntityData('User', `${data.user.id}`);
-        `${userCustomer.customer.id}` === `${customerId}`;
-    });
-    return FAnuncios;
+    let FCustomer = [];
+    for(let i = 0; i < anuncios.length; i++){
+        let userAn = await getEntityData('User', `${anuncios[i].user.id}`);
+        if(`${userAn.customer.id}` === `${customerId}`){
+            FCustomer.push(anuncios[i]);
+        }   
+    }
+    return FCustomer;
 }
 export class Announcements {
     constructor() {

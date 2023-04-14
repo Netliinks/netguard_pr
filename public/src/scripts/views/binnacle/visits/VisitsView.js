@@ -15,10 +15,13 @@ const pageName = 'Visitas';
 const customerId = localStorage.getItem('customer_id');
 const GetVisits = async () => {
     const visits = await getEntitiesData('Visit');
-    const FCustomer = visits.filter(async (data) => {
-        const userCustomer = await getEntityData('User', `${data.user.id}`);
-        `${userCustomer.customer.id}` === `${customerId}`
-    });
+    let FCustomer = [];
+    for(let i = 0; i < visits.length; i++){
+        let userVisits = await getEntityData('User', `${visits[i].user.id}`);
+        if(`${userVisits.customer.id}` === `${customerId}`){
+            FCustomer.push(visits[i]);
+        }   
+    }
     return FCustomer;
 };
 export class Visits {

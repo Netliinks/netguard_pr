@@ -11,14 +11,17 @@ const pageName = 'Eventos';
 const customerId = localStorage.getItem('customer_id');
 const getEvents = async () => {
     const events = await getEntitiesData('Notification');
-    const Fcustomer = events.filter(async (data) => {
-        const userBusiness = await getEntityData('User', `${data.user.id}`);
-        `${userBusiness.business.id}` === `${customerId}`
-    });
+    let FCustomer = [];
+    for(let i = 0; i < events.length; i++){
+        let userEvents = await getEntityData('User', `${events[i].user.id}`);
+        if(`${userEvents.customer.id}` === `${customerId}`){
+            FCustomer.push(events[i]);
+        }   
+    }
     // notificationType.name
     //const removeVisitsFromList = events.filter((data) => data.notificationType.name !== "Visita");
     //const removeVehicularFromList = removeVisitsFromList.filter((data) => data.notificationType.name !== 'Vehicular');
-    return Fcustomer;
+    return FCustomer;
 };
 export class Events {
     constructor() {
@@ -44,6 +47,7 @@ export class Events {
             // Rendering icons
         };
         this.load = (tableBody, currentPage, events) => {
+            
             tableBody.innerHTML = ''; // clean table
             // configuring max table row size
             currentPage--;

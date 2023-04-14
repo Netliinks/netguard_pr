@@ -15,10 +15,13 @@ const pageName = 'Ingreso Vehicular';
 const customerId = localStorage.getItem('customer_id');
 const GetVehiculars = async () => {
     const vehicular = await getEntitiesData('Vehicular');
-    const FCustomer = vehicular.filter(async (data) => {
-        const userVehicular = await getEntityData('User', `${data.ingressIssued.id}`); //Usuario vehicular
-        `${userVehicular.customer.id}` === `${customerId}`
-    });
+    let FCustomer = [];
+    for(let i = 0; i < vehicular.length; i++){
+        let userVehicular = await getEntityData('User', `${vehicular[i].ingressIssued.id}`);
+        if(`${userVehicular.customer?.id}` === `${customerId}`){
+            FCustomer.push(vehicular[i]);
+        }   
+    }
     return FCustomer;
 };
 export class Vehiculars {

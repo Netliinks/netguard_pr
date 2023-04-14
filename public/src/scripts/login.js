@@ -25,15 +25,14 @@ export class SignIn {
         const checkUser = async () => {
             let currentUser = await getUserInfo();
             const customerId = localStorage.getItem('customer_id')
-            if(customerId == null){
-                const user = await getEntityData('User', currentUser.attributes.id);
-                localStorage.setItem('customer_id', user.customer.id);
-                window.location.reload();
-            }
             if (currentUser.error === 'invalid_token') {
                 this.signOut();
             }
-            console.log(currentUser);
+            if(customerId == null){
+                let user = await getEntityData('User', currentUser.attributes.id);
+                localStorage.setItem('customer_id', user.customer.id);
+                window.location.reload();
+            }
             if (currentUser.attributes.isSuper === true && currentUser.attributes.userType === 'GUARD') {
                 new RenderApplicationUI().render();
             }
