@@ -24,9 +24,9 @@ export class SignIn {
         const accessToken = localStorage.getItem('access_token');
         const checkUser = async () => {
             let currentUser = await getUserInfo();
-            const user = await getEntityData('User', currentUser.attributes.id);
             const customerId = localStorage.getItem('customer_id')
             if(customerId == null){
+                const user = await getEntityData('User', currentUser.attributes.id);
                 localStorage.setItem('customer_id', user.customer.id);
                 window.location.reload();
             }

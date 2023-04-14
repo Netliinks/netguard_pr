@@ -315,3 +315,14 @@ export function generateCsv(ar, title){
       alert("Su navegador no permite esta acción");
     }
   }
+export const getVerifyEmail = async (email) => {
+    let value = false;
+    if(email != ""){
+        const users = await getEntitiesData('User');
+        const data = users.filter((data) => `${data.email}`.includes(`${email}`));
+        if(data.length != 0){
+            value = true;
+        }
+    }
+    return value;
+};
