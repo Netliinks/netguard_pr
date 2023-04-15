@@ -524,7 +524,7 @@ export class Clients {
                     </div>
 
                     <div class="material_input">
-                    <input type="email" id="entity-email" class="input_filled" value="${data.email}">
+                    <input type="email" id="entity-email" class="input_filled" value="${data.email}" disabled>
                     <label for="entity-email">Email</label>
                     </div>
 
@@ -635,12 +635,13 @@ export class Clients {
                     "phone": `${$value.phone?.value}`,
                     "email": `${$value.email?.value}`,
                 });
-                const existEmail = await getVerifyEmail($value.email?.value);
-                if(existEmail == true){
-                    alert("¡Correo electrónico ya existe!");
-                }else{
-                    update(raw);
-                }
+                //const existEmail = await getVerifyEmail($value.email?.value);
+                //if(existEmail == true){
+                //    alert("¡Correo electrónico ya existe!");
+                //}else{
+                    
+                //}
+                update(raw);
             });
             const update = (raw) => {
                 updateEntity('User', entityId, raw)
@@ -794,17 +795,19 @@ export class Clients {
                 const resultMail = document.getElementById('result-mail');
                 const inputMail = document.getElementById('input-email');
                 const confirmationCode = document.getElementById('confirmation-code');
-                const modalContainer = document.getElementById('modal_container');
+                const modalContainer = document.getElementById('modal_container');    
                 let mailRaw = [];
                 let updateRaw = [];
+                let roleRaw = [];
+                inputMail.value = user.email;
                 nextButton.addEventListener('click', async() => {
                     const randomKey = { key: Math.floor(Math.random() * 999999) };
                     const existEmail = await getVerifyEmail(inputMail.value);
                     if (inputMail.value === '') {
                         alert('Debe ingresar un correo para continuar.');
                     }
-                    else if(existEmail == true){
-                        alert("¡Correo electrónico ya existe!");
+                    else if(inputMail.value != user.email && existEmail == true){
+                            alert("¡Correo electrónico ya existe!");
                     }
                     else {
                         modalViews.forEach((modalView) => {

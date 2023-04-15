@@ -524,7 +524,7 @@ export class Guards {
                     </div>
 
                     <div class="material_input">
-                    <input type="email" id="entity-email" class="input_filled" value="${data.email}">
+                    <input type="email" id="entity-email" class="input_filled" value="${data.email}" disabled>
                     <label for="entity-email">Email</label>
                     </div>
 
@@ -636,12 +636,13 @@ export class Guards {
                     "phone": `${$value.phone?.value}`,
                     "email": `${$value.email?.value}`,
                 });
-                const existEmail = await getVerifyEmail($value.email?.value);
-                if(existEmail == true){
-                    alert("¡Correo electrónico ya existe!");
-                }else{
-                    update(raw);
-                } 
+                //const existEmail = await getVerifyEmail($value.email?.value);
+                //if(existEmail == true){
+                //    alert("¡Correo electrónico ya existe!");
+                //}else{
+                //    update(raw);
+                //} 
+                update(raw);
             });
             const update = (raw) => {
                 updateEntity('User', entityId, raw)
@@ -800,13 +801,15 @@ export class Guards {
                 let updateRaw = [];
                 let roleRaw = [];
                 inputMail.value = user.email;
+                console.log(user.email)
                 nextButton.addEventListener('click', async() => {
                     const randomKey = { key: Math.floor(Math.random() * 999999) };
                     const existEmail = await getVerifyEmail(inputMail.value);
+                    console.log(inputMail.value)
                     if (inputMail.value === '') {
                         alert('Debe ingresar un correo para continuar.');
                     }
-                    else if(existEmail == true){
+                    else if(inputMail.value != user.email && existEmail == true){
                         alert("¡Correo electrónico ya existe!");
                     }
                     else {

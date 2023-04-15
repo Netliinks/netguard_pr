@@ -449,7 +449,7 @@ export class SuperUsers {
             </div>
 
             <div class="material_input">
-              <input type="email" id="entity-email" class="input_filled" value="${data.email}">
+              <input type="email" id="entity-email" class="input_filled" value="${data.email}" disabled>
               <label for="entity-email">Email</label>
             </div>
 
@@ -553,12 +553,13 @@ export class SuperUsers {
                   // @ts-ignore
                   //"userType": `${$value.userType?.dataset.optionid}`,
               });
-              const existEmail = await getVerifyEmail($value.email?.value);
+              /*const existEmail = await getVerifyEmail($value.email?.value);
               if(existEmail == true){
                   alert("¡Correo electrónico ya existe!");
               }else{
                   update(raw);
-              } 
+              } */
+              update(raw);
             });
             const update = (raw) => {
               updateEntity('User', entityId, raw)

@@ -587,7 +587,7 @@ export class Contractors {
                     </div>
 
                     <div class="material_input">
-                    <input type="email" id="entity-email" class="input_filled" value="${data.email}">
+                    <input type="email" id="entity-email" class="input_filled" value="${data.email}" disabled>
                     <label for="entity-email">Email</label>
                     </div>
 
@@ -717,12 +717,13 @@ export class Contractors {
                     //    "id": `${_values.contractor.optionid}`
                     //}
                 });
-                const existEmail = await getVerifyEmail(_values.email.value);
+                /*const existEmail = await getVerifyEmail(_values.email.value);
                 if(existEmail == true){
                     alert("¡Correo electrónico ya existe!");
                 }else{
                     update(contractorRaw);
-                }
+                }*/
+                update(contractorRaw);
             });
             /**
              * Update entity and execute functions to finish defying user

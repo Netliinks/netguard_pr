@@ -317,12 +317,14 @@ export function generateCsv(ar, title){
   }
 export const getVerifyEmail = async (email) => {
     let value = false;
-    if(email != ""){
+    //console.log(email.includes("@"))
+    if(email.includes("@") === true){
         const users = await getEntitiesData('User');
         const data = users.filter((data) => `${data.email}`.includes(`${email}`));
         if(data.length != 0){
             value = true;
         }
     }
+    console.log(value)
     return value;
 };
