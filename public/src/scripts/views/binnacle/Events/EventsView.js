@@ -1,6 +1,6 @@
 // @filename: EvetnsView.ts
 import { Config } from "../../../Configs.js";
-import { getEntityData, getEntitiesData, getUserInfo } from "../../../endpoints.js";
+import { getEntityData, getEntitiesData, getUserInfo, getFilterEntityData } from "../../../endpoints.js";
 import { CloseDialog, renderRightSidebar, filterDataByHeaderType, inputObserver, generateCsv } from "../../../tools.js";
 import { UIContentLayout, UIRightSidebar } from "./Layout.js";
 import { UITableSkeletonTemplate } from "./Template.js";
@@ -10,18 +10,12 @@ let currentPage = Config.currentPage;
 const pageName = 'Eventos';
 const customerId = localStorage.getItem('customer_id');
 const getEvents = async () => {
-    const events = await getEntitiesData('Notification');
-    let FCustomer = [];
-    for(let i = 0; i < events.length; i++){
-        let userEvents = await getEntityData('User', `${events[i].user.id}`);
-        if(`${userEvents.customer.id}` === `${customerId}`){
-            FCustomer.push(events[i]);
-        }   
-    }
+    const eventsRaw = await getEntitiesData('Notification');
+    const events = eventsRaw.filter((data) => data.customer?.id === `${customerId}`);
     // notificationType.name
     //const removeVisitsFromList = events.filter((data) => data.notificationType.name !== "Visita");
     //const removeVehicularFromList = removeVisitsFromList.filter((data) => data.notificationType.name !== 'Vehicular');
-    return FCustomer;
+    return events;
 };
 export class Events {
     constructor() {

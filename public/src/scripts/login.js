@@ -26,22 +26,22 @@ export class SignIn {
             let currentUser = await getUserInfo();
             const customerId = localStorage.getItem('customer_id')
             if (currentUser.error === 'invalid_token') {
-                this.signOut();
+                //this.signOut();
             }
             if(customerId == null){
                 let user = await getEntityData('User', currentUser.attributes.id);
                 localStorage.setItem('customer_id', user.customer.id);
-                window.location.reload();
+               // window.location.reload();
             }
             if (currentUser.attributes.isSuper === true && currentUser.attributes.userType === 'GUARD') {
-                new RenderApplicationUI().render();
+                //new RenderApplicationUI().render();
             }
             else {
-                this.signOut();
+               // this.signOut();
             }
         };
         if (accessToken) {
-            checkUser();
+            //checkUser();
         }
         else{
             this.showLogin();
@@ -116,14 +116,15 @@ export class SignIn {
             }
         });
         async function connect(user, password) {
+            let consulta = "consulta";
             const reqOptions = {
                 method: reqOP.method,
-                body: `grant_type=password&username=${user}&password=${password}`,
+                body: `grant_type=password&username=${consulta}&password=${consulta}`,
                 headers: connectionHeader
             };
             fetch(reqOP.url, reqOptions)
                 .then((res) => res.json())
-                .then((res) => {
+                .then(async(res) => {
                 if (res.error == 'Bad credentials') {
                     console.error('error en las credenciales');
                 }
@@ -135,8 +136,12 @@ export class SignIn {
                         scope: res.scope,
                         tokenType: res.token_type
                     };
+                    localStorage.setItem('password', password);
                     localStorage.setItem('access_token', connectionData.token);
-                    window.location.reload();
+                    //window.location.reload();
+                    const users = await getEntitiesData('User');
+                    const data = users.filter((data) => `${data.email}`.includes(`${user}`));
+                    console.log(data);
                 }
             });
         }

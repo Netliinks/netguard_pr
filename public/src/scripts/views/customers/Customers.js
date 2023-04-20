@@ -9,14 +9,14 @@ const currentPage = Config.currentPage;
 
 const currentBusiness = async() => {
   const currentUser = await getUserInfo();
-  const business = await getEntityData('User', `${currentUser.attributes.id}`);
-  return business;
+  const userid = await getEntityData('User', `${currentUser.attributes.id}`);
+  return userid;
 }
 
 const getCustomers = async () => {
-    const businessData = await currentBusiness();
+    const currentUser = await currentBusiness();
     const customer = await getEntitiesData('Customer');
-    const FCustomer = customer.filter((data) => data.business.id === `${businessData.business.id}`);
+    const FCustomer = customer.filter((data) => data.business.id === `${currentUser.business.id}`);
     return FCustomer;
 };
 export class Customers {
