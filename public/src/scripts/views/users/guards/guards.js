@@ -805,8 +805,7 @@ export class Guards {
                 nextButton.addEventListener('click', async() => {
                     const randomKey = { key: Math.floor(Math.random() * 999999) };
                     const existEmail = await getVerifyEmail(inputMail.value);
-                    console.log(inputMail.value)
-                    if (inputMail.value === '') {
+                    if (inputMail.value === '' || inputMail.value == null) {
                         alert('Debe ingresar un correo para continuar.');
                     }
                     else if(inputMail.value != user.email && existEmail == true){

@@ -114,7 +114,7 @@ export const getEntityData = async (entities, entity) => {
 };
 export const getFilterEntityData = async (entities, raw) => {
     const req = {
-        url: `${NetliinksUrl}${entities}/search?fetchPlan=full`,
+        url: `${NetliinksUrl}${entities}/search?fetchPlan=full&sort=-createdDate`,
         method: 'POST'
     };
     const requestOptions = {

@@ -1,4 +1,4 @@
-import { getEntitiesData, getUserInfo } from "./endpoints.js";
+import { getEntitiesData, getUserInfo, getFilterEntityData } from "./endpoints.js";
 //
 export const inputObserver = () => {
     const inputs = document.querySelectorAll('input');
@@ -319,12 +319,23 @@ export const getVerifyEmail = async (email) => {
     let value = false;
     //console.log(email.includes("@"))
     if(email.includes("@") === true){
-        const users = await getEntitiesData('User');
-        const data = users.filter((data) => `${data.email}`.includes(`${email}`));
+        /*const users = await getEntitiesData('User');
+        const data = users.filter((data) => `${data.email}`.includes(`${email}`));*/
+        let raw = JSON.stringify({
+            "filter": {
+                "conditions": [
+                  {
+                    "property": "email",
+                    "operator": "=",
+                    "value": `${email}`
+                  }
+                ]
+            }
+        });
+        let data = await getFilterEntityData("User", raw);
         if(data.length != 0){
             value = true;
         }
     }
-    console.log(value)
     return value;
 };
