@@ -50,7 +50,7 @@ export class SignIn {
                 let user = await getFilterEntityData("User", raw);
                 const reqOptions = {
                     method: reqOP.method,
-                    body: `grant_type=password&username=${user[0].username}&password=${password}`,
+                    body: `grant_type=password&username=${user[0]?.username}&password=${password}`,
                     headers: connectionHeader
                 };
                 fetch(reqOP.url, reqOptions)
@@ -73,12 +73,15 @@ export class SignIn {
                         localStorage.setItem('access_token', connectionData.token);
                         window.location.reload();  
                     }
+                }).catch((e) => {
+                    console.log(e);
+                    this.signOut();
                 });
             }else{
                 if(customerId == null){
                     let user = await getEntityData('User', currentUser.attributes.id);
                     if(user.customer.id){
-                        localStorage.setItem('customer_id', user.customer.id);
+                        localStorage.setItem('customer_id', user.customer?.id);
                         window.location.reload();
                     }else{
                         this.signOut();
