@@ -299,7 +299,6 @@ export class SuperUsers {
                     "newUser": true,
                     "hashSuper": randomKey.key,
                     "verifiedSuper": false,
-                    "verifiedSuper": false,
                     "dni": `${inputsCollection.dni.value}`,
                     "email": `${inputsCollection.email.value}`,
                     "temp": `${inputsCollection.temporalPass.value}`,
@@ -517,7 +516,7 @@ export class SuperUsers {
               // @ts-ignore
               phone: document.getElementById('entity-phone'),
               // @ts-ignore
-              email: document.getElementById('entity-email'),
+              //email: document.getElementById('entity-email'),
               // @ts-ignore
               status: document.getElementById('entity-state'),
               // @ts-ignore
@@ -549,7 +548,7 @@ export class SuperUsers {
                   // @ts-ignore
                   "phone": `${$value.phone?.value}`,
                   // @ts-ignore
-                  "email": `${$value.email?.value}`,
+                  //"email": `${$value.email?.value}`,
                   // @ts-ignore
                   //"userType": `${$value.userType?.dataset.optionid}`,
               });
@@ -735,7 +734,8 @@ export const setNewPassword = async () => {
 export const setUserPassword = async (SUser) => {
   const users = await getEntitiesData('User');
   const filterBySuperUsers = users.filter((data) => data.isSuper === SUser);
-  const data = filterBySuperUsers;
+  const FCustomer = filterBySuperUsers.filter((data) => `${data.customer.id}` === `${customerId}`);
+  const data = FCustomer;
   data.forEach((newUser) => {
       let raw = JSON.stringify({
           "id": `${newUser.id}`,
@@ -748,7 +748,8 @@ export const setUserPassword = async (SUser) => {
 export async function setRole(SUser) {
   const users = await getEntitiesData('User');
   const filterByNewUsers = users.filter((data) => data.newUser === SUser);
-  const data = filterByNewUsers;
+  const FCustomer = filterByNewUsers.filter((data) => `${data.customer.id}` === `${customerId}`);
+  const data = FCustomer;
   data.forEach((newUser) => {
       let roleCode;
       if(newUser.userType === 'GUARD'){

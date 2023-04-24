@@ -605,7 +605,7 @@ export class Guards {
                 // @ts-ignore
                 phone: document.getElementById('entity-phone'),
                 // @ts-ignore
-                email: document.getElementById('entity-email'),
+                //email: document.getElementById('entity-email'),
                 // @ts-ignore
                 status: document.getElementById('entity-state'),
                 // @ts-ignore
@@ -634,7 +634,7 @@ export class Guards {
                    // },
                     // @ts-ignore
                     "phone": `${$value.phone?.value}`,
-                    "email": `${$value.email?.value}`,
+                    //"email": `${$value.email?.value}`,
                 });
                 //const existEmail = await getVerifyEmail($value.email?.value);
                 //if(existEmail == true){
@@ -890,7 +890,8 @@ export class Guards {
 export const setUserPassword = async () => {
     const users = await getEntitiesData('User');
     const filterBySuperUsers = users.filter((data) => data.isSuper === false);
-    const filterByUserType = filterBySuperUsers.filter((data) => `${data.userType}`.includes('GUARD'));
+    const FCustomer = filterBySuperUsers.filter((data) => `${data.customer.id}` === `${customerId}`);
+    const filterByUserType = FCustomer.filter((data) => `${data.userType}`.includes('GUARD'));
     const data = filterByUserType;
     data.forEach((newUser) => {
         let raw = JSON.stringify({
@@ -904,7 +905,8 @@ export const setUserPassword = async () => {
 export async function setRole() {
     const users = await getEntitiesData('User');
     const filterByNewUsers = users.filter((data) => data.newUser === true);
-    const filterByUserType = filterByNewUsers.filter((data) => `${data.userType}`.includes('GUARD'));
+    const FCustomer = filterByNewUsers.filter((data) => `${data.customer.id}` === `${customerId}`);
+    const filterByUserType = FCustomer.filter((data) => `${data.userType}`.includes('GUARD'));
     const data = filterByUserType;
     data.forEach((newUser) => {
         let raw = JSON.stringify({

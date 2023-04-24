@@ -582,7 +582,7 @@ export class Contractors {
                         id="entity-dni"
                         class="input_filled"
                         maxlength="10"
-                        value="${data.dni}">
+                        value="${data.dni}" disabled>
                     <label for="entity-dni">Cédula</label>
                     </div>
 
@@ -697,7 +697,7 @@ export class Contractors {
                 ingressHour: document.getElementById('start-time'),
                 turnChange: document.getElementById('end-time'),
                 //contractor: document.getElementById('entity-contractor'),
-                email: document.getElementById('entity-email'),
+                //email: document.getElementById('entity-email'),
             };
             updateButton.addEventListener('click', async() => {
                 let contractorRaw = JSON.stringify({
@@ -711,7 +711,7 @@ export class Contractors {
                     "ingressHour": `${_values.ingressHour.value}`,
                     "turnChange": `${_values.turnChange.value}`,
                     "phone": `${_values.phone.value}`,
-                    "email": `${_values.email.value}`,
+                    //"email": `${_values.email.value}`,
                     //"dni": `${_values.dni.value}`,
                     //"contractor": {
                     //    "id": `${_values.contractor.optionid}`
@@ -826,7 +826,8 @@ export class Contractors {
 export async function setUserPassword() {
     const users = await getEntitiesData('User');
     const filterBySuperUsers = users.filter((data) => data.isSuper === false);
-    const filterByUserType = filterBySuperUsers.filter((data) => `${data.userType}`.includes('CONTRACTOR'));
+    const FCustomer = filterBySuperUsers.filter((data) => `${data.customer.id}` === `${customerId}`);
+    const filterByUserType = FCustomer.filter((data) => `${data.userType}`.includes('CONTRACTOR'));
     const data = filterByUserType;
     data.forEach((newUser) => {
         let raw = JSON.stringify({
@@ -840,7 +841,8 @@ export async function setUserPassword() {
 export async function setRole() {
     const users = await getEntitiesData('User');
     const filterByNewUsers = users.filter((data) => data.newUser == true);
-    const filterByUserType = filterByNewUsers.filter((data) => `${data.userType}`.includes('CONTRACTOR'));
+    const FCustomer = filterByNewUsers.filter((data) => `${data.customer.id}` === `${customerId}`);
+    const filterByUserType = FCustomer.filter((data) => `${data.userType}`.includes('CONTRACTOR'));
     const data = filterByUserType;
     data.forEach((newUser) => {
         let raw = JSON.stringify({
