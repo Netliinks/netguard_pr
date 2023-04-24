@@ -9,17 +9,7 @@ const currentUserData = async() => {
     const user = await getEntityData('User', `${currentUser.attributes.id}`);
     return user;
 }
-const announcementData = async() => {
-    const anuncios = await getEntitiesData('Announcement');
-    let FCustomer = [];
-    for(let i = 0; i < anuncios.length; i++){
-        let userAn = await getEntityData('User', `${anuncios[i].user.id}`);
-        if(`${userAn.customer.id}` === `${customerId}`){
-            FCustomer.push(anuncios[i]);
-        }   
-    }
-    return FCustomer;
-}
+
 export class Announcements {
     constructor() {
         this._newAnnouncementButton = document.getElementById('new-announcement');
@@ -30,11 +20,12 @@ export class Announcements {
     async render() {
         this._announcementCardContainer.innerHTML = '';
         this._announcementCardControlsContainers.innerHTML = '';
-        //const announcementsList = await getEntitiesData('Announcement');
+        const customerId = localStorage.getItem('customer_id');
+        const announcements = await getEntitiesData('Announcement');
+        const announcementsList  = announcements.filter((data) => `${data.customer?.id}` === `${customerId}`);
+        let _userinfo = await getUserInfo();
         
         let prop;
-        const currentUser = await currentUserData(); //usuario logueado
-        const announcementsList = await announcementData();
         //console.log(announcementsList);
         announcementsList.forEach((announcement) => {
                 const _card = document.createElement('DIV');
@@ -44,7 +35,7 @@ export class Announcements {
                     <h3 class="card_title">${announcement.title}</h3>
                     <p class="card_content">${announcement.content}</p>
                 `;
-                let _currentUserId = currentUser.id;
+                let _currentUserId = _userinfo.id;
                 this._announcementCardContainer.appendChild(_card);
                 const _dotButton = document.createElement('BUTTON');
                 _dotButton.classList.add('card_dotbutton');
@@ -105,11 +96,15 @@ export class Announcements {
             const _year = _date.getFullYear();
             const date = `${_year}-${('0' + _month).slice(-2)}-${('0' + _day).slice(-2)}`;
             // RAW
+            const customerId = localStorage.getItem('customer_id');
             const announcementRaw = JSON.stringify({
                 "title": `${_announcementTitle.value}`,
                 "content": `${_announcementContent.value}`,
                 "user": {
                     "id": `${_userInfo.attributes.id}`
+                },
+                "customer": {
+                    "id": `${customerId}`
                 },
                 "creationTime": `${currentTime}`,
                 "creationDate": `${date}`
