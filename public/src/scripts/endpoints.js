@@ -98,7 +98,7 @@ export const getData = async (url) => {
  * entity (all bussines data for example).
  */
 export const getEntitiesData = async (entities) => {
-    const URL = `${NetliinksUrl}${entities}?fetchPlan=full&sort=-creationDate`;
+    const URL = `${NetliinksUrl}${entities}?fetchPlan=full&sort=-createdDate`;
     return await getData(URL);
 };
 /**
