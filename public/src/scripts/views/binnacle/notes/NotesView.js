@@ -77,12 +77,13 @@ export class Notes {
                     </td>
                 `;
                     tableBody.appendChild(row);
-                    this.previewNote(note.id);
+                    //this.previewNote(note.id);
                     
                     // TODO: Corret this fixer
                     // fixDate()
                 }
             }
+            this.previewNote();
         };
         this.searchNotes = async (tableBody, notes) => {
             const search = document.getElementById('search');
@@ -101,7 +102,7 @@ export class Notes {
                 // Rendering icons
             });
         };
-        this.previewNote = async (noteID) => {
+        this.previewNote = async () => {
             const openPreview = document.querySelectorAll('#entity-details');
             openPreview.forEach((preview) => {
                 let currentNoteId = preview.dataset.entityid;
@@ -127,7 +128,7 @@ export class Notes {
                     date: document.getElementById('creation-date'),
                     time: document.getElementById('creation-time')
                 };
-                const image = await getFile(note.attachment);
+                //const image = await getFile(note.attachment);
                 const noteCreationDateAndTime = note.creationDate.split('T');
                 const noteCreationTime = noteCreationDateAndTime[1];
                 const noteCreationDate = noteCreationDateAndTime[0];
@@ -138,6 +139,7 @@ export class Notes {
                 _details.date.value = noteCreationDate;
                 _details.time.value = noteCreationTime;
                 if (note.attachment !== undefined) {
+                    const image = await getFile(note.attachment);
                     _details.picture.innerHTML = `
                     <img id="note-picture" width="100%" class="note_picture margin_b_8" src="${image}">
                 `;

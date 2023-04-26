@@ -5,6 +5,7 @@
 //
 import { getEntityData, getUserInfo } from "../endpoints.js";
 import { SelectCustomer } from "./selectCustomer/selectCustomer.js";
+import { Dashboard } from "../views/dashboard/dashboard.js";
 import { SignIn } from "../login.js";
 import { Sidebar } from "./sidebar.js";
 import { CloseDialog } from "../tools.js";
@@ -22,7 +23,8 @@ export class RenderApplicationUI {
       this.topbar.style.display = 'flex';
       this.renderTopbar();
       new Sidebar().render();
-      new SelectCustomer().render();
+      new Dashboard().render();
+      //new SelectCustomer().render();
   }
   async renderTopbar() {
     const customerId = localStorage.getItem('customer_id')

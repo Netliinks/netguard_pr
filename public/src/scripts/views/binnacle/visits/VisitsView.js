@@ -159,7 +159,25 @@ export class Visits {
                 visitCitadelID.value = entityData.citadel.name;
                 const visitDepartment = document.getElementById('visit-department');
                 visitDepartment.value = entityData.department.name;
-                console.log(entityData.citadel.name);
+                //console.log(entityData.citadel.name);
+                // Start marking
+                const ingressDate = document.getElementById('ingress-date');
+                ingressDate.value = entityData?.ingressDate ?? '';
+                const ingressTime = document.getElementById('ingress-time');
+                ingressTime.value = entityData?.ingressTime ?? '';
+                const ingressGuardId = document.getElementById('ingress-guard-id');
+                ingressGuardId.value = entityData?.ingressIssuedId?.username ?? '';
+                const ingressGuardName = document.getElementById('ingress-guard-name');
+                ingressGuardName.value = `${entityData?.ingressIssuedId?.firstName ?? ''} ${entityData?.ingressIssuedId?.lastName ?? ''}`;
+                // End marking
+                const egressDate = document.getElementById('egress-date');
+                egressDate.value = entityData?.egressDate ?? '';
+                const egressTime = document.getElementById('egress-time');
+                egressTime.value = entityData?.egressTime ?? '';
+                const egressGuardId = document.getElementById('egress-guard-id');
+                egressGuardId.value = entityData?.egressIssuedId?.username ?? '';
+                const egressGuardName = document.getElementById('egress-guard-name');
+                egressGuardName.value = `${entityData?.egressIssuedId?.firstName ?? ''} ${entityData?.egressIssuedId?.lastName ?? ''}`;
                 this.closeRightSidebar();
                 drawTagsIntoTables();
             };

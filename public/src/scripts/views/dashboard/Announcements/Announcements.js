@@ -97,11 +97,15 @@ export class Announcements {
             const date = `${_year}-${('0' + _month).slice(-2)}-${('0' + _day).slice(-2)}`;
             // RAW
             const customerId = localStorage.getItem('customer_id');
+            let currentUserInfo = await getEntityData('User', `${_userInfo.attributes.id}`);
             const announcementRaw = JSON.stringify({
                 "title": `${_announcementTitle.value}`,
                 "content": `${_announcementContent.value}`,
                 "user": {
                     "id": `${_userInfo.attributes.id}`
+                },
+                "business": {
+                    "id": `${currentUserInfo.business.id}`
                 },
                 "customer": {
                     "id": `${customerId}`
