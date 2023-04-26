@@ -233,7 +233,7 @@ export class Customers {
                 id="entity-ruc"
                 class="input_filled"
                 maxlength="10"
-                value="${data.ruc}">
+                value="${data?.ruc ?? ''}">
               <label for="entity-ruc">RUC</label>
             </div>
 
