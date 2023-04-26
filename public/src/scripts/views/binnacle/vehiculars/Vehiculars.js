@@ -69,7 +69,7 @@ export class Vehiculars {
                     <td>${vehicular.dni}</td>
                     <td>${vehicular.driver}</td>
                     <td id="table-date">${vehicular.ingressDate} ${vehicular.ingressTime}</td>
-                    <td id="table-date">${vehicular.egressDate} ${vehicular.egressTime}</td>
+                    <td id="table-date">${vehicular?.egressDate ?? ''} ${vehicular?.egressTime ?? ''}</td>
                     <td class="tag"><span>${vehicular.visitState.name}</span></td>
 
                     <td>
@@ -157,26 +157,26 @@ export class Vehiculars {
                     endGuardName: document.getElementById('marking-end-guard-name')
                 };
                 _values.status.innerText = markingData.visitState.name;
-                _values.name.value = markingData.driver;
-                _values.dni.value = markingData.dni;
-                _values.type.value = markingData.licensePlate;
-                _values.department.value = markingData.noGuide;
-                _values.contractor.value = markingData.supplier;
-                _values.product.value = markingData.product;
-                _values.type.value = markingData.type;
-                _values.observation.value = markingData.observation;
-                _values.dayManager.value = markingData.dayManager;
-                _values.nightManager.value = markingData.nightManager;
+                _values.name.value = markingData?.driver ?? '';
+                _values.dni.value = markingData?.dni ?? '';
+                _values.type.value = markingData?.licensePlate ?? '';
+                _values.department.value = markingData?.noGuide ?? '';
+                _values.contractor.value = markingData?.supplier ?? '';
+                _values.product.value = markingData?.product ?? '';
+                _values.type.value = markingData?.type ?? '';
+                _values.observation.value = markingData?.observation ?? '';
+                _values.dayManager.value = markingData?.dayManager ?? '';
+                _values.nightManager.value = markingData?.nightManager ?? '';
                 // Start marking
-                _values.startDate.value = markingData.ingressDate;
-                _values.startTime.value = markingData.ingressTime;
-                _values.startGuardID.value = markingData.ingressIssued.username;
-                _values.startGuardName.value = markingData.ingressIssued.firstName + ' ' + markingData.ingressIssued.lastName;
+                _values.startDate.value = markingData?.ingressDate ?? '';
+                _values.startTime.value = markingData?.ingressTime ?? '';
+                _values.startGuardID.value = markingData.ingressIssued?.username ?? '';
+                _values.startGuardName.value = markingData.ingressIssued?.firstName ?? '' + ' ' + markingData.ingressIssued?.lastName ?? '';
                 // End marking
-                _values.endDate.value = markingData.egressDate ? markingData.egressDate : '';
-                _values.endTime.value = markingData.egressTime ? markingData.egressTime : '';
-                _values.endGuardID.value = markingData.egressIssued.username ? markingData.egressIssued.username : '';
-                _values.endGuardName.value = markingData.egressIssued.firstName ? markingData.egressIssued.firstName : '' + ' ' + markingData.egressIssued.lastName ? markingData.egressIssued.lastName : '';
+                _values.endDate.value = markingData?.egressDate ?? '';
+                _values.endTime.value = markingData?.egressTime ?? '';
+                _values.endGuardID.value = markingData.egressIssued?.username ?? '';
+                _values.endGuardName.value = markingData.egressIssued?.firstName ?? '' + ' ' + markingData.egressIssued?.lastName ?? '';
                 drawTagsIntoTables();
                 this.closeRightSidebar();
                 drawTagsIntoTables();
