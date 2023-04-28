@@ -76,7 +76,7 @@ export class SignIn {
                     }
                 }).catch((e) => {
                     console.log(e);
-                    //this.signOut();
+                    this.signOut();
                 });
             }else{
                 if(customerId == null){
