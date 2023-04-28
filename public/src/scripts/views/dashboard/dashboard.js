@@ -92,7 +92,7 @@ export class Dashboard {
               <div class="cards_controls_container" id="cards-controls-container"></div>
             </div>
 
-            <button class="btn btn_new_announcement margin_t_8" id="new-announcement" style="display: none"><i class="fa-regular fa-plus margin_r_8"></i> Nuevo anuncio</button>
+            <button class="btn btn_new_announcement margin_t_8" id="new-announcement"><i class="fa-regular fa-plus margin_r_8"></i> Nuevo anuncio</button>
 
           </div>
         <!-- End news card -->
