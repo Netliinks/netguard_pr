@@ -1,4 +1,4 @@
-import { getEntitiesData, getUserInfo, getFilterEntityData } from "./endpoints.js";
+import { getEntitiesData, getUserInfo, getFilterEntityData, getEntityData, registerEntity, _userAgent } from "./endpoints.js";
 //
 export const inputObserver = () => {
     const inputs = document.querySelectorAll('input');
@@ -338,4 +338,42 @@ export const getVerifyEmail = async (email) => {
         }
     }
     return value;
+};
+export const registryPlataform = async (id) => {
+    let platUser = await getEntityData('User', id);
+    const _date = new Date();
+    // TIME
+    const _hours = _date.getHours();
+    const _minutes = _date.getMinutes();
+    const _seconds = _date.getSeconds();
+    const _fixedHours = ('0' + _hours).slice(-2);
+    const _fixedMinutes = ('0' + _minutes).slice(-2);
+    const _fixedSeconds = ('0' + _seconds).slice(-2);
+    const currentTime = `${_fixedHours}:${_fixedMinutes}:${_fixedSeconds}`;
+    // DATE
+    const _day = _date.getDate();
+    const _month = _date.getMonth() + 1;
+    const _year = _date.getFullYear();
+    const date = `${_year}-${('0' + _month).slice(-2)}-${('0' + _day).slice(-2)}`;
+    let plataformRaw = JSON.stringify({
+        // @ts-ignore
+        "userAgent": `${_userAgent}`,
+        "customer": {
+            "id": `${platUser.customer.id}`
+        },
+        "system": {
+            "id": `8d457eb2-fe46-5797-7203-55aaa1813010`
+        },
+        "user": {
+            "id": `${platUser.id}`
+        },
+        // @ts-ignore
+        "creationDate": `${date}`,
+        // @ts-ignore
+        "creationTime": `${currentTime}`,
+    });
+    await registerEntity(plataformRaw, 'WebAccess')
+        .then(res => {
+        console.log("Registrado");
+    }).catch(err => console.log(err));
 };
