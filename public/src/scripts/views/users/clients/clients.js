@@ -723,6 +723,7 @@ export class Clients {
                     }
                     else {
                         console.log('Las contraseñas no coinciden');
+                        alert('Las contraseñas no coinciden');
                     }
                 });
                 _closeButton.onclick = () => {
