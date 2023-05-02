@@ -8,6 +8,7 @@ import { SelectCustomer } from "./selectCustomer/selectCustomer.js";
 import { Dashboard } from "../views/dashboard/dashboard.js";
 import { SignIn } from "../login.js";
 import { Sidebar } from "./sidebar.js";
+import { ChangePassword } from "./changePassword/changePassword.js";
 import { CloseDialog } from "../tools.js";
 export class RenderApplicationUI {
     constructor() {
@@ -52,8 +53,8 @@ export class RenderApplicationUI {
            </div>
            <div class="user_settings" id="user-settings">
              <button class="btn btn_transparent btn_widder" id="change-customer">Cambiar Empresa</button>
-             <button class="btn btn_transparent btn_widder">Preferencias</button>
-             <button class="btn btn_transparent btn_widder">Cambiar Contraseña</button>
+             <!--<button class="btn btn_transparent btn_widder">Preferencias</button>-->
+             <button class="btn btn_transparent btn_widder" id="change-password">Cambiar Contraseña</button>
              <br>
              <button class="btn btn_primary btn_widder" id="logout-button">Cerrar sesión</button>
            </div>
@@ -63,9 +64,14 @@ export class RenderApplicationUI {
     const options = document.getElementById('settings-button');
     options.addEventListener('click', () => {
         const settingOptions = document.getElementById('user-settings');
+        const changePassword = document.getElementById('change-password');
         const changeCustomer = document.getElementById('change-customer');
         const logoutButton = document.getElementById('logout-button');
         settingOptions.classList.toggle("user_settings_visible");
+        changePassword.addEventListener("click", () => {
+            new ChangePassword().render();
+            //new CloseDialog().x(settingOptions);
+        });
         changeCustomer.addEventListener("click", () => {
             new SelectCustomer().render();
             //new CloseDialog().x(settingOptions);
