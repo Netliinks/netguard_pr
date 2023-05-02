@@ -1,5 +1,5 @@
 // @filename: SuperUsers.ts
-import { deleteEntity, getEntitiesData, getEntityData, registerEntity, setPassword, setUserRole, updateEntity, getUserInfo, sendMail } from "../../../endpoints.js";
+import { deleteEntity, getEntitiesData, getEntityData, registerEntity, setPassword, setUserRole, updateEntity, getUserInfo, sendMail, getFilterEntityData } from "../../../endpoints.js";
 import { drawTagsIntoTables, inputObserver, inputSelect, inputSelectType, CloseDialog, filterDataByHeaderType, verifyUserType, getVerifyEmail } from "../../../tools.js";
 import { Config } from "../../../Configs.js";
 import { tableLayout } from "./Layout.js";
@@ -342,6 +342,23 @@ export class SuperUsers {
                 const existEmail = await getVerifyEmail(inputsCollection.email.value);
                 if(existEmail == true){
                     alert("¡Correo electrónico ya existe!");
+                }else if (inputsCollection.firstName.value === '' || inputsCollection.firstName.value === undefined) {
+                  alert("¡Nombre vacío!");
+                }
+                else if (inputsCollection.lastName.value === '' || inputsCollection.lastName.value === undefined) {
+                    alert("¡Primer apellido vacío!");
+                }
+                else if (inputsCollection.secondLastName.value === '' || inputsCollection.secondLastName.value === undefined) {
+                    alert("¡Segundo apellido vacío!");
+                }
+                else if (inputsCollection.email.value === '' || inputsCollection.email.value === undefined) {
+                    alert("¡Correo vacío!");
+                }
+                else if (inputsCollection.dni.value === '' || inputsCollection.dni.value === undefined) {
+                    alert("DNI vacío!");
+                }
+                else if (inputsCollection.temporalPass.value === '' || inputsCollection.temporalPass.value === undefined) {
+                    alert("Clave vacío!");
                 }else{
                     reg(raw, mailRaw);
                 }       
@@ -733,24 +750,63 @@ export const setNewPassword = async () => {
 };
 
 export const setUserPassword = async (SUser) => {
-  const users = await getEntitiesData('User');
+  /*const users = await getEntitiesData('User');
   const filterBySuperUsers = users.filter((data) => data.isSuper === SUser);
   const FCustomer = filterBySuperUsers.filter((data) => `${data.customer.id}` === `${customerId}`);
-  const data = FCustomer;
+  const data = FCustomer;*/
+  let raw = JSON.stringify({
+    "filter": {
+        "conditions": [
+            {
+                "property": "isSuper",
+                "operator": "=",
+                "value": `${SUser}`
+            },
+            {
+                "property": "customer.id",
+                "operator": "=",
+                "value": `${customerId}`
+            }
+        ]
+    }
+  });
+  let data = await getFilterEntityData("User", raw);
   data.forEach((newUser) => {
       let raw = JSON.stringify({
           "id": `${newUser.id}`,
           "newPassword": `${newUser.temp}`
       });
-      if (newUser.newUser === true && newUser.temp !== undefined)
+      if (newUser.newUser === true && (newUser.temp !== undefined || newUser.temp !== '')){
           setPassword(raw);
+          const pass = JSON.stringify({
+            "temp": ``,
+          });
+          updateEntity('User', newUser.id, pass);
+      }
   });
 };
 export async function setRole(SUser) {
-  const users = await getEntitiesData('User');
+  /*const users = await getEntitiesData('User');
   const filterByNewUsers = users.filter((data) => data.newUser === SUser);
   const FCustomer = filterByNewUsers.filter((data) => `${data.customer.id}` === `${customerId}`);
-  const data = FCustomer;
+  const data = FCustomer;*/
+  let raw = JSON.stringify({
+    "filter": {
+        "conditions": [
+            {
+                "property": "newUser",
+                "operator": "=",
+                "value": `${SUser}`
+            },
+            {
+                "property": "customer.id",
+                "operator": "=",
+                "value": `${customerId}`
+            }
+        ]
+    }
+  });
+  let data = await getFilterEntityData("User", raw);
   data.forEach((newUser) => {
       let roleCode;
       if(newUser.userType === 'GUARD'){
