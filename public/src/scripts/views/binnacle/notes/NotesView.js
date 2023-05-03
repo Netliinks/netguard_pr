@@ -11,7 +11,7 @@ import { UITableSkeletonTemplate } from "./Template.js";
 // Local configs
 const tableRows = Config.tableRows;
 let currentPage = Config.currentPage;
-const pageName = 'Notas';
+const pageName = 'Reportes';
 const customerId = localStorage.getItem('customer_id');
 const GetNotes = async () => {
     const notesRaw = await getEntitiesData('Note');
@@ -229,7 +229,7 @@ export class Notes {
                             }
                             
                         }
-                        generateCsv(rows, "Notas");
+                        generateCsv(rows, "Reportes");
                         
                         
                     });

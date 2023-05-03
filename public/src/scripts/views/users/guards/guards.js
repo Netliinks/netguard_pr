@@ -757,7 +757,7 @@ export class Guards {
                         <div class="dialog dialog_danger">
                         <div class="dialog_container">
                             <div class="dialog_header">
-                            <h2>¿Deseas eliminar este cliente?</h2>
+                            <h2>¿Deseas eliminar este guardia?</h2>
                             </div>
 
                             <div class="dialog_message">
@@ -933,13 +933,8 @@ export const setUserPassword = async () => {
             "id": `${newUser.id}`,
             "newPassword": `${newUser.temp}`
         });
-        if (newUser.newUser === true && (newUser.temp !== undefined || newUser.temp !== '')){
+        if (newUser.newUser === true && (newUser.temp !== undefined || newUser.temp !== ''))
             setPassword(raw);
-            const pass = JSON.stringify({
-                "temp": ``,
-            })
-            updateEntity('User', newUser.id, pass);
-        } 
     });
 };
 export async function setRole() {
@@ -951,6 +946,11 @@ export async function setRole() {
     let raw = JSON.stringify({
         "filter": {
             "conditions": [
+              {
+                "property": "isSuper",
+                "operator": "=",
+                "value": `${false}`
+              },
               {
                 "property": "newUser",
                 "operator": "=",
@@ -976,13 +976,15 @@ export async function setRole() {
             "roleCode": 'app_guardias'
         });
         let updateNewUser = JSON.stringify({
-            "newUser": false
+            "newUser": false,
+            "temp": ''
         });
         if (newUser.newUser === true) {
-            setUserRole(raw);
-            setTimeout(() => {
-                updateEntity('User', newUser.id, updateNewUser);
-            }, 1000);
+            setUserRole(raw).then((res) => {
+                setTimeout(() => {
+                    updateEntity('User', newUser.id, updateNewUser);
+                }, 1000);
+            });
         }
     });
 }
