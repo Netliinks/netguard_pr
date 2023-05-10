@@ -7,18 +7,21 @@ import { UITableSkeletonTemplate } from "./Template.js";
 // Local configs
 const tableRows = Config.tableRows;
 let currentPage = Config.currentPage;
-const pageName = 'Eventos';
+const pageName = 'Bitácora';
 const customerId = localStorage.getItem('customer_id');
 const getEvents = async () => {
     const eventsRaw = await getEntitiesData('Notification');
     const events = eventsRaw.filter((data) => data.customer?.id === `${customerId}`);
     // notificationType.name
-    const removeVisitsFromList = events.filter((data) => data.notificationType.name !== "Visita");
-    const removeVehicularFromList = removeVisitsFromList.filter((data) => data.notificationType.name !== 'Vehicular');
-    const removeNoteFromList = removeVehicularFromList.filter((data) => data.notificationType.name !== 'Nota');
-    return removeNoteFromList;
+    const removeOtroFromList = events.filter((data) => data.notificationType.name !== "Otro");
+    const removeFuegoFromList = removeOtroFromList.filter((data) => data.notificationType.name !== '🔥 Fuego');
+    const removeCaidoFromList = removeFuegoFromList.filter((data) => data.notificationType.name !== '🚨 Hombre Caído');
+    const removeIntrusionFromList = removeCaidoFromList.filter((data) => data.notificationType.name !== '🚪 Intrusión');
+    const removeRoboFromList = removeIntrusionFromList.filter((data) => data.notificationType.name !== '🏚 Robo');
+    const removePanicoFromList = removeRoboFromList.filter((data) => data.notificationType.name !== 'Botón Pánico');
+    return removePanicoFromList;
 };
-export class Events {
+export class Binnacle {
     constructor() {
         this.dialogContainer = document.getElementById('app-dialogs');
         this.siebarDialogContainer = document.getElementById('entity-editor-container');
@@ -213,7 +216,7 @@ export class Events {
                         }
                         
                     }
-                    generateCsv(rows, "Eventos");
+                    generateCsv(rows, "Bitácora");
                     
                     
                 });
@@ -240,7 +243,7 @@ export class Events {
             button.innerText = page;
             button.addEventListener('click', () => {
                 currentPage = page;
-                new Events().load(tableBody, page, items);
+                new Binnacle().load(tableBody, page, items);
             });
             return button;
         }
