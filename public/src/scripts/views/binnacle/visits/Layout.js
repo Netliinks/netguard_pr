@@ -156,6 +156,11 @@ export const UIRightSidebar = `
         <label for="egress-guard-name"><i class="fa-solid fa-user-police"></i></label>
         <input type="text" id="egress-guard-name" class="input_filled" readonly>
     </div>
+    <br>
+    <h3>Galería</h3>
+
+    <div id="galeria">
+    </div>
 </div>
 <!-- END EDITOR BODY -->
 </div>
