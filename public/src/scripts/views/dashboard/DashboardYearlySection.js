@@ -24,11 +24,6 @@ export const renderYearlyChart = async () => {
                     "property": "creationYear",
                     "operator": "=",
                     "value": `${_year}`
-                },
-                {
-                    "property": "lastUpdateYear",
-                    "operator": "=",
-                    "value": `${_year}`
                 }
             ]
         }
