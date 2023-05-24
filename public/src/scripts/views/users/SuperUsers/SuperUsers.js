@@ -325,7 +325,7 @@ export class SuperUsers {
                     },
                     "phone": `${inputsCollection.phoneNumer.value}`,
                     "userType": `${inputsCollection.userType.dataset.optionid}`,
-                    "username": `${inputsCollection.username.value}@${currentCustomer.name.toLowerCase()}.com`
+                    "username": `${inputsCollection.username.value}@${currentCustomer.name.toLowerCase().replace(/\s+/g, '')}.com`
                 });
                 let userType = inputsCollection.userType.dataset.optionid;
                   if(userType == 'CUSTOMER'){

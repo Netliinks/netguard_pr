@@ -403,7 +403,7 @@ export class Contractors {
                     "phone": `${_values.phoneNumer.value}`,
                     "dni": `${_values.dni.value}`,
                     "userType": "CONTRACTOR",
-                    "username": `${_values.username.value}@${currentCustomer.name.toLowerCase()}.com`,
+                    "username": `${_values.username.value}@${currentCustomer.name.toLowerCase().replace(/\s+/g, '')}.com`,
                 });
                 const existEmail = await getVerifyEmail(_values.email.value);
                 if(existEmail == true){
@@ -530,7 +530,7 @@ export class Contractors {
                             "phone": `${contractorData[3]?.replace(/\n/g, '')}`,
                             "dni": `${contractorData[4]?.replace(/\n/g, '')}`,
                             "userType": "CONTRACTOR",
-                            "username": `${contractorData[0]?.toLowerCase().replace(/\n/g, '')}.${contractorData[1]?.toLowerCase().replace(/\n/g, '')}@${currentCustomer.name.toLowerCase()}.com`,
+                            "username": `${contractorData[0]?.toLowerCase().replace(/\n/g, '')}.${contractorData[1]?.toLowerCase().replace(/\n/g, '')}@${currentCustomer.name.toLowerCase().replace(/\s+/g, '')}.com`,
                             "createVisit": false,
                         });
                         stageUsers.push(rawFile);

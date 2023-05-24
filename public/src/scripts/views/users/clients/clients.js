@@ -317,7 +317,7 @@ export class Clients {
                     },
                     "phone": `${inputsCollection.phoneNumer.value}`,
                     "userType": "CUSTOMER",
-                    "username": `${inputsCollection.username.value}@${currentCustomer.name.toLowerCase()}.com`
+                    "username": `${inputsCollection.username.value}@${currentCustomer.name.toLowerCase().replace(/\s+/g, '')}.com`
                 });
                 const existEmail = await getVerifyEmail(inputsCollection.email.value);
                 if(existEmail == true){
@@ -455,7 +455,7 @@ export class Clients {
                             "phone": `${userData[3]?.replace(/\n/g, '')}`,
                             "dni": `${userData[4]?.replace(/\n/g, '')}`,
                             "userType": "CUSTOMER",
-                            "username": `${userData[0]?.toLowerCase().replace(/\n/g, '')}.${userData[1]?.toLowerCase().replace(/\n/g, '')}@${currentCustomer.name.toLowerCase()}.com`,
+                            "username": `${userData[0]?.toLowerCase().replace(/\n/g, '')}.${userData[1]?.toLowerCase().replace(/\n/g, '')}@${currentCustomer.name.toLowerCase().replace(/\s+/g, '')}.com`,
                             "createVisit": false
                         });
                         elem.push(rawFile);

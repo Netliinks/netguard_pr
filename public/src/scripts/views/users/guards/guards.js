@@ -450,7 +450,7 @@ export class Guards {
                             "phone": `${userData[3]?.replace(/\n/g, '')}`,
                             "dni": `${userData[4]?.replace(/\n/g, '')}`,
                             "userType": "GUARD",
-                            "username": `${userData[0]?.toLowerCase().replace(/\n/g, '')}.${userData[1]?.toLowerCase().replace(/\n/g, '')}@${currentCustomer.name.toLowerCase().replace(/\n/g, '')}.com`,
+                            "username": `${userData[0]?.toLowerCase().replace(/\n/g, '')}.${userData[1]?.toLowerCase().replace(/\n/g, '')}@${currentCustomer.name.toLowerCase().replace(/\s+/g, '')}.com`,
                             "createVisit": false
                         });
                         elem.push(rawFile);
