@@ -417,7 +417,7 @@ export class Guards {
                     let resultSplit = result.split('\r');
                     let rawFile;
                     let elem = [];
-                    for (let i = 1; i < resultSplit.length; i++) {
+                    for (let i = 1; i < resultSplit.length-1; i++) {
                         let userData = resultSplit[i].split(';');
                         rawFile = JSON.stringify({
                             "lastName": `${userData[1]?.replace(/\n/g, '')}`,
