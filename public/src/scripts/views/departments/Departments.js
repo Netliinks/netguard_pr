@@ -9,7 +9,7 @@ const currentPage = Config.currentPage;
 const customerId = localStorage.getItem('customer_id');
 const getDepartments = async () => {
     const department = await getEntitiesData('Department');
-    const FCustomer = department.filter((data) => `${data.customer.id}` === `${customerId}`);
+    const FCustomer = department.filter((data) => `${data.customer?.id}` === `${customerId}`);
     return FCustomer;
 };
 export class Departments {
