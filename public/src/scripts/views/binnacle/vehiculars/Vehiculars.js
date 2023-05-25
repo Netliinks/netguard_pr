@@ -131,13 +131,13 @@ export class Vehiculars {
             });
             const renderInterface = async (entity) => {
                 let markingData = await getEntityData('Vehicular', entity);
-                console.log(markingData);
+                //console.log(markingData);
                 renderRightSidebar(UIRightSidebar);
                 const _values = {
                     status: document.getElementById('marking-status'),
                     name: document.getElementById('marking-name'),
                     dni: document.getElementById('marking-dni'),
-                    type: document.getElementById('marking-type'),
+                    license: document.getElementById('marking-license'),
                     department: document.getElementById('marking-department'),
                     contractor: document.getElementById('marking-contractor'),
                     product: document.getElementById('marking-product'),
@@ -159,7 +159,7 @@ export class Vehiculars {
                 _values.status.innerText = markingData.visitState.name;
                 _values.name.value = markingData?.driver ?? '';
                 _values.dni.value = markingData?.dni ?? '';
-                _values.type.value = markingData?.licensePlate ?? '';
+                _values.license.value = markingData?.licensePlate ?? '';
                 _values.department.value = markingData?.noGuide ?? '';
                 _values.contractor.value = markingData?.supplier ?? '';
                 _values.product.value = markingData?.product ?? '';

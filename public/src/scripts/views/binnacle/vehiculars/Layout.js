@@ -72,52 +72,52 @@ export const UIRightSidebar = `
   <br><br>
 
     <div class="input_detail">
-        <label for="marking-name"><i class="fa-solid fa-user"></i></label>
+        <label for="marking-name"><i class="fa-solid fa-user"></i> Conductor:</label>
         <input type="text" id="marking-name" class="input_filled" readonly>
     </div>
     <br>
     <div class="input_detail">
-        <label for="marking-dni"><i class="fa-solid fa-address-card"></i></label>
+        <label for="marking-dni"><i class="fa-solid fa-address-card"></i> DNI:</label>
         <input type="text" id="marking-dni" class="input_filled" readonly>
     </div>
     <br>
     <div class="input_detail">
-        <label for="marking-type"><i class="fa-solid fa-object-group"></i></label>
-        <input type="text" id="marking-type" class="input_filled" readonly>
+        <label for="marking-license"><i class="fa-solid fa-object-group"></i> Licencia:</label>
+        <input type="text" id="marking-license" class="input_filled" readonly>
     </div>
     <br>
     <div class="input_detail">
-        <label for="marking-department"><i class="fa-solid fa-building"></i></label>
+        <label for="marking-department"><i class="fa-solid fa-building"></i> # Guía:</label>
         <input type="text" id="marking-department" class="input_filled" readonly>
     </div>
     <br>
     <div class="input_detail">
-        <label for="marking-contractor"><i class="fa-solid fa-briefcase"></i></label>
+        <label for="marking-contractor"><i class="fa-solid fa-briefcase"></i> Proveedor:</label>
         <input type="text" id="marking-contractor" class="input_filled" readonly>
     </div>
     <br>
     <div class="input_detail">
-        <label for="marking-product"><i class="fa-solid fa-briefcase"></i></label>
+        <label for="marking-product"><i class="fa-solid fa-briefcase"></i> Producto:</label>
         <input type="text" id="marking-product" class="input_filled" readonly>
     </div>
     <br>
     <div class="input_detail">
-        <label for="marking-type"><i class="fa-solid fa-object-group"></i></label>
+        <label for="marking-type"><i class="fa-solid fa-object-group"></i> Tipo:</label>
         <input type="text" id="marking-type" class="input_filled" readonly>
     </div>
     <br>
     <div class="input_detail">
-        <label for="marking-observation"><i class="fa-solid fa-address-card"></i></label>
+        <label for="marking-observation"><i class="fa-solid fa-address-card"></i> Observación:</label>
         <input type="text" id="marking-observation" class="input_filled" readonly>
     </div>
     <br>
     <div class="input_detail">
-        <label for="marking-start-dayManager"><i class="fa-solid fa-user-police"></i></label>
+        <label for="marking-start-dayManager"><i class="fa-solid fa-user-police"></i> Resp. Diurno:</label>
         <input type="text" id="marking-dayManager" class="input_filled" readonly>
     </div>
     <br>
     <div class="input_detail">
-        <label for="marking-nightManager"><i class="fa-solid fa-user-police"></i></label>
+        <label for="marking-nightManager"><i class="fa-solid fa-user-police"></i> Resp. Nocturno:</label>
         <input type="text" id="marking-nightManager" class="input_filled" readonly>
     </div>
     <br>
