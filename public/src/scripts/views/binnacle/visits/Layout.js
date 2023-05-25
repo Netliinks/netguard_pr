@@ -75,42 +75,47 @@ export const UIRightSidebar = `
   <div class="tag"><i class="label active_label"><i class="fa-solid fa-circle-dot"></i> Estado:</i> <span class="tag_gray" id="visit-status"></span></div>
   <br><br>
   <div class="material_input">
-    <input type="text" id="visit-name" autocomplete="none" class="input_filled">
+    <input type="text" id="visit-name" autocomplete="none" class="input_filled" disabled>
     <label for="visit-name"><i class="fa-solid fa-user"></i> Nombre</label>
   </div>
 
   <div class="material_input">
-    <input type="text" id="visit-reason" autocomplete="none" class="input_filled">
+    <input type="text" id="visit-reason" autocomplete="none" class="input_filled" disabled>
     <label for="visit-reasons"><i class="fa-solid fa-seal-question"></i> Asunto</label>
   </div>
 
   <div class="material_input">
-    <input type="text" id="visit-citadel" autocomplete="none" class="input_filled">
+    <input type="text" id="visit-citadel" autocomplete="none" class="input_filled" disabled>
     <label for="visit-citadel"><i class="fa-solid fa-buildings"></i> Ciudadela</label>
   </div>
 
   <div class="material_input">
-    <input type="text" id="visit-citadelid" autocomplete="none" class="input_filled">
+    <input type="text" id="visit-citadelid" autocomplete="none" class="input_filled" disabled>
     <label for="visit-citadelid"><i class="fa-solid fa-hashtag"></i> Ciudadela - ID</label>
   </div>
 
   <div class="material_input">
-    <input type="text" id="visit-department" autocomplete="none" class="input_filled">
+    <input type="text" id="visit-department" autocomplete="none" class="input_filled" disabled>
     <label for="visit-department"><i class="fa-solid fa-building"></i> Departamento</label>
   </div>
 
   <div class="material_input">
-    <input type="text" id="visit-authorizedby" autocomplete="none" class="input_filled">
+    <input type="text" id="visit-authorizedby" autocomplete="none" class="input_filled" disabled>
     <label for="visit-authorizedby"><i class="fa-solid fa-shield"></i> Autorizado por</label>
   </div>
 
   <div class="material_input">
     <input type="text"
       id="entity-phone"
-      maxlength="10" autocomplete="none">
+      maxlength="10" autocomplete="none" disabled>
     <label for="entity-phone">Teléfono</label>
   </div>
 
+  <div class="input_checkbox">
+      <label><input type="checkbox" class="checkbox" id="entity-blacklist" disabled> Lista Negra</label>
+  </div>
+
+  <br>
   <!-- Start marking -->
     <h3>Ingreso</h3>
     <br>

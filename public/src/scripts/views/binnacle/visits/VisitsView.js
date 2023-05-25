@@ -179,6 +179,10 @@ export class Visits {
                 egressGuardId.value = entityData?.egressIssuedId?.username ?? '';
                 const egressGuardName = document.getElementById('egress-guard-name');
                 egressGuardName.value = `${entityData?.egressIssuedId?.firstName ?? ''} ${entityData?.egressIssuedId?.lastName ?? ''}`;
+                const checkboxBlackList = document.getElementById('entity-blacklist');
+                if (entityData?.checkBlacklist === true) {
+                    checkboxBlackList?.setAttribute('checked', 'true');
+                }
                 if (entityData?.image !== undefined || entityData?.camera1 !== undefined || entityData?.camera2 !== undefined || entityData?.camera3 !== undefined || entityData?.camera4 !== undefined) {
                     let images = [];
                     if (entityData?.image !== undefined) {

@@ -14,6 +14,7 @@ import { SuperUsers } from "../views/users/SuperUsers/SuperUsers.js";
 import { Events } from "../views/binnacle/Events/EventsView.js";
 import { Vehiculars } from "../views/binnacle/vehiculars/Vehiculars.js";
 import { Binnacle } from "../views/binnacle/binnacle/BinnacleView.js";
+import { Blacklist } from "../views/users/blacklist/blacklist.js";
 export class Sidebar {
   constructor() {
       this.sidebarContainer = document.getElementById('app-sidebar');
@@ -82,6 +83,12 @@ export class Sidebar {
                 <div class="sidebar_subitem">
                   <span class="sidebar_subitem_label" id="render-contractors">
                     <i class="fa-regular fa-briefcase"></i> <div class="label">Contratistas</div>
+                  </span>
+                </div>
+
+                <div class="sidebar_subitem">
+                  <span class="sidebar_subitem_label" id="render-blacklist">
+                    <i class="fa-regular fa-exclamation-triangle"></i> <div class="label">Lista Negra</div>
                   </span>
                 </div>
 
@@ -175,6 +182,9 @@ renders() {
     });
     document.getElementById('render-contractors')?.addEventListener('click', () => {
         new Contractors().render();
+    });
+    document.getElementById('render-blacklist')?.addEventListener('click', () => {
+        new Blacklist().render();
     });
     // render notes
     document.getElementById('render-notes')?.addEventListener('click', () => {
