@@ -699,11 +699,15 @@ export class SuperUsers {
                 const cancelButton = document.getElementById('cancel');
                 const dialogContent = document.getElementById('dialog-content');
                 deleteButton.onclick = async() => {
-                    deleteEntity('User', entityId);
-                    let data = await getUsers(SUser);
-                    const tableBody = document.getElementById('datatable-body');
-                    new CloseDialog().x(dialogContent);
-                    this.load(tableBody, currentPage, data);
+                    deleteEntity('User', entityId)
+                    .then((res) => {
+                      setTimeout(async () => {
+                        let data = await getUsers(SUser);
+                          const tableBody = document.getElementById('datatable-body');
+                          new CloseDialog().x(dialogContent);
+                          new SuperUsers().load(tableBody, currentPage, data);
+                      }, 1000);
+                  });
                 };
                 cancelButton.onclick = () => {
                     new CloseDialog().x(dialogContent);

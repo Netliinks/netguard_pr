@@ -326,15 +326,15 @@ export class Blacklist {
                 const cancelButton = document.getElementById('cancel');
                 const dialogContent = document.getElementById('dialog-content');
                 deleteButton.onclick = () => {
-                    deleteEntity('BlacklistedUser', entityId);
-                    
-                    this.render();
-                    setTimeout(async () => {
-                        let data = await getUsers();
-                        const tableBody = document.getElementById('datatable-body');
-                        new CloseDialog().x(dialogContent);
-                        this.load(tableBody, currentPage, data);
-                    }, 1000);
+                    deleteEntity('BlacklistedUser', entityId)
+                    .then((res) => {
+                        setTimeout(async () => {
+                            let data = await getUsers();
+                            const tableBody = document.getElementById('datatable-body');
+                            new CloseDialog().x(dialogContent);
+                            new Blacklist().load(tableBody, currentPage, data);
+                        }, 1000);
+                    });
                 };
                 cancelButton.onclick = () => {
                     new CloseDialog().x(dialogContent);
