@@ -1,6 +1,6 @@
 // @filename: SuperUsers.ts
 import { deleteEntity, getEntitiesData, getEntityData, registerEntity, setPassword, setUserRole, updateEntity, getUserInfo, sendMail, getFilterEntityData } from "../../../endpoints.js";
-import { drawTagsIntoTables, inputObserver, inputSelect, inputSelectType, CloseDialog, filterDataByHeaderType, verifyUserType, getVerifyEmail } from "../../../tools.js";
+import { drawTagsIntoTables, inputObserver, inputSelect, inputSelectType, CloseDialog, filterDataByHeaderType, verifyUserType, getVerifyEmail, generateCsv } from "../../../tools.js";
 import { Config } from "../../../Configs.js";
 import { tableLayout } from "./Layout.js";
 import { tableLayoutTemplate } from "./Templates.js";
@@ -139,6 +139,7 @@ export class SuperUsers {
         }
         this.register();
         this.import();
+        this.export(SUser);
         this.edit(this.entityDialogContainer, data);
         this.remove();
         //this.convertToSuper();
@@ -722,7 +723,29 @@ export class SuperUsers {
             new CloseDialog().x(editor);
         }, false);
     }
-    
+    export = (SUser) => {
+      const exportUsers = document.getElementById('export-entities');
+      exportUsers.addEventListener('click', async () => {
+          let rows = [];
+          const users = await getUsers(SUser);
+          for (let i = 0; i < users.length; i++) {
+              let user = users[i];
+              // @ts-ignore
+              let obj = {
+                  "Nombre": `${user.firstName.split("\n").join("(salto)")}`,
+                  "Apellido 1": `${user.lastName.split("\n").join("(salto)")}`,
+                  "Apellido 2": `${user.secondLastName.split("\n").join("(salto)")}`,
+                  "Usuario": `${user.username}`,
+                  "DNI": `${user?.dni}`,
+                  "Email": `${user?.email ?? ''}`,
+                  "Teléfono": `${user?.phone ?? ''}`,
+                  "Tipo": `${verifyUserType(user?.userType)}`
+              };
+              rows.push(obj);
+          }
+          generateCsv(rows, "Super");
+      });
+    };
     pagination(items, limitRows, currentPage) {
       const tableBody = document.getElementById('datatable-body');
       const paginationWrapper = document.getElementById('pagination-container');

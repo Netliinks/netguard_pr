@@ -19,11 +19,13 @@ export const tableLayout = `
           <i class="fa-solid fa-user-plus"></i>
         </button>
 
-        <!-- <button
+        <button
           class="datatable_button import_user"
           id="import-entities">
           Importar
-        </button> -->
+        </button>
+
+        <button class="datatable_button import_user" id="export-entities">Exportar</button>
       </div>
     </div>
 
