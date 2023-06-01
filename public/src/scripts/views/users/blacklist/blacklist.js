@@ -346,7 +346,82 @@ export class Blacklist {
         });
     }
     import = () => {
-        
+        const _importContractors = document.getElementById('import-entities');
+        _importContractors.addEventListener('click', () => {
+            this.entityDialogContainer.innerHTML = '';
+            this.entityDialogContainer.style.display = 'flex';
+            this.entityDialogContainer.innerHTML = `
+                    <div class="entity_editor id="entity-editor">
+                        <div class="entity_editor_header">
+                            <div class="user_info">
+                                <div class="avatar">
+                                    <i class="fa-regular fa-up-from-line"></i>
+                                </div>
+                                <h1 class="entity_editor_title">Importar <br> <small>Persona</small></h1>
+                            </div>
+                            <button class="btn btn_close_editor" id="close"><i class="fa-solid fa-x"></i></button>
+                        </div>
+                        <!--EDITOR BODY -->
+                        <div class="entity_editor_body padding_t_8_important">
+                            <div class="sidebar_section">
+                                <div class="file_template">
+                                    <i class="fa-solid fa-file-csv"></i>
+                                    <div class="description">
+                                        <p class="filename">Plantilla de Lista Negra</p>
+                                        <a href="./public/src/templates/NetguardBlackList.csv" download="./public/src/templates/NetguardContractors.csv" rel="noopener" target="_self" class="filelink">Descargar</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="sidebar_section">
+                                <input type="file" id="file-handler">
+                            </div>
+                        </div>
+                        <div class="entity_editor_footer">
+                            <button class="btn btn_primary btn_widder" id="button-import">Importar<button>
+                        </div>
+                    </div>
+                `;
+            this.close();
+            const _fileHandler = document.getElementById('file-handler');
+            _fileHandler.addEventListener('change', () => {
+                readFile(_fileHandler.files[0]);
+            });
+            async function readFile(file) {
+                const fileReader = new FileReader();
+                fileReader.readAsText(file);
+                fileReader.addEventListener('load', (e) => {
+                    let result = e.srcElement.result;
+                    let resultSplit = result.split('\r');
+                    let rawFile;
+                    let stageUsers = [];
+                    for (let i = 1; i < resultSplit.length; i++) {
+                        let blackListData = resultSplit[i].split(';');
+                        rawFile = JSON.stringify({
+                            "firstName": `${blackListData[0]?.replace(/\n/g, '')}`,
+                            "firstLastName": `${blackListData[1]?.replace(/\n/g, '')}`,
+                            "secondLastName": `${blackListData[2]?.replace(/\n/g, '')}`,
+                            "dni": `${blackListData[3]?.replace(/\n/g, '')}`,
+                        });
+                        stageUsers.push(rawFile);
+                    }
+                    const _import = document.getElementById('button-import');
+                    _import.addEventListener('click', () => {
+                        stageUsers.forEach((user) => {
+                            registerEntity(user, 'BlacklistedUser')
+                                .then((res) => {
+                                setTimeout(async () => {
+                                    let data = await getUsers();
+                                    const tableBody = document.getElementById('datatable-body');
+                                    const container = document.getElementById('entity-editor-container');
+                                    new CloseDialog().x(container);
+                                    new Blacklist().load(tableBody, currentPage, data);
+                                }, 1000);
+                            });
+                        });
+                    });
+                });
+            }
+        });
     }
     export = () => {
         const exportUsers = document.getElementById('export-entities');
