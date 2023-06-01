@@ -360,7 +360,7 @@ export class Blacklist {
                     "Nombre": `${user.firstName.split("\n").join("(salto)")}`,
                     "Apellido 1": `${user.firstLastName.split("\n").join("(salto)")}`,
                     "Apellido 2": `${user.secondLastName.split("\n").join("(salto)")}`,
-                    "DNI": `${user?.dni}`
+                    "DNI": `${user?.dni ?? ''}`
                 };
                 rows.push(obj);
             }
