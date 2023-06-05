@@ -85,6 +85,38 @@ export class AssistControl {
                 this.fixCreatedDate();
             }
         };
+        this.previewZoom = async (arrayImages) => {
+            const openButtons = document.querySelectorAll('#entity-details-zoom');
+            openButtons.forEach((openButton) => {
+                const entityId = openButton.dataset.entityid;
+                openButton.addEventListener('click', () => {
+                    renderInterfaceZoom(entityId, arrayImages);
+                });
+            });
+            const renderInterfaceZoom = async (entity, arrayImages) => {
+                let description = '';
+                for (let i = 0; i < arrayImages.length; i++) {
+                    if (arrayImages[i].id == entity) {
+                        description = arrayImages[i].description;
+                    }
+                }
+                const picture = document.getElementsByName(`${entity}`);
+                const close = document.getElementById("close-modalZoom");
+                const modalZoom = document.getElementById('modalZoom');
+                const editor = document.getElementById('entity-editor-container');
+                editor.style.display = 'none';
+                const img01 = document.getElementById('img01');
+                const caption = document.getElementById('caption');
+                modalZoom.style.display = 'block';
+                img01.src = picture[0].currentSrc;
+                caption.innerHTML = `${description}`;
+                close.addEventListener('click', () => {
+                    modalZoom.style.display = 'none';
+                    const editor = document.getElementById('entity-editor-container');
+                    editor.style.display = 'flex';
+                });
+            };
+        };
         this.pagination = async (items, limitRows, currentPage) => {
             const tableBody = document.getElementById('datatable-body');
             const paginationWrapper = document.getElementById('pagination-container');
