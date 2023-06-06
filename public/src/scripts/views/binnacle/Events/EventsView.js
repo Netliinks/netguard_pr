@@ -140,6 +140,7 @@ export class Events {
                     _details.picture.innerHTML = `
                     <img id="note-picture" width="100%" class="note_picture margin_b_8" src="${image}">
                 `;
+                    this.zoom(event);
                 }
             };
         };
@@ -227,6 +228,27 @@ export class Events {
                 _closeButton.onclick = () => {
                     new CloseDialog().x(_dialog);
                 };
+            });
+        };
+        this.zoom = (event) => {
+            const picture = document.getElementById('note-picture');
+            const close = document.getElementById("close-modalZoom");
+            const modalZoom = document.getElementById('modalZoom');
+            picture.addEventListener('click', () => {
+                //this.dialogContainer.style.display = 'block'
+                //this.dialogContainer.innerHTML = modalZoomImage
+                const editor = document.getElementById('entity-editor-container');
+                editor.style.display = 'none';
+                const img01 = document.getElementById('img01');
+                const caption = document.getElementById('caption');
+                modalZoom.style.display = 'block';
+                img01.src = picture.src;
+                caption.innerHTML = `${event?.title ?? ''}`;
+            });
+            close.addEventListener('click', () => {
+                modalZoom.style.display = 'none';
+                const editor = document.getElementById('entity-editor-container');
+                editor.style.display = 'flex';
             });
         };
     }
