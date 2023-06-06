@@ -24,7 +24,6 @@ export class Vehiculars {
         this.siebarDialogContainer = document.getElementById('entity-editor-container');
         this.appContainer = document.getElementById('datatable-container');
         this.render = async () => {
-            let assistControlArray = await GetVehiculars();
             this.appContainer.innerHTML = '';
             this.appContainer.innerHTML = UIContentLayout;
             // Getting interface elements
@@ -32,6 +31,8 @@ export class Vehiculars {
             const tableBody = document.getElementById('datatable-body');
             // Changing interface element content
             viewTitle.innerText = pageName;
+            tableBody.innerHTML = '.Cargando...';
+            let assistControlArray = await GetVehiculars();
             tableBody.innerHTML = UITableSkeletonTemplate.repeat(tableRows);
             // Exec functions
             this.load(tableBody, currentPage, assistControlArray);

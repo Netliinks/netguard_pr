@@ -25,7 +25,6 @@ export class AssistControl {
         this.siebarDialogContainer = document.getElementById('entity-editor-container');
         this.appContainer = document.getElementById('datatable-container');
         this.render = async () => {
-            let assistControlArray = await GetAssistControl();
             this.appContainer.innerHTML = '';
             this.appContainer.innerHTML = UIContentLayout;
             // Getting interface elements
@@ -33,6 +32,8 @@ export class AssistControl {
             const tableBody = document.getElementById('datatable-body');
             // Changing interface element content
             viewTitle.innerText = pageName;
+            tableBody.innerHTML = '.Cargando...';
+            let assistControlArray = await GetAssistControl();
             tableBody.innerHTML = UITableSkeletonTemplate.repeat(tableRows);
             // Exec functions
             this.load(tableBody, currentPage, assistControlArray);
