@@ -53,9 +53,11 @@ export class Blacklist {
         let end = start + tableRows;
         let paginatedItems = data.slice(start, end);
         if (data.length === 0) {
+            let mensaje = 'No existen datos';
+            if(customerId == null){mensaje = 'Seleccione una empresa';}
             let row = document.createElement('tr');
             row.innerHTML = `
-        <td>los datos no coinciden con su búsqueda</td>
+        <td>${mensaje}</td>
         <td></td>
         <td></td>
       `;

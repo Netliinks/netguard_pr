@@ -28,13 +28,14 @@ export class SelectCustomer {
         this.siebarDialogContainer = document.getElementById('entity-editor-container');
         this.appContainer = document.getElementById('datatable-container');
         this.render = async () => {
-            let customersArray = await GetCustomers();
             this.appContainer.innerHTML = '';
             this.appContainer.innerHTML = tableLayout;
             // Getting interface elements
             const viewTitle = document.getElementById('view-title');
             const tableBody = document.getElementById('datatable-body');
             // Changing interface element content
+            tableBody.innerHTML = '.Cargando...';
+            let customersArray = await GetCustomers();
             tableBody.innerHTML = tableLayoutTemplate.repeat(tableRows);
             // Exec functions
             this.load(tableBody, currentPage, customersArray);

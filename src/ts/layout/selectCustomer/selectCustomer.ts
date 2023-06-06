@@ -31,7 +31,7 @@ export class SelectCustomer {
     private appContainer: InterfaceElement = document.getElementById('datatable-container')
 
     public render = async (): Promise<void> => {
-        let customersArray: any = await GetCustomers()
+        
         this.appContainer.innerHTML = ''
         this.appContainer.innerHTML = tableLayout
 
@@ -40,6 +40,8 @@ export class SelectCustomer {
         const tableBody: InterfaceElement = document.getElementById('datatable-body')
 
         // Changing interface element content
+        tableBody.innerHTML = '.Cargando...'
+        let customersArray: any = await GetCustomers()
         tableBody.innerHTML = tableLayoutTemplate.repeat(tableRows)
 
         // Exec functions
