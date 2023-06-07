@@ -5,7 +5,7 @@
 //
 import { Config } from "../../Configs.js"
 import { getEntityData, getEntitiesData, getUserInfo } from "../../endpoints.js"
-import { CloseDialog, FixStatusElement, drawTagsIntoTables, fixDate, renderRightSidebar } from "../../tools.js"
+import { CloseDialog, FixStatusElement, drawTagsIntoTables, fixDate, renderRightSidebar, filterDataByHeaderType } from "../../tools.js"
 import { InterfaceElement, InterfaceElementCollection } from "../../types.js"
 import { tableLayout, tableLayoutTemplate } from "./Layout.js"
 
@@ -46,6 +46,7 @@ export class SelectCustomer {
 
         // Exec functions
         this.load(tableBody, currentPage, customersArray)
+        new filterDataByHeaderType().filter();
         this.searchCustomer(tableBody, customersArray)
 
         // Rendering icons

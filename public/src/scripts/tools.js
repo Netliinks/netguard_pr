@@ -221,14 +221,28 @@ export class filterDataByHeaderType {
                     header.classList.remove('datatable_header_selected');
                 });
                 e.target.classList.add('datatable_header_selected');
-                this.sortGrid(th.cellIndex, span.dataset.type);
+                this.sortGrid(th.cellIndex, span.dataset.type, span);
             };
         };
-        this.sortGrid = (colNum, type) => {
+        this.sortGrid = (colNum, type, span) => {
             let tbody = this.datatable.querySelector('tbody');
             let rowsArray = Array.from(tbody.rows);
             let compare;
-            switch (type) {
+            if (span.dataset.mode == "desc") {
+                compare = (rowA, rowB) => {
+                    return rowA.cells[colNum].innerHTML >
+                        rowB.cells[colNum].innerHTML ? -1 : 1;
+                };
+                span.setAttribute("data-mode", "asc");
+            }
+            else {
+                compare = (rowA, rowB) => {
+                    return rowA.cells[colNum].innerHTML >
+                        rowB.cells[colNum].innerHTML ? 1 : -1;
+                };
+                span.setAttribute("data-mode", "desc");
+            }
+            /*switch (type) {
                 case 'name':
                     compare = (rowA, rowB) => {
                         return rowA.cells[colNum].innerHTML >
@@ -253,7 +267,7 @@ export class filterDataByHeaderType {
                             rowB.cells[colNum].innerHTML ? 1 : -1;
                     };
                     break;
-            }
+            }*/
             rowsArray.sort(compare);
             tbody.append(...rowsArray);
         };

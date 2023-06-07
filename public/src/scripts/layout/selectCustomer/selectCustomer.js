@@ -5,7 +5,7 @@
 //
 import { Config } from "../../Configs.js";
 import { getEntityData, getEntitiesData, getUserInfo } from "../../endpoints.js";
-import { drawTagsIntoTables } from "../../tools.js";
+import { drawTagsIntoTables, filterDataByHeaderType } from "../../tools.js";
 import { tableLayout, tableLayoutTemplate } from "./Layout.js";
 // Local configs
 const tableRows = Config.tableRows;
@@ -39,6 +39,7 @@ export class SelectCustomer {
             tableBody.innerHTML = tableLayoutTemplate.repeat(tableRows);
             // Exec functions
             this.load(tableBody, currentPage, customersArray);
+            new filterDataByHeaderType().filter();
             this.searchCustomer(tableBody, customersArray);
             // Rendering icons
         };
