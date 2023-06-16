@@ -582,12 +582,17 @@ export class Guards {
                     <div id="input-options" class="input_options">
                     </div>
                     </div>
-                    -->
 
                     <br><br><br>
                     <div class="material_input" style="display: none">
                     <input type="password" id="tempPass" >
                     <label for="tempPass">Contraseña</label>
+                    </div> -->
+                    <br>
+                    <div style="display:flex;justify-content:center">
+                        <img alt="Código QR ${data?.dni ?? ''}" id="qrcode">
+                        <br>
+                        <button id="btnDescargar">Descargar</button>
                     </div>
 
                 </div>
@@ -604,8 +609,28 @@ export class Guards {
             inputSelect('State', 'entity-state', data.state.name);
             //inputSelect('Department', 'entity-department');
             //inputSelect('Business', 'entity-business');
+            const qr = document.getElementById("qrcode");
+            // @ts-ignore
+            new QRious({
+                element: qr,
+                value: data.id,
+                size: 250,
+                backgroundAlpha: 1,
+                foreground: "#1D4C82FF",
+                level: "H", // Puede ser L,M,Q y H (L es el de menor nivel, H el mayor)
+            });
+            download(qr, data);
             this.close();
             UUpdate(entityID);
+        };
+        const download = (qr, data) => {
+            const btnDescargar = document.getElementById('btnDescargar');
+            btnDescargar.addEventListener('click', () => {
+                const enlace = document.createElement("a");
+                enlace.href = qr.src;
+                enlace.download = `Código QR ${data?.dni ?? ''}.png`;
+                enlace.click();
+            });
         };
         const UUpdate = async (entityId) => {
             const updateButton = document.getElementById('update-changes');
