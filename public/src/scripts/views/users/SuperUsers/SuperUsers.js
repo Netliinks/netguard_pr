@@ -376,7 +376,7 @@ export class SuperUsers {
                     const tableBody = document.getElementById('datatable-body');
                     const container = document.getElementById('entity-editor-container');
                     new CloseDialog().x(container);
-                    this.load(tableBody, currentPage, data);
+                    new SuperUsers().load(tableBody, currentPage, data);
                 }, 1000);
                 //setNewPassword();
             });
@@ -616,7 +616,7 @@ export class SuperUsers {
                       new CloseDialog()
                           .x(container =
                           document.getElementById('entity-editor-container'));
-                      this.load(tableBody
+                      new SuperUsers().load(tableBody
                           = document.getElementById('datatable-body'), currentPage, data);
                   }, 100);
               });

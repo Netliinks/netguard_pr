@@ -310,7 +310,7 @@ export class Customers {
                       new CloseDialog()
                           .x(container =
                           document.getElementById('entity-editor-container'));
-                      this.load(tableBody
+                      new Customers().load(tableBody
                           = document.getElementById('datatable-body'), currentPage, data);
                   }, 100);
               });

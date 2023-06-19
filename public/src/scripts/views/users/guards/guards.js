@@ -349,7 +349,7 @@ export class Guards {
                     const tableBody = document.getElementById('datatable-body');
                     const container = document.getElementById('entity-editor-container');
                     new CloseDialog().x(container);
-                    this.load(tableBody, currentPage, data);
+                    new Guards().load(tableBody, currentPage, data);
                 }, 1000);
             });
         };
@@ -661,15 +661,12 @@ export class Guards {
                 updateEntity('User', entityId, raw)
                     .then((res) => {
                     setTimeout(async () => {
-                        let tableBody;
-                        let container;
-                        let data;
-                        data = await getUsers();
+                        let tableBody = document.getElementById('datatable-body');
+                        let container = document.getElementById('entity-editor-container');
+                        let data = await getUsers();
                         new CloseDialog()
-                            .x(container =
-                            document.getElementById('entity-editor-container'));
-                        this.load(tableBody
-                            = document.getElementById('datatable-body'), currentPage, data);
+                            .x(container);
+                        new Guards().load(tableBody, currentPage, data);
                     }, 100);
                 });
             };

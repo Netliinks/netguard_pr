@@ -452,7 +452,7 @@ export class Employees {
                     const tableBody = document.getElementById('datatable-body');
                     const container = document.getElementById('entity-editor-container');
                     new CloseDialog().x(container);
-                    this.load(tableBody, currentPage, data);
+                    new Employees().load(tableBody, currentPage, data);
                 }, 1000);
             });
         };
@@ -818,7 +818,7 @@ export class Employees {
                         container = document.getElementById('entity-editor-container');
                         data = await getUsers();
                         new CloseDialog().x(container);
-                        this.load(tableBody, currentPage, data);
+                        new Employees().load(tableBody, currentPage, data);
                     }, 100);
                 });
             };
