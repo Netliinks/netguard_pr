@@ -1,8 +1,8 @@
 // @filename: Customers.ts
-import { deleteEntity, getEntitiesData, registerEntity, getUserInfo, getEntityData, updateEntity } from "../../endpoints.js";
+import { deleteEntity, getEntitiesData, registerEntity, getUserInfo, getEntityData, updateEntity, getFilterEntityData } from "../../endpoints.js";
 import { inputObserver, inputSelect, CloseDialog, filterDataByHeaderType } from "../../tools.js";
 import { Config } from "../../Configs.js";
-import { tableLayout } from "./Layout.js";
+import { tableLayout, UIContact } from "./Layout.js";
 import { tableLayoutTemplate } from "./Template.js";
 const tableRows = Config.tableRows;
 const currentPage = Config.currentPage;
@@ -79,12 +79,17 @@ export class Customers {
               <button class="button" id="edit-entity" data-entityId="${customer.id}">
                 <i class="fa-solid fa-pen"></i>
               </button>
+
+              <button class="button" id="convert-entity" data-entityId="${customer.id}">
+                <i class="fa-solid fa-shield"></i>
+            </button>
           </dt>
         `;
                 table.appendChild(row);
             }
         }
         this.register();
+        this.updateContact();
         this.edit(this.entityDialogContainer, data);
     }
     pagination(items, limitRows, currentPage) {
@@ -317,6 +322,91 @@ export class Customers {
           };
         };
     }
+    updateContact() {
+      const changeUser = document.querySelectorAll('#convert-entity');
+      changeUser.forEach((buttonKey) => {
+            buttonKey.addEventListener('click', async () => {
+                let entityId = buttonKey.dataset.entityid;
+                this.dialogContainer.style.display = 'block';
+                this.dialogContainer.innerHTML = UIContact;
+                inputObserver();
+                const _contactName= document.getElementById('entity-contact-name');
+                const _contactPhone = document.getElementById('entity-contact-phone');
+                const data = await getEntityData("Customer", entityId);
+                _contactName.value = data.contact?.name ?? "";
+                _contactPhone.value = data.contact?.phone ?? "";
+                const _updateContactButton = document.getElementById('update-contact');
+                const _closeButton = document.getElementById('cancel');
+                const _dialog = document.getElementById('dialog-content');
+                _updateContactButton.addEventListener('click', async () => {
+                    if (_contactName.value === '') {
+                        alert('El campo Nombre no puede estar vacío.');
+                    }
+                    else if (_contactPhone.value === '') {
+                        alert('El campo Teléfono no puede estar vacío.');
+                    }
+                    else if (data.contact?.id === '' || data.contact?.id === null || data.contact?.id === undefined) {
+                        let raw = JSON.stringify({
+                            "name": `${_contactName.value}`,
+                            "phone": `${_contactPhone.value}`
+                        });
+                        await registerEntity(raw, 'Contact')
+                            .then(() => {
+                            setTimeout(async () => {
+                              let rawSearch = JSON.stringify({
+                                "filter": {
+                                    "conditions": [
+                                        {
+                                            "property": "name",
+                                            "operator": "=",
+                                            "value": `${_contactName.value}`
+                                        },
+                                        {
+                                            "property": "phone",
+                                            "operator": "=",
+                                            "value": `${_contactPhone.value}`
+                                        }
+                                    ]
+                                }
+                              });
+                              let contactData = await getFilterEntityData("Contact", rawSearch);
+                              console.log(contactData);
+                              contactData.forEach(async (newContact) => {
+                                let rawCustomer = JSON.stringify({
+                                  "contact": {
+                                      "id": `${newContact.id}`
+                                  },
+                                });
+                                await updateEntity('Customer', entityId, rawCustomer)
+                                    .then(() => {
+                                    setTimeout(() => {
+                                        new CloseDialog().x(_dialog);
+                                    }, 1000);
+                                });
+                              });
+                            }, 1000);
+                        });
+
+                    }
+                    else {
+                      let raw = JSON.stringify({
+                        "name": `${_contactName.value}`,
+                        "phone": `${_contactPhone.value}`
+                      });
+                      await updateEntity('Contact', data.contact.id, raw)
+                          .then(() => {
+                          setTimeout(() => {
+                              new CloseDialog().x(_dialog);
+                          }, 1000);
+                      });
+                    }
+                });
+                _closeButton.onclick = () => {
+                    new CloseDialog().x(_dialog);
+                };
+            });
+        });
+  }
     close() {
         const closeButton = document.getElementById('close');
         const editor = document.getElementById('entity-editor-container');
