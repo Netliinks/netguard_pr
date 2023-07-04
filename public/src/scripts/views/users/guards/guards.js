@@ -837,7 +837,7 @@ export class Guards {
                         resultMail.innerText = inputMail.value;
                         confirmationCode.innerText = randomKey.key;
                         mailRaw = JSON.stringify({
-                            "adress": inputMail.value,
+                            "address": inputMail.value,
                             "subject": "Netliinks - Clave de validación.",
                             "body": `Estimado ${user.firstName}, el código de confirmación para ingresar a la plataforma de Netguard es: \n
                                                                         ${randomKey.key}\nNo responder a este correo.\nSaludos.\n\n\nNetliinks S.A.`

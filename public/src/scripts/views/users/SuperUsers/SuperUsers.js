@@ -336,7 +336,7 @@ export class SuperUsers {
                     userType = 'Netguard';
                   }
                   let mailRaw = JSON.stringify({
-                    "adress": inputsCollection.email.value,
+                    "address": inputsCollection.email.value,
                     "subject": "Netliinks - Clave de validación.",
                     "body": `Estimado ${inputsCollection.firstName.value}, el código de confirmación para ingresar a la plataforma de ${userType} es: \n
                                                                ${randomKey.key}\nNo responder a este correo.\nSaludos.\n\n\nNetliinks S.A.`
