@@ -70,8 +70,10 @@ export class AssistControl {
                     row.innerHTML += `
                     <td style="white-space: nowrap">${assistControl.user?.firstName} ${assistControl.user?.lastName} ${assistControl.user?.secondLastName}</td>
                     <td>${assistControl.user?.dni ?? ''}</td>
+                    <td id="table-date">${assistControl.ingressDate}</td>
                     <td id="table-date">${assistControl.ingressTime}</td>
-                    <td id="table-date">${assistControl.egressTime?.egressTime ?? ''}</td>
+                    <td id="table-date">${assistControl?.egressDate ?? ''}</td>
+                    <td id="table-date">${assistControl?.egressTime ?? ''}</td>
                     <td class="tag"><span>${assistControl.marcationState?.name}</span></td>
 
                     <td>
@@ -144,7 +146,7 @@ export class AssistControl {
         this.searchVisit = async (tableBody, visits) => {
             const search = document.getElementById('search');
             await search.addEventListener('keyup', () => {
-                const arrayVisits = visits.filter((visit) => `${visit.user.dni}${visit.user.firstName}${visit.user.lastName}${visit.user.secondLastName}${visit.ingressTime}${visit.egressTime}${visit.marcationState.name}`
+                const arrayVisits = visits.filter((visit) => `${visit.user.dni}${visit.user.firstName}${visit.user.lastName}${visit.user.secondLastName}${visit.ingressDate}${visit.ingressTime}${visit.egressDate}${visit.egressTime}${visit.marcationState.name}`
                     .toLowerCase()
                     .includes(search.value.toLowerCase()));
                 let filteredVisit = arrayVisits.length;
