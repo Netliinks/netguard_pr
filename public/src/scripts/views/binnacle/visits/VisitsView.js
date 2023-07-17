@@ -5,7 +5,7 @@
 //
 import { Config } from "../../../Configs.js";
 import { getEntityData, getEntitiesData, getUserInfo, getFilterEntityData, getFile } from "../../../endpoints.js";
-import { CloseDialog, drawTagsIntoTables, renderRightSidebar, filterDataByHeaderType, verifyUserType, inputObserver, generateCsv } from "../../../tools.js";
+import { CloseDialog, drawTagsIntoTables, renderRightSidebar, filterDataByHeaderType, verifyUserType, inputObserver } from "../../../tools.js";
 import { UIContentLayout, UIRightSidebar } from "./Layout.js";
 import { UITableSkeletonTemplate } from "./Template.js";
 import { exportVisitCsv, exportVisitPdf, exportVisitXls } from "../../../exportFiles/visits.js";

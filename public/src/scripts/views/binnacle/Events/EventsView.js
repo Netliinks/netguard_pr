@@ -1,7 +1,7 @@
 // @filename: EvetnsView.ts
 import { Config } from "../../../Configs.js";
 import { getEntityData, getEntitiesData, getUserInfo, getFilterEntityData, getFile } from "../../../endpoints.js";
-import { CloseDialog, renderRightSidebar, filterDataByHeaderType, inputObserver, generateCsv } from "../../../tools.js";
+import { CloseDialog, renderRightSidebar, filterDataByHeaderType, inputObserver } from "../../../tools.js";
 import { UIContentLayout, UIRightSidebar } from "./Layout.js";
 import { UITableSkeletonTemplate } from "./Template.js";
 import { exportEventCsv, exportEventPdf, exportEventXls } from "../../../exportFiles/events.js";
