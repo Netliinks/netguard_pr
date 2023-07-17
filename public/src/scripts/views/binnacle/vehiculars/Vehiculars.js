@@ -8,6 +8,7 @@ import { getEntityData, getEntitiesData, getUserInfo, getFilterEntityData } from
 import { CloseDialog, drawTagsIntoTables, renderRightSidebar, filterDataByHeaderType, inputObserver, generateCsv } from "../../../tools.js";
 import { UIContentLayout, UIRightSidebar } from "./Layout.js";
 import { UITableSkeletonTemplate } from "./Template.js";
+import { exportVehicularCsv, exportVehicularPdf, exportVehicularXls } from "../../../exportFiles/vehiculars.js";
 // Local configs
 const tableRows = Config.tableRows;
 let currentPage = Config.currentPage;
@@ -220,6 +221,18 @@ export class Vehiculars {
                                             <label class="form_label" for="end-date">Hasta:</label>
                                             <input type="date" class="input_date input_date-end" id="end-date" name="end-date">
                                         </div>
+
+                                        <label for="exportCsv">
+                                            <input type="radio" id="exportCsv" name="exportOption" value="csv" /> CSV
+                                        </label>
+
+                                        <label for="exportXls">
+                                            <input type="radio" id="exportXls" name="exportOption" value="xls" checked /> XLS
+                                        </label>
+
+                                        <label for="exportPdf">
+                                            <input type="radio" id="exportPdf" name="exportOption" value="pdf" /> PDF
+                                        </label>
                                     </div>
                                 </div>
 
@@ -251,35 +264,28 @@ export class Vehiculars {
                     const _values = {
                         start: document.getElementById('start-date'),
                         end: document.getElementById('end-date'),
+                        exportOption: document.getElementsByName('exportOption')
                     }
                     const vehiculars = await GetVehiculars();
-                    for(let i=0; i < vehiculars.length; i++){
-                        let vehicular = vehiculars[i]
-                        if(vehicular.ingressDate >= _values.start.value && vehicular.ingressDate <= _values.end.value){
-                            let obj = {
-                                "Placa": `${vehicular.licensePlate.split("\n").join("(salto)")}`,
-                                "Conductor": `${vehicular.driver.split("\n").join("(salto)")}`,
-                                "DNI": `${vehicular.dni}`,
-                                "Fecha Ingreso": `${vehicular.ingressDate}`,
-                                "Hora Ingreso": `${vehicular.ingressTime}`,
-                                "Emitido Ingreso": `${vehicular.ingressIssued.firstName} ${vehicular.ingressIssued.lastName}`,
-                                "Fecha Salida": `${vehicular.egressDate}`,
-                                "Hora Salida": `${vehicular.egressTime}`,
-                                "Emitido Salida": `${vehicular.egressIssued?.firstName} ${vehicular.egressIssued?.lastName}`,
-                                "Producto": `${vehicular.product.split("\n").join("(salto)")}`,
-                                "Nro Guía": `${vehicular.nroGuide.split("\n").join("(salto)")}`,
-                                "Proveedor": `${vehicular.supplier.split("\n").join("(salto)")}`,
-                                "Tipo": `${vehicular.type.split("\n").join("(salto)")}`,
-                                "Estado": `${vehicular.visitState.name}`,
-                                "Encargado Diurno": `${vehicular.dayManager.split("\n").join("(salto)")}`,
-                                "Encargado Nocturno": `${vehicular.nightManager.split("\n").join("(salto)")}`,
-                                "Observación": `${vehicular.observation.split("\n").join("(salto)")}`,
-                              }
-                              rows.push(obj);
+                    for (let i = 0; i < _values.exportOption.length; i++) {
+                        let ele = _values.exportOption[i];
+                        if (ele.type = "radio") {
+                            if (ele.checked) {
+                                if (ele.value == "xls") {
+                                    // @ts-ignore
+                                    exportVehicularXls(vehiculars, _values.start.value, _values.end.value);
+                                }
+                                else if (ele.value == "csv") {
+                                    // @ts-ignore
+                                    exportVehicularCsv(vehiculars, _values.start.value, _values.end.value);
+                                }
+                                else if (ele.value == "pdf") {
+                                    // @ts-ignore
+                                    exportVehicularPdf(vehiculars, _values.start.value, _values.end.value);
+                                }
+                            }
                         }
-                        
                     }
-                    generateCsv(rows, "Ingreso_Vehicular");
                     
                     
                 });
