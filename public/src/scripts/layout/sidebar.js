@@ -7,7 +7,7 @@ import { Visits } from "../views/binnacle/visits/VisitsView.js";
 import { Employees } from "../views/users/employees/employees.js";
 // @ts-ignore
 import { Contractors } from "../views/users/contractors/Contractors.js";
-import { AssistControl } from "../views/binnacle/assistcontrol/AssistControl.js";
+import { AssistControl } from "../views/attendance/assistcontrol/AssistControl.js";
 import { Departments } from "../views/departments/Departments.js";
 import { Customers } from "../views/customers/Customers.js";
 import { SuperUsers } from "../views/users/SuperUsers/SuperUsers.js";
@@ -113,12 +113,6 @@ export class Sidebar {
                   </span>
                 </div>
 
-                <div class="sidebar_subitem" id="render-assistControl">
-                  <span class="sidebar_subitem_label">
-                    <i class="fa-regular fa-marker"></i> <div class="label">Control de<br> asistencia</div>
-                  </span>
-                </div>
-
                 <div class="sidebar_subitem" id="render-events">
                   <span class="sidebar_subitem_label">
                     <i class="fa-regular fa-megaphone"></i> <div class="label">Eventos</div>
@@ -149,6 +143,22 @@ export class Sidebar {
               <span class="sidebar_item_label">
                 <i class="fa-regular fa-shield"></i> <div class="label">Superusuarios</div>
               </span>
+            </div>
+
+            <div class="sidebar_item">
+              <span class="sidebar_item_label">
+              <i class="fa-regular fa-calendar"></i></i> <div class="label">Asistencia</div>
+              </span>
+
+              <div class="sidebar_subitems">
+
+                <div class="sidebar_subitem" id="render-assistControl">
+                  <span class="sidebar_subitem_label">
+                    <i class="fa-regular fa-marker"></i> <div class="label">Control de<br> asistencia</div>
+                  </span>
+                </div>
+
+              </div>
             </div>
           </div>
         </div>
