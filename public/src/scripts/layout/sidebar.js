@@ -15,6 +15,7 @@ import { Events } from "../views/binnacle/Events/EventsView.js";
 import { Vehiculars } from "../views/binnacle/vehiculars/Vehiculars.js";
 import { Binnacle } from "../views/binnacle/binnacle/BinnacleView.js";
 import { Blacklist } from "../views/users/blacklist/blacklist.js";
+import { AssistGestion } from "../views/attendance/assistgestion/AssistGestion.js";
 export class Sidebar {
   constructor() {
       this.sidebarContainer = document.getElementById('app-sidebar');
@@ -154,7 +155,13 @@ export class Sidebar {
 
                 <div class="sidebar_subitem" id="render-assistControl">
                   <span class="sidebar_subitem_label">
-                    <i class="fa-regular fa-marker"></i> <div class="label">Control de<br> asistencia</div>
+                    <i class="fa-regular fa-marker"></i> <div class="label">Control</div>
+                  </span>
+                </div>
+
+                <div class="sidebar_subitem" id="render-assistGestion">
+                  <span class="sidebar_subitem_label">
+                    <i class="fa-regular fa-list-alt"></i> <div class="label">Gestión</div>
                   </span>
                 </div>
 
@@ -211,6 +218,10 @@ renders() {
     document.getElementById('render-assistControl')?.addEventListener('click', () => {
         new AssistControl().render();
     });
+    // render AssistControl
+    document.getElementById('render-assistGestion')?.addEventListener('click', () => {
+      new AssistGestion().render();
+  });
     // render AssistControl
     document.getElementById('render-events')?.addEventListener('click', () => {
         new Events().render();
