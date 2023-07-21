@@ -8,7 +8,7 @@ import { getEntityData, getEntitiesData, getUserInfo, getFilterEntityData, getFi
 import { CloseDialog, drawTagsIntoTables, renderRightSidebar, filterDataByHeaderType, inputObserver, verifyUserType } from "../../../tools.js";
 import { UIContentLayout, UIRightSidebar } from "./Layout.js";
 import { UITableSkeletonTemplate } from "./Template.js";
-import { exportMarcationsCsv, exportMarcationsPdf, exportMarcationsXls } from "../../../exportFiles/marcations.js";
+import { exportMarcationsCsv, exportMarcationsPdf, exportMarcationsXls } from "../../../exportFiles/marcations2.js";
 // Local configs
 const tableRows = Config.tableRows;
 let currentPage = Config.currentPage;
@@ -36,7 +36,7 @@ const GetAssistControl = async () => {
             //console.log(objects.length)
             let valueMax = []
             objects.map(element => {
-                if(element.marcationState.name == 'Finalizado'){
+                if(element.marcationState.name == 'Finalizado' && (element.egressTime != '' || element.egressTime != null || element.egressTime != undefined)){
                     valueMax.push(element)
                 }
                 
@@ -104,7 +104,7 @@ export class AssistGestion {
             this.searchVisit(tableBody, assistControlArray);
             new filterDataByHeaderType().filter();
             this.pagination(assistControlArray, tableRows, currentPage);
-            //this.export();
+            this.export();
             // Rendering icons
         };
         this.load = (tableBody, currentPage, assistControl) => {
@@ -331,7 +331,7 @@ export class AssistGestion {
                 date.innerText = separateDateAndTime[0];
             });
         };
-        /*this.export = () => {
+        this.export = () => {
             const exportNotes = document.getElementById('export-entities');
             exportNotes.addEventListener('click', async() => {
                 this.dialogContainer.style.display = 'block';
@@ -425,6 +425,6 @@ export class AssistGestion {
                     new CloseDialog().x(_dialog);
                 };
             });
-        };*/
+        };
     }
 }
