@@ -299,6 +299,30 @@ export const getVerifyEmail = async (email) => {
     }
     return value;
 };
+export const getVerifyUsername = async (username) => {
+    let value = "none";
+    //console.log(email.includes("@"))
+    if (username != '') {
+        /*const users = await getEntitiesData('User');
+        const data = users.filter((data) => `${data.email}`.includes(`${email}`));*/
+        let raw = JSON.stringify({
+            "filter": {
+                "conditions": [
+                    {
+                        "property": "username",
+                        "operator": "=",
+                        "value": `${username}`
+                    }
+                ]
+            }
+        });
+        let data = await getFilterEntityData("User", raw);
+        if (data.length != 0) {
+            value = `${verifyUserType(data[0].userType)}`;
+        }
+    }
+    return value;
+};
 export const registryPlataform = async (id) => {
     let platUser = await getEntityData('User', id);
     const _date = new Date();

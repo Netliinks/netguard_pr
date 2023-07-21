@@ -1,6 +1,6 @@
 // @filename: Contractors.ts
 import { deleteEntity, getEntitiesData, getEntityData, registerEntity, setPassword, setUserRole, updateEntity, getUserInfo, getFilterEntityData } from "../../../endpoints.js";
-import { drawTagsIntoTables, inputObserver, inputSelect, CloseDialog, getVerifyEmail, filterDataByHeaderType } from "../../../tools.js";
+import { drawTagsIntoTables, inputObserver, inputSelect, CloseDialog, getVerifyEmail, filterDataByHeaderType, getVerifyUsername } from "../../../tools.js";
 import { Config } from "../../../Configs.js";
 import { tableLayout } from "./Layout.js";
 import { tableLayoutTemplate } from "./Templates.js";
@@ -409,11 +409,15 @@ export class Contractors {
                     "userType": "CONTRACTOR",
                     "username": `${_values.username.value}@${currentCustomer.name.toLowerCase().replace(/\s+/g, '')}.com`,
                 });
+                const existUsername = await getVerifyUsername(`${_values.username.value}@${currentUserInfo.customer.name.toLowerCase().replace(/\s+/g, '')}.com`);
                 /*const existEmail = await getVerifyEmail(_values.email.value);
                 if(existEmail == true){
                     alert("¡Correo electrónico ya existe!");
                 }else */
-                if (_values.firstName.value === '' || _values.firstName.value === undefined) {
+                if (existUsername != "none") {
+                    alert("¡Usuario ya existe, es tipo " + existUsername + "!");
+                }
+                else if (_values.firstName.value === '' || _values.firstName.value === undefined) {
                     alert("¡Nombre vacío!");
                 }
                 else if (_values.lastName.value === '' || _values.lastName.value === undefined) {
