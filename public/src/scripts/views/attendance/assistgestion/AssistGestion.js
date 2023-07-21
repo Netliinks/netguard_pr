@@ -20,7 +20,7 @@ const GetAssistControl = async () => {
         let objDate = {}
         let arrayAssist= []
         assistControl.forEach((marcation) => {
-            let date = marcation.ingressDate+" "+marcation.user.username
+            let date = marcation.ingressDate+" "+marcation.user?.username ?? ''
             if (objDate[date]) {
                 objDate[date].push(marcation);
             } else {
