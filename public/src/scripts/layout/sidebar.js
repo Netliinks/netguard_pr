@@ -16,6 +16,7 @@ import { Vehiculars } from "../views/binnacle/vehiculars/Vehiculars.js";
 import { Binnacle } from "../views/binnacle/binnacle/BinnacleView.js";
 import { Blacklist } from "../views/users/blacklist/blacklist.js";
 import { AssistGestion } from "../views/attendance/assistgestion/AssistGestion.js";
+import { Schedules } from "../views/attendance/schedules/Schedules.js";
 export class Sidebar {
   constructor() {
       this.sidebarContainer = document.getElementById('app-sidebar');
@@ -165,6 +166,12 @@ export class Sidebar {
                   </span>
                 </div>
 
+                <div class="sidebar_subitem" id="render-schedules">
+                  <span class="sidebar_subitem_label">
+                    <i class="fa-regular fa-clock"></i> <div class="label">Horarios</div>
+                  </span>
+                </div>
+
               </div>
             </div>
           </div>
@@ -221,6 +228,10 @@ renders() {
     // render AssistControl
     document.getElementById('render-assistGestion')?.addEventListener('click', () => {
       new AssistGestion().render();
+  });
+    // render AssistControl
+    document.getElementById('render-schedules')?.addEventListener('click', () => {
+      new Schedules().render();
   });
     // render AssistControl
     document.getElementById('render-events')?.addEventListener('click', () => {
