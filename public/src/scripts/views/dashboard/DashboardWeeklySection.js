@@ -20,15 +20,14 @@ export const renderWeeklyChart = async () => {
     const _month1 = _date1.getMonth() + 1;
     const _year1 = _date1.getFullYear();
     const fchDesde = `${_year1}-${('0' + _month1).slice(-2)}-${('0' + _day1).slice(-2)}`;
-    let _userInfo = await getUserInfo();
-    let currentUserInfo = await getEntityData('User', `${_userInfo.attributes.id}`);
+    const customerId = localStorage.getItem('customer_id');
     let raw = JSON.stringify({
         "filter": {
             "conditions": [
                 {
                     "property": "customer.id",
                     "operator": "=",
-                    "value": `${currentUserInfo.customer.id}`
+                    "value": `${customerId}`
                 },
                 {
                     "property": "creationDate",
