@@ -15,6 +15,8 @@ import { Events } from "../views/binnacle/Events/EventsView.js";
 import { Vehiculars } from "../views/binnacle/vehiculars/Vehiculars.js";
 import { Binnacle } from "../views/binnacle/binnacle/BinnacleView.js";
 import { Blacklist } from "../views/users/blacklist/blacklist.js";
+import { Locations } from "../views/attendance/locations/Locations.js";
+import { Schedules } from "../views/attendance/schedules/Schedules.js";
 export class Sidebar {
   constructor() {
       this.sidebarContainer = document.getElementById('app-sidebar');
@@ -150,6 +152,29 @@ export class Sidebar {
                 <i class="fa-regular fa-shield"></i> <div class="label">Superusuarios</div>
               </span>
             </div>
+            
+            <div class="sidebar_item">
+              <span class="sidebar_item_label">
+              
+              <i class="fa-regular fa-clipboard-user"></i> <div class="label">Asistencia</div>
+              </span>
+
+              <div class="sidebar_subitems">
+                <div class="sidebar_subitem" id="render-location">
+                  <span class="sidebar_subitem_label">
+                    <i class="fa-regular fa-location-dot"></i> <div class="label">Ubicaciones</div>
+                  </span>
+                </div>
+
+                <div class="sidebar_subitem" id="render-schedule">
+                  <span class="sidebar_subitem_label">
+                    <i class="fa-regular fa-clock"></i> <div class="label">Horarios</div>
+                  </span>
+                </div>
+
+                
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -217,6 +242,14 @@ renders() {
     document.getElementById('render-superusers')?.addEventListener('click', () => {
         new SuperUsers().render();
     });
+    // render Locations
+    document.getElementById('render-location')?.addEventListener('click', () => {
+        new Locations().render();
+    });
+    // render Schedules
+    document.getElementById('render-schedule')?.addEventListener('click', () => {
+      new Schedules().render();
+  });
   }
 }
 // new Clients().render()

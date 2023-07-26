@@ -48,7 +48,9 @@ export const tableLayout = `
       <th><span data-type="citadel">
         Ciudadela <i class="fa-regular fa-filter"></i>
       </span></th>
-
+      <th><span data-type="asistencia">
+        Asistencia <i class="fa-regular fa-filter"></i>
+      </span></th>
       <th class="header_filled"></th>
 
     </tr></thead>
