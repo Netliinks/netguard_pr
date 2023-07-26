@@ -11,15 +11,14 @@ export const renderMonthlyChart = async () => {
     const _date = new Date();
     // DATE
     const _month = _date.getMonth() + 1;
-    let _userInfo = await getUserInfo();
-    let currentUserInfo = await getEntityData('User', `${_userInfo.attributes.id}`);
+    const customerId = localStorage.getItem('customer_id');
     let raw = JSON.stringify({
         "filter": {
             "conditions": [
                 {
                     "property": "customer.id",
                     "operator": "=",
-                    "value": `${currentUserInfo.customer.id}`
+                    "value": `${customerId}`
                 },
                 {
                     "property": "creationMonth",

@@ -15,15 +15,14 @@ export const renderDailyChart = async () => {
     const _month = _date.getMonth() + 1;
     const _year = _date.getFullYear();
     const date = `${_year}-${('0' + _month).slice(-2)}-${('0' + _day).slice(-2)}`;
-    let _userInfo = await getUserInfo();
-    let currentUserInfo = await getEntityData('User', `${_userInfo.attributes.id}`);
+    const customerId = localStorage.getItem('customer_id');
     let raw = JSON.stringify({
         "filter": {
             "conditions": [
                 {
                     "property": "customer.id",
                     "operator": "=",
-                    "value": `${currentUserInfo.customer.id}`
+                    "value": `${customerId}`
                 },
                 {
                     "property": "creationDate",

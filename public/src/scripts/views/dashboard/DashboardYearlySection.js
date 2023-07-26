@@ -10,15 +10,14 @@ export const renderYearlyChart = async () => {
     const chart = document.getElementById('yearly-chart');
     const _date = new Date();
     const _year = _date.getFullYear();
-    let _userInfo = await getUserInfo();
-    let currentUserInfo = await getEntityData('User', `${_userInfo.attributes.id}`);
+    const customerId = localStorage.getItem('customer_id');
     let raw = JSON.stringify({
         "filter": {
             "conditions": [
                 {
                     "property": "customer.id",
                     "operator": "=",
-                    "value": `${currentUserInfo.customer.id}`
+                    "value": `${customerId}`
                 },
                 {
                     "property": "creationYear",

@@ -124,6 +124,7 @@ export class SuperUsers {
           <td class="key"><button class="button" data-userid="${client.id}" id="change-user-password"><i class="fa-regular fa-key"></i></button></td>
           <td>${verifyUserType(client.userType)}</td>
           <td class="tag"><span>${client.state.name}</span></td>
+          <td>${client.verifiedSuper ? 'Si' : 'No'}</td>
 
           <td class="entity_options">
             <button class="button" id="edit-entity" data-entityId="${client.id}">
