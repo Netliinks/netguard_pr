@@ -593,6 +593,7 @@ table button:hover {
   padding: 150px 32px 137px 32px;
   overflow-y: scroll;
   height: 100%;
+  width: 400px !important;
 }
 .entity_editor_footer {
   display: block;

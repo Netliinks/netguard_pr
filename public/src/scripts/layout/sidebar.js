@@ -17,6 +17,7 @@ import { Binnacle } from "../views/binnacle/binnacle/BinnacleView.js";
 import { Blacklist } from "../views/users/blacklist/blacklist.js";
 import { AssistGestion } from "../views/attendance/assistgestion/AssistGestion.js";
 import { Schedules } from "../views/attendance/schedules/Schedules.js";
+import { Locations } from "../views/attendance/locations/Locations.js";
 export class Sidebar {
   constructor() {
       this.sidebarContainer = document.getElementById('app-sidebar');
@@ -172,6 +173,12 @@ export class Sidebar {
                   </span>
                 </div>
 
+                <div class="sidebar_subitem" id="render-location">
+                  <span class="sidebar_subitem_label">
+                    <i class="fa-regular fa-location-dot"></i> <div class="label">Ubicaciones</div>
+                  </span>
+                </div>
+
               </div>
             </div>
           </div>
@@ -232,6 +239,10 @@ renders() {
     // render AssistControl
     document.getElementById('render-schedules')?.addEventListener('click', () => {
       new Schedules().render();
+  });
+  // render Locations
+    document.getElementById('render-location')?.addEventListener('click', () => {
+      new Locations().render();
   });
     // render AssistControl
     document.getElementById('render-events')?.addEventListener('click', () => {
