@@ -81,13 +81,13 @@ export class Employees {
             });
             secondLastName.addEventListener('keyup', (e) => {
                 _fragmentThree = secondLastName.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-                if (secondLastName.value.length > 0) {
-                    _fragmentOne[0];
+                //if (secondLastName.value.length > 0) {
+                //    _fragmentOne[0];
                     userName.setAttribute('value', `${_fragmentOne}.${_fragmentTwo}${_fragmentThree[0]}`);
-                }
-                else {
-                    userName.setAttribute('value', `${_fragmentOne}.${_fragmentTwo}${_fragmentThree}`);
-                }
+                //}
+                //else {
+                //    userName.setAttribute('value', `${_fragmentOne}.${_fragmentTwo}${_fragmentThree}`);
+                //}
             });
         };
     }
@@ -633,7 +633,7 @@ export class Employees {
                         id="entity-dni"
                         class="input_filled"
                         maxlength="10"
-                        value="${data?.dni ?? ''}" readonly>
+                        value="${data?.dni ?? ''}">
                     <label for="entity-dni">Cédula</label>
                     </div>
 
@@ -770,19 +770,20 @@ export class Employees {
         const updateEmployee = async (employeeId) => {
             let updateButton;
             updateButton = document.getElementById('update-changes');
-            const _values = {
-                //firstName: document.getElementById('entity-firstname'),
-                //lastName: document.getElementById('entity-lastname'),
-                //secondLastName: document.getElementById('entity-secondlastname'),
-                phone: document.getElementById('entity-phone'),
-                status: document.getElementById('entity-state'),
-                //department: document.getElementById('entity-department'),
-                ingressHour: document.getElementById('start-time'),
-                turnChange: document.getElementById('end-time'),
-                allowVisits: document.getElementById('allow-visits'),
-                email: document.getElementById('entity-email'),
-            };
             updateButton.addEventListener('click', async() => {
+                const _values = {
+                    //firstName: document.getElementById('entity-firstname'),
+                    //lastName: document.getElementById('entity-lastname'),
+                    //secondLastName: document.getElementById('entity-secondlastname'),
+                    phone: document.getElementById('entity-phone'),
+                    dni: document.getElementById('entity-dni'),
+                    status: document.getElementById('entity-state'),
+                    //department: document.getElementById('entity-department'),
+                    ingressHour: document.getElementById('start-time'),
+                    turnChange: document.getElementById('end-time'),
+                    allowVisits: document.getElementById('allow-visits'),
+                    //email: document.getElementById('entity-email'),
+                };
                 let employeeRaw = JSON.stringify({
                     //"lastName": `${_values.lastName.value}`,
                     //"secondLastName": `${_values.secondLastName.value}`,
@@ -797,8 +798,9 @@ export class Employees {
                     "ingressHour": `${_values.ingressHour.value}`,
                     "turnChange": `${_values.turnChange.value}`,
                     "createVisit": `${_values.allowVisits.checked ? true : false}`,
-                    "email": `${_values.email.value}`,
+                    //"email": `${_values.email.value}`,
                     "phone": `${_values.phone.value}`,
+                    "dni": `${_values.dni.value}`,
                 });
                 /*const existEmail = await getVerifyEmail(_values.email.value);
                 if(existEmail == true){
@@ -806,7 +808,11 @@ export class Employees {
                 }else{
                     update(employeeRaw);;
                 } */
-                update(employeeRaw);
+                if (_values.dni.value === '' || _values.dni.value === undefined) {
+                    alert("DNI vacío!");
+                }else{
+                    update(employeeRaw);
+                }
             });
             /**
              * Update entity and execute functions to finish defying user
