@@ -373,7 +373,7 @@ export class Blacklist {
                                     <i class="fa-solid fa-file-csv"></i>
                                     <div class="description">
                                         <p class="filename">Plantilla de Lista Negra</p>
-                                        <a href="./public/src/templates/NetguardBlackList.csv" download="./public/src/templates/NetguardContractors.csv" rel="noopener" target="_self" class="filelink">Descargar</a>
+                                        <a href="./public/src/templates/NetguardBlackList.csv" download="./public/src/templates/NetguardBlackList.csv" rel="noopener" target="_self" class="filelink">Descargar</a>
                                     </div>
                                 </div>
                             </div>
