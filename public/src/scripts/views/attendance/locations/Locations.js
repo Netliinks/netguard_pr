@@ -136,8 +136,8 @@ export class Locations {
           <div class="fila" style="display: flex">
             <div class="elemento" style ="flex: 1;">
               <div  style="padding-bottom:20px"> 
-              <input id="pac-input" class="controls pac-target-input" type="text" placeholder="Buscar" autocomplete="off">
-                <button id="obtCords">Obtener Coordenadas</button>
+              <input id="pac-input" class="controls pac-target-input" type="text" placeholder="Ciudad, lugar o calle" autocomplete="off">
+                <button id="obtCords">Buscar</button>
               </div>
               <div id="map" style="height: 400px;width: 600px">
               </div>
@@ -169,7 +169,7 @@ export class Locations {
       `;
             // @ts-ignore
             inputObserver();
-            this.initAutocomplete(-2.186790330550842, -79.8948977850493);
+            initAutocomplete(-2.186790330550842, -79.8948977850493, 13);
             this.close();
             const registerButton = document.getElementById('register-entity');
             registerButton.addEventListener('click', () => {
@@ -203,14 +203,58 @@ export class Locations {
                 if (status === google.maps.GeocoderStatus.OK) {
                     var latitud = results[0].geometry.location.lat();
                     var longitud = results[0].geometry.location.lng();
-                    //initAutocomplete(latitud, longitud)
-                    console.log('Latitud: ' + latitud);
-                    console.log('Longitud: ' + longitud);
+                    //console.log('Latitud: ' + latitud);
+                    //console.log('Longitud: ' + longitud);
+                    initAutocomplete(latitud, longitud, 20);
                 } else {
-                    console.log('Geocodificación fallida: ' + status);
+                    //console.log('Geocodificación fallida: ' + status);
+                    alert("No encontrado "+status);
                 }
                 });
             });
+            async function initAutocomplete(lat, lng, zoom) {
+              //var map = new google.maps.Map(document.getElementById('map'), {
+              var marker1;
+              const { Map } = await google.maps.importLibrary("maps");
+
+              var map = new Map(document.getElementById("map"), {
+                center: {
+                  lat: lat,
+                  lng: lng
+                },
+                zoom: zoom,
+                mapTypeId: 'hybrid'
+              });
+      
+               // Create the search box and link it to the UI element.
+              var input = document.getElementById('pac-input');
+              console.log(input);
+              var searchBox = new google.maps.places.SearchBox(input);       
+              //map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+      
+                // Bias the SearchBox results towards current map's viewport.
+                map.addListener('bounds_changed', function() {
+                    searchBox.setBounds(map.getBounds());
+                });
+                map.addListener('click', function(event) {
+                    let location = event.latLng;
+                    if (marker1) {
+                        marker1.setPosition(location);
+                      } else {
+                        marker1 = new google.maps.Marker({
+                            position: location,
+                            map: map,
+                            title: 'Mi marcador'
+                        });
+                      }
+                      
+                      var latitud = location.lat();
+                      var longitud = location.lng();
+                      //console.log('Latitud2: ' + latitud);
+                      //console.log('Longitud2: ' + longitud)
+            
+                });
+          }  
         };
         
 
@@ -366,99 +410,6 @@ export class Locations {
             new CloseDialog().x(editor);
         });
     }
-    async initAutocomplete(lat, lng) {
-        //var map = new google.maps.Map(document.getElementById('map'), {
-        var map;
-        var marker1;
-        const { Map } = await google.maps.importLibrary("maps");
-
-          map = new Map(document.getElementById("map"), {
-          center: {
-            lat: lat,
-            lng: lng
-          },
-          zoom: 13,
-          mapTypeId: 'roadmap'
-        });
-
-         // Create the search box and link it to the UI element.
-        var input = document.getElementById('pac-input');
-        console.log(input);
-        var searchBox = new google.maps.places.SearchBox(input);       
-        //map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-
-          // Bias the SearchBox results towards current map's viewport.
-          map.addListener('bounds_changed', function() {
-              searchBox.setBounds(map.getBounds());
-          });
-          map.addListener('click', function(event) {
-              //marker1.setMap(null)
-              //marker2.setMap(null)
-              //console.log(marker1)
-              //console.log(marker2)
-              //console.log(event.latLng)
-              //placeMarker(event.latLng);
-              let location = event.latLng;
-              if (marker1) {
-                marker1.setPosition(location);
-                } else {
-                marker1 = new google.maps.Marker({
-                    position: location,
-                    map: map,
-                    title: 'Mi marcador'
-                });
-                
-                
-                }
-                
-                var latitud = location.lat();
-                var longitud = location.lng();
-                console.log('Latitud2: ' + latitud);
-                console.log('Longitud2: ' + longitud)
-      
-          });
-
-          /*var markers = [];
-          // Listen for the event fired when the user selects a prediction and retrieve
-          // more details for that place.
-          searchBox.addListener('places_changed', function() {
-          var places = searchBox.getPlaces();
-
-          if (places.length == 0) {
-              return;
-          }
-
-          // Clear out the old markers.
-          markers.forEach(function(marker) {
-              marker.setMap(null);
-          });
-          markers = [];
-
-          // For each place, get the icon, name and location.
-          var bounds = new google.maps.LatLngBounds();
-          places.forEach(function(place) {
-              if (!place.geometry) {
-              console.log("Returned place contains no geometry");
-              return;
-              }
-
-              // Create a marker for each place.
-              markers.push(new google.maps.Marker({
-              map: map,
-              title: place.name,
-              position: place.geometry.location
-              }));
-
-              if (place.geometry.viewport) {
-              // Only geocodes have viewport.
-              bounds.union(place.geometry.viewport);
-              } else {
-              bounds.extend(place.geometry.location);
-              }
-          });
-          map.fitBounds(bounds);
-          });*/
-    }  
 
     /*placeMarker(location) {
         if (marker1) {
