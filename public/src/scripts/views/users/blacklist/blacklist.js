@@ -1,5 +1,5 @@
 // @filename: Blacklist.ts
-import { deleteEntity, getEntitiesData, getEntityData, registerEntity, setPassword, setUserRole, updateEntity, getUserInfo, getFilterEntityData } from "../../../endpoints.js";
+import { deleteEntity, getEntityData, registerEntity, updateEntity, getFilterEntityData } from "../../../endpoints.js";
 import { drawTagsIntoTables, inputObserver, inputSelect, CloseDialog, filterDataByHeaderType } from "../../../tools.js";
 import { Config } from "../../../Configs.js";
 import { tableLayout } from "./Layout.js";
@@ -8,10 +8,25 @@ import { exportBlackListCsv, exportBlackListPdf, exportBlackListXls } from "../.
 const tableRows = Config.tableRows;
 const currentPage = Config.currentPage;
 const customerId = localStorage.getItem('customer_id');
+let dataPage;
 const getUsers = async () => {
-    const users = await getEntitiesData('BlacklistedUser');
-    const FCustomer = users.filter((data) => `${data.customer?.id}` === `${customerId}`);
-    return FCustomer;
+    //const users = await getEntitiesData('BlacklistedUser');
+    //const FCustomer = users.filter((data) => `${data.customer?.id}` === `${customerId}`);
+    let raw = JSON.stringify({
+        "filter": {
+            "conditions": [
+                {
+                    "property": "customer.id",
+                    "operator": "=",
+                    "value": `${customerId}`
+                }
+            ],
+        },
+        sort: "-createdDate",
+        fetchPlan: 'full',
+    });
+    dataPage = await getFilterEntityData("BlacklistedUser", raw);
+    return dataPage;
 };
 export class Blacklist {
     constructor() {
@@ -472,7 +487,7 @@ export class Blacklist {
                     const _values = {
                         exportOption: document.getElementsByName('exportOption')
                     };
-                    const users = await getUsers();
+                    const users = dataPage; //await getUsers();
                     for (let i = 0; i < _values.exportOption.length; i++) {
                         let ele = _values.exportOption[i];
                         if (ele.type = "radio") {

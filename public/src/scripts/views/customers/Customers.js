@@ -1,5 +1,5 @@
 // @filename: Customers.ts
-import { deleteEntity, getEntitiesData, registerEntity, getUserInfo, getEntityData, updateEntity, getFilterEntityData } from "../../endpoints.js";
+import { registerEntity, getUserInfo, getEntityData, updateEntity, getFilterEntityData } from "../../endpoints.js";
 import { inputObserver, inputSelect, CloseDialog, filterDataByHeaderType } from "../../tools.js";
 import { Config } from "../../Configs.js";
 import { tableLayout, UIContact } from "./Layout.js";
@@ -15,9 +15,20 @@ const currentBusiness = async() => {
 
 const getCustomers = async () => {
     const currentUser = await currentBusiness();
-    const customer = await getEntitiesData('Customer');
-    const FCustomer = customer.filter((data) => data.business.id === `${currentUser.business.id}`);
-    return FCustomer;
+    let raw = JSON.stringify({
+      "filter": {
+          "conditions": [
+              {
+                  "property": "business.id",
+                  "operator": "=",
+                  "value": `${currentUser.business.id}`
+              }
+          ],
+      },
+      sort: "-createdDate",
+      fetchPlan: 'full',
+  });
+  return await getFilterEntityData("Customer", raw);
 };
 export class Customers {
     constructor() {

@@ -1,6 +1,6 @@
 // @filename: EvetnsView.ts
 import { Config } from "../../../Configs.js";
-import { getEntityData, getEntitiesData, getUserInfo, getFilterEntityData, getFile } from "../../../endpoints.js";
+import { getEntityData, getFilterEntityData, getFile } from "../../../endpoints.js";
 import { CloseDialog, renderRightSidebar, filterDataByHeaderType, inputObserver } from "../../../tools.js";
 import { UIContentLayout, UIRightSidebar } from "./Layout.js";
 import { UITableSkeletonTemplate } from "./Template.js";
@@ -10,14 +10,44 @@ const tableRows = Config.tableRows;
 let currentPage = Config.currentPage;
 const pageName = 'Eventos';
 const customerId = localStorage.getItem('customer_id');
+let dataPage;
 const getEvents = async () => {
-    const eventsRaw = await getEntitiesData('Notification');
+    /*const eventsRaw = await getEntitiesData('Notification');
     const events = eventsRaw.filter((data) => data.customer?.id === `${customerId}`);
     // notificationType.name
     const removeVisitsFromList = events.filter((data) => data.notificationType.name !== "Visita");
     const removeVehicularFromList = removeVisitsFromList.filter((data) => data.notificationType.name !== 'Vehicular');
-    const removeNoteFromList = removeVehicularFromList.filter((data) => data.notificationType.name !== 'Nota');
-    return removeNoteFromList;
+    const removeNoteFromList = removeVehicularFromList.filter((data) => data.notificationType.name !== 'Nota');*/
+    let raw = JSON.stringify({
+        "filter": {
+            "conditions": [
+                {
+                    "property": "customer.id",
+                    "operator": "=",
+                    "value": `${customerId}`
+                },
+                {
+                    "property": "notificationType.name",
+                    "operator": "<>",
+                    "value": `Visita`
+                },
+                {
+                    "property": "notificationType.name",
+                    "operator": "<>",
+                    "value": `Vehicular`
+                },
+                {
+                    "property": "notificationType.name",
+                    "operator": "<>",
+                    "value": `Nota`
+                }
+            ],
+        },
+        sort: "-createdDate",
+        fetchPlan: 'full',
+    });
+    dataPage = await getFilterEntityData("Notification", raw);
+    return dataPage;
 };
 export class Events {
     constructor() {
@@ -220,7 +250,7 @@ export class Events {
                         end: document.getElementById('end-date'),
                         exportOption: document.getElementsByName('exportOption')
                     }
-                    const events = await getEvents();
+                    const events = dataPage; //await getEvents();
                     for (let i = 0; i < _values.exportOption.length; i++) {
                         let ele = _values.exportOption[i];
                         if (ele.type = "radio") {

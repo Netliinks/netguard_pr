@@ -1,5 +1,5 @@
 // @filename: SuperUsers.ts
-import { deleteEntity, getEntitiesData, getEntityData, registerEntity, setPassword, setUserRole, updateEntity, getUserInfo, sendMail, getFilterEntityData } from "../../../endpoints.js";
+import { deleteEntity, getEntityData, registerEntity, setPassword, setUserRole, updateEntity, getUserInfo, sendMail, getFilterEntityData } from "../../../endpoints.js";
 import { drawTagsIntoTables, inputObserver, inputSelect, inputSelectType, CloseDialog, filterDataByHeaderType, verifyUserType, getVerifyEmail, getVerifyUsername } from "../../../tools.js";
 import { Config } from "../../../Configs.js";
 import { tableLayout } from "./Layout.js";
@@ -11,6 +11,7 @@ const SUser = true;
 let currentUserInfo; 
 let currentCustomer;
 const customerId = localStorage.getItem('customer_id');
+let dataPage;
 const currentUserData = async() => {
   const currentUser = await getUserInfo();
   const user = await getEntityData('User', `${currentUser.attributes.id}`);
@@ -24,12 +25,31 @@ const currentCustomerData = async() => {
 const getUsers = async (superUser) => {
     const currentUser = await currentUserData(); //usuario logueado
     currentCustomer = await currentCustomerData();
-    const users = await getEntitiesData('User');
+    /*const users = await getEntitiesData('User');
     const FSuper = users.filter((data) => data.isSuper === superUser);
     const admin = FSuper.filter((data) => data.username != `admin`);
     const consulta = admin.filter((data) => data.username != `consulta`);
-    const FCustomer = consulta.filter((data) => `${data.customer?.id}` === `${customerId}`);
-    return FCustomer;
+    const FCustomer = consulta.filter((data) => `${data.customer?.id}` === `${customerId}`);*/
+    let raw = JSON.stringify({
+      "filter": {
+          "conditions": [
+              {
+                  "property": "customer.id",
+                  "operator": "=",
+                  "value": `${customerId}`
+              },
+              {
+                  "property": "isSuper",
+                  "operator": "=",
+                  "value": `${superUser}`
+              }
+          ],
+      },
+      sort: "-createdDate",
+      fetchPlan: 'full',
+  });
+  dataPage = await getFilterEntityData("User", raw);
+  return dataPage;
 };
 export class SuperUsers {
     constructor() {
@@ -806,7 +826,7 @@ export class SuperUsers {
             const _values = {
                 exportOption: document.getElementsByName('exportOption')
             };
-            const users = await getUsers(SUser);
+            const users = dataPage; //await getUsers(SUser);
             for (let i = 0; i < _values.exportOption.length; i++) {
                 let ele = _values.exportOption[i];
                 if (ele.type = "radio") {
