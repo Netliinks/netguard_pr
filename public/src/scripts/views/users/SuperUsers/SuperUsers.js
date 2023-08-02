@@ -925,22 +925,27 @@ export class SuperUsers {
                         });
                         resultMail.innerText = inputMail.value;
                         confirmationCode.innerText = randomKey.key;
+                        let roleCode;
+                        let plataform
+                        if(user.userType === 'GUARD'){
+                          roleCode = 'app_web_guardias'
+                          plataform = 'Netguard'
+                        }else if(user.userType === 'CUSTOMER'){
+                          roleCode = 'app_web_clientes'
+                          plataform = 'Netvisitors'
+                        }
+                        
                         mailRaw = JSON.stringify({
                             "address": inputMail.value,
                             "subject": "Netliinks - Clave de validación.",
-                            "body": `Estimado ${user.firstName}, el código de confirmación para ingresar a la plataforma de Netvisitors es: \n
+                            "body": `Estimado ${user.firstName}, el código de confirmación para ingresar a la plataforma de ${plataform} es: \n
                                                                         ${randomKey.key}\nNo responder a este correo.\nSaludos.\n\n\nNetliinks S.A.`
                         });
                         updateRaw = JSON.stringify({
                             "email": inputMail.value,
                             "hashSuper": randomKey.key,
                         });
-                        let roleCode;
-                        if(user.userType === 'GUARD'){
-                          roleCode = 'app_web_guardias'
-                        }else if(user.userType === 'CUSTOMER'){
-                          roleCode = 'app_web_clientes'
-                        }
+                        
                         roleRaw = JSON.stringify({
                             "id": `${user.id}`,
                             "roleCode": `${roleCode}`
