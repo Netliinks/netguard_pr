@@ -904,7 +904,7 @@ export class SuperUsers {
                 const modalContainer = document.getElementById('modal_container');
                 let mailRaw = [];
                 let updateRaw = [];
-                let roleRaw = [];
+                //let roleRaw = [];
                 inputMail.value = user.email;
                 nextButton.addEventListener('click', async () => {
                     const randomKey = { key: Math.floor(Math.random() * 999999) };
@@ -925,13 +925,13 @@ export class SuperUsers {
                         });
                         resultMail.innerText = inputMail.value;
                         confirmationCode.innerText = randomKey.key;
-                        let roleCode;
+                        //let roleCode;
                         let plataform
                         if(user.userType === 'GUARD'){
-                          roleCode = 'app_web_guardias'
+                          //roleCode = 'app_web_guardias'
                           plataform = 'Netguard'
                         }else if(user.userType === 'CUSTOMER'){
-                          roleCode = 'app_web_clientes'
+                          //roleCode = 'app_web_clientes'
                           plataform = 'Netvisitors'
                         }
                         
@@ -946,13 +946,13 @@ export class SuperUsers {
                             "hashSuper": randomKey.key,
                         });
                         
-                        roleRaw = JSON.stringify({
+                        /*roleRaw = JSON.stringify({
                             "id": `${user.id}`,
                             "roleCode": `${roleCode}`
-                        });
+                        });*/
                         sendMail(mailRaw);
                         updateEntity('User', entityId, updateRaw);
-                        setUserRole(roleRaw);
+                        //setUserRole(roleRaw);
                         setTimeout(async () => {
                             let data = await getUsers(SUser);
                             const tableBody = document.getElementById('datatable-body');
