@@ -1086,7 +1086,7 @@ export class SuperUsers {
                             //let data = await getUsers(SUser);
                             const tableBody = document.getElementById('datatable-body');
                             new CloseDialog().x(modalContainer);
-                            new SuperUsers().render(infoPage.offset, infoPage.currentPage, infoPage.search);
+                            //new SuperUsers().render(infoPage.offset, infoPage.currentPage, infoPage.search);
                             //this.load(tableBody, currentPage, data);
                         }, 100);
                     }
