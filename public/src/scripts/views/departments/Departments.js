@@ -1,5 +1,5 @@
 // @filename: Departments.ts
-import { deleteEntity, getFilterEntityData, registerEntity } from "../../endpoints.js";
+import { deleteEntity, getFilterEntityData, registerEntity, getFilterEntityCount } from "../../endpoints.js";
 import { inputObserver, inputSelect, CloseDialog, filterDataByHeaderType, pageNumbers, fillBtnPagination } from "../../tools.js";
 import { Config } from "../../Configs.js";
 import { tableLayout } from "./Layout.js";
@@ -7,6 +7,12 @@ import { tableLayoutTemplate } from "./Template.js";
 const tableRows = Config.tableRows;
 const currentPage = Config.currentPage;
 const customerId = localStorage.getItem('customer_id');
+let infoPage = {
+    count: 0,
+    offset: Config.offset,
+    currentPage: currentPage,
+    search: ""
+};
 let dataPage;
 const getDepartments = async () => {
     //const department = await getEntitiesData('Department');
@@ -22,7 +28,36 @@ const getDepartments = async () => {
           ],
       },
       sort: "-createdDate",
+      limit: Config.tableRows,
+      offset: infoPage.offset,
   });
+  if (infoPage.search != "") {
+    raw = JSON.stringify({
+        "filter": {
+            "conditions": [
+                {
+                    "group": "OR",
+                    "conditions": [
+                        {
+                            "property": "name",
+                            "operator": "contains",
+                            "value": `${infoPage.search.toLowerCase()}`
+                        }
+                    ]
+                },
+                {
+                    "property": "customer.id",
+                    "operator": "=",
+                    "value": `${customerId}`
+                }
+            ]
+        },
+        sort: "-createdDate",
+        limit: Config.tableRows,
+        offset: infoPage.offset
+    });
+  }
+  infoPage.count = await getFilterEntityCount("Department", raw);
   dataPage = await getFilterEntityData("Department", raw);
   return dataPage;
 };
@@ -31,10 +66,12 @@ export class Departments {
         this.dialogContainer = document.getElementById('app-dialogs');
         this.entityDialogContainer = document.getElementById('entity-editor-container');
         this.content = document.getElementById('datatable-container');
-        this.searchEntity = async (tableBody, data) => {
+        this.searchEntity = async (tableBody /*, data: any*/) => {
             const search = document.getElementById('search');
+            const btnSearch = document.getElementById('btnSearch');
+            search.value = infoPage.search;
             await search.addEventListener('keyup', () => {
-                const arrayData = data.filter((user) => `${user.name}`
+                /*const arrayData = data.filter((user) => `${user.name}`
                     .toLowerCase()
                     .includes(search.value.toLowerCase()));
                 let filteredResult = arrayData.length;
@@ -42,12 +79,18 @@ export class Departments {
                 if (filteredResult >= tableRows)
                     filteredResult = tableRows;
                 this.load(tableBody, currentPage, result);
-                this.pagination(result, tableRows, currentPage);
+                this.pagination(result, tableRows, currentPage);*/
+            });
+            btnSearch.addEventListener('click', async () => {
+                new Departments().render(Config.offset, Config.currentPage, search.value.toLowerCase().trim());
             });
         };
     }
     
-    async render() {
+    async render(offset, actualPage, search) {
+        infoPage.offset = offset;
+        infoPage.currentPage = actualPage;
+        infoPage.search = search;
         this.content.innerHTML = '';
         this.content.innerHTML = tableLayout;
         const tableBody = document.getElementById('datatable-body');
@@ -55,9 +98,9 @@ export class Departments {
         let data = await getDepartments();
         tableBody.innerHTML = tableLayoutTemplate.repeat(tableRows);
         this.load(tableBody, currentPage, data);
-        this.searchEntity(tableBody, data);
+        this.searchEntity(tableBody /*, data*/);
         new filterDataByHeaderType().filter();
-        this.pagination(data, tableRows, currentPage);
+        this.pagination(data, tableRows, infoPage.currentPage);
     }
 
     load(table, currentPage, data) {
@@ -100,11 +143,11 @@ export class Departments {
       const paginationWrapper = document.getElementById('pagination-container');
       paginationWrapper.innerHTML = '';
       let pageCount;
-      pageCount = Math.ceil(items.length / limitRows);
+      pageCount = Math.ceil(infoPage.count / limitRows);
       let button;
       if (pageCount <= Config.maxLimitPage) {
           for (let i = 1; i < pageCount + 1; i++) {
-              button = setupButtons(i, items, currentPage, tableBody, limitRows);
+              button = setupButtons(i /*, items, currentPage, tableBody, limitRows*/);
               paginationWrapper.appendChild(button);
           }
           fillBtnPagination(currentPage, Config.colorPagination);
@@ -112,38 +155,22 @@ export class Departments {
       else {
           pagesOptions(items, currentPage);
       }
-      function setupButtons(page, items, currentPage, tableBody, limitRows) {
+      function setupButtons(page /*, items, currentPage, tableBody, limitRows*/) {
           const button = document.createElement('button');
           button.classList.add('pagination_button');
           button.setAttribute("name", "pagination-button");
             button.setAttribute("id", "btnPag" + page);
             button.innerText = page;
             button.addEventListener('click', () => {
-                const buttons = document.getElementsByName("pagination-button");
-                buttons.forEach(button => {
-                    button.style.background = "#ffffff";
-                });
+                infoPage.offset = Config.tableRows * (page - 1);
                 currentPage = page;
-                fillBtnPagination(page, Config.colorPagination);
-                new Departments().load(tableBody, page, items);
-            });
-            return button;
-        }
-        function setupButtons2(page) {
-            const button = document.createElement('button');
-            button.classList.add('pagination_button');
-            button.setAttribute("id", "btnPag" + page);
-            button.innerText = page;
-            button.addEventListener('click', () => {
-                currentPage = page;
-                pagesOptions(items, currentPage);
-                new Departments().load(tableBody, page, items);
+                new Departments().render(infoPage.offset, currentPage, infoPage.search);
             });
             return button;
         }
         function pagesOptions(items, currentPage) {
             paginationWrapper.innerHTML = '';
-            let pages = pageNumbers(items, Config.maxLimitPage, currentPage);
+            let pages = pageNumbers(infoPage.count, Config.maxLimitPage, currentPage);
             const prevButton = document.createElement('button');
             prevButton.classList.add('pagination_button');
             prevButton.innerText = "<<";
@@ -152,8 +179,8 @@ export class Departments {
             nextButton.classList.add('pagination_button');
             nextButton.innerText = ">>";
             for (let i = 0; i < pages.length; i++) {
-                if (pages[i] <= pageCount) {
-                    button = setupButtons2(pages[i]);
+                if (pages[i] > 0 && pages[i] <= pageCount) {
+                    button = setupButtons(pages[i]);
                     paginationWrapper.appendChild(button);
                 }
             }
@@ -163,12 +190,11 @@ export class Departments {
         }
         function setupButtonsEvents(prevButton, nextButton) {
             prevButton.addEventListener('click', () => {
-                pagesOptions(items, 1);
-                new Departments().load(tableBody, 1, items);
+                new Departments().render(Config.offset, Config.currentPage, infoPage.search);
             });
             nextButton.addEventListener('click', () => {
-                pagesOptions(items, pageCount);
-                new Departments().load(tableBody, pageCount, items);
+                infoPage.offset = Config.tableRows * (pageCount - 1);
+                new Departments().render(infoPage.offset, pageCount, infoPage.search);
             });
         }
     }
@@ -235,7 +261,7 @@ export class Departments {
                 setTimeout(() => {
                     const container = document.getElementById('entity-editor-container');
                     new CloseDialog().x(container);
-                    new Departments().render();
+                    new Departments().render(Config.offset, Config.currentPage, infoPage.search);
                 }, 1000);
             });
         };
@@ -276,7 +302,7 @@ export class Departments {
                 const dialogContent = document.getElementById('dialog-content');
                 deleteButton.onclick = () => {
                     deleteEntity('Department', entityId)
-                        .then(res => new Departments().render());
+                        .then(res => new Departments().render(infoPage.offset, infoPage.currentPage, infoPage.search));
                     new CloseDialog().x(dialogContent);
                 };
                 cancelButton.onclick = () => {
@@ -289,7 +315,7 @@ export class Departments {
         const closeButton = document.getElementById('close');
         const editor = document.getElementById('entity-editor-container');
         closeButton.addEventListener('click', () => {
-            console.log('close');
+            //console.log('close');
             new CloseDialog().x(editor);
         });
     }

@@ -38,7 +38,7 @@ export const exportVisitPdf = (ar, start, end) => {
     for (let i = 0; i < ar.length; i++) {
         let visit = ar[i];
         // @ts-ignore
-        if (visit.creationDate >= start && visit.creationDate <= end) {
+        //if (visit.creationDate >= start && visit.creationDate <= end) {
             doc.setFontSize(9);
             doc.setFont(undefined, 'normal');
             doc.setTextColor(0, 0, 0);
@@ -82,7 +82,7 @@ export const exportVisitPdf = (ar, start, end) => {
                 doc.text(10, 200, `Página ${pagina}`);
             }
             lineas++;
-        }
+        //}
     }
     // Save the PDF
     var d = new Date();
@@ -94,7 +94,7 @@ export const exportVisitCsv = (ar, start, end) => {
     for (let i = 0; i < ar.length; i++) {
         let visit = ar[i];
         // @ts-ignore
-        if (visit.creationDate >= start && visit.creationDate <= end) {
+        //if (visit.creationDate >= start && visit.creationDate <= end) {
             let obj = {
                 "Nombre": `${visit.firstName} ${visit.firstLastName} ${visit.secondLastName}`,
                 "DNI": `${visit.dni}`,
@@ -117,7 +117,7 @@ export const exportVisitCsv = (ar, start, end) => {
                 "Asunto": `${visit.reason.split("\n").join("(salto)")}`,
             };
             rows.push(obj);
-        }
+        //}
     }
     generateFile(rows, "Visitas", "csv");
 };
@@ -126,7 +126,7 @@ export const exportVisitXls = (ar, start, end) => {
     for (let i = 0; i < ar.length; i++) {
         let visit = ar[i];
         // @ts-ignore
-        if (visit.creationDate >= start && visit.creationDate <= end) {
+        //if (visit.creationDate >= start && visit.creationDate <= end) {
             let obj = {
                 "Nombre": `${visit.firstName} ${visit.firstLastName} ${visit.secondLastName}`,
                 "DNI": `${visit.dni}`,
@@ -149,7 +149,7 @@ export const exportVisitXls = (ar, start, end) => {
                 "Asunto": `${visit.reason.split("\n").join("(salto)")}`,
             };
             rows.push(obj);
-        }
+        //}
     }
     generateFile(rows, "Visitas", "xls");
 };

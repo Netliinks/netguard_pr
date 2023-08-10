@@ -1,5 +1,5 @@
 // @filename: SuperUsers.ts
-import { deleteEntity, getEntityData, registerEntity, setPassword, setUserRole, updateEntity, getUserInfo, sendMail, getFilterEntityData } from "../../../endpoints.js";
+import { deleteEntity, getEntityData, registerEntity, setPassword, setUserRole, updateEntity, getUserInfo, sendMail, getFilterEntityData, getFilterEntityCount } from "../../../endpoints.js";
 import { drawTagsIntoTables, inputObserver, inputSelect, inputSelectType, CloseDialog, filterDataByHeaderType, verifyUserType, getVerifyEmail, getVerifyUsername, pageNumbers, fillBtnPagination } from "../../../tools.js";
 import { Config } from "../../../Configs.js";
 import { tableLayout, UIConvertToSU } from "./Layout.js";
@@ -11,6 +11,12 @@ const SUser = true;
 let currentUserInfo; 
 let currentCustomer;
 const customerId = localStorage.getItem('customer_id');
+let infoPage = {
+  count: 0,
+  offset: Config.offset,
+  currentPage: currentPage,
+  search: ""
+};
 let dataPage;
 const currentUserData = async() => {
   const currentUser = await getUserInfo();
@@ -46,8 +52,68 @@ const getUsers = async (superUser) => {
           ],
       },
       sort: "-createdDate",
+      limit: Config.tableRows,
+      offset: infoPage.offset,
       fetchPlan: 'full',
   });
+  if (infoPage.search != "") {
+    raw = JSON.stringify({
+        "filter": {
+            "conditions": [
+                {
+                    "group": "OR",
+                    "conditions": [
+                        {
+                            "property": "dni",
+                            "operator": "contains",
+                            "value": `${infoPage.search.toLowerCase()}`
+                        },
+                        {
+                            "property": "firstName",
+                            "operator": "contains",
+                            "value": `${infoPage.search.toLowerCase()}`
+                        },
+                        {
+                            "property": "lastName",
+                            "operator": "contains",
+                            "value": `${infoPage.search.toLowerCase()}`
+                        },
+                        {
+                            "property": "secondLastName",
+                            "operator": "contains",
+                            "value": `${infoPage.search.toLowerCase()}`
+                        },
+                        {
+                            "property": "username",
+                            "operator": "contains",
+                            "value": `${infoPage.search.toLowerCase()}`
+                        },
+                        {
+                            "property": "email",
+                            "operator": "contains",
+                            "value": `${infoPage.search.toLowerCase()}`
+                        }
+                    ]
+                },
+                {
+                    "property": "customer.id",
+                    "operator": "=",
+                    "value": `${customerId}`
+                },
+                {
+                    "property": "isSuper",
+                    "operator": "=",
+                    "value": `${superUser}`
+                }
+            ]
+        },
+        sort: "-createdDate",
+        limit: Config.tableRows,
+        offset: infoPage.offset,
+        fetchPlan: 'full',
+    });
+  }
+  infoPage.count = await getFilterEntityCount("User", raw);
   dataPage = await getFilterEntityData("User", raw);
   return dataPage;
 };
@@ -56,10 +122,12 @@ export class SuperUsers {
         this.dialogContainer = document.getElementById('app-dialogs');
         this.entityDialogContainer = document.getElementById('entity-editor-container');
         this.content = document.getElementById('datatable-container');
-        this.searchEntity = async (tableBody, data) => {
+        this.searchEntity = async (tableBody /*, data: any*/) => {
             const search = document.getElementById('search');
+            const btnSearch = document.getElementById('btnSearch');
+            search.value = infoPage.search;
             await search.addEventListener('keyup', () => {
-                const arrayData = data.filter((user) => `${user.firstName}
+                /*const arrayData = data.filter((user) => `${user.firstName}
                  ${user.lastName}
                  ${user.username}`
                     .toLowerCase()
@@ -69,7 +137,10 @@ export class SuperUsers {
                 if (filteredResult >= tableRows)
                     filteredResult = tableRows;
                 this.load(tableBody, currentPage, result);
-                this.pagination(result, tableRows, currentPage);
+                this.pagination(result, tableRows, currentPage);*/
+            });
+            btnSearch.addEventListener('click', async () => {
+              new SuperUsers().render(Config.offset, Config.currentPage, search.value.toLowerCase().trim());
             });
         };
         this.generateUserName = async () => {
@@ -102,7 +173,10 @@ export class SuperUsers {
             });
         };
     }
-    async render() {
+    async render(offset, actualPage, search) {
+        infoPage.offset = offset;
+        infoPage.currentPage = actualPage;
+        infoPage.search = search;
         this.content.innerHTML = '';
         this.content.innerHTML = tableLayout;
         const tableBody = document.getElementById('datatable-body');
@@ -110,9 +184,9 @@ export class SuperUsers {
         let data = await getUsers(SUser);
         tableBody.innerHTML = tableLayoutTemplate.repeat(tableRows);
         this.load(tableBody, currentPage, data);
-        this.searchEntity(tableBody, data);
+        this.searchEntity(tableBody  /*, data*/);
         new filterDataByHeaderType().filter();
-        this.pagination(data, tableRows, currentPage);
+        this.pagination(data, tableRows, infoPage.currentPage);
     }
     load(table, currentPage, data) {
         setUserPassword(SUser);
@@ -401,11 +475,11 @@ export class SuperUsers {
                 .then(res => {
                 sendMail(mailRaw);
                 setTimeout(async () => {
-                  let data = await getUsers(SUser);
+                  //let data = await getUsers(SUser);
                     const tableBody = document.getElementById('datatable-body');
                     const container = document.getElementById('entity-editor-container');
                     new CloseDialog().x(container);
-                    new SuperUsers().load(tableBody, currentPage, data);
+                    new SuperUsers().render(Config.offset, Config.currentPage, infoPage.search);
                 }, 1000);
                 //setNewPassword();
             });
@@ -648,12 +722,11 @@ export class SuperUsers {
                       let tableBody;
                       let container;
                       let data;
-                      data = await getUsers(SUser);
+                      //data = await getUsers(SUser);
                       new CloseDialog()
                           .x(container =
                           document.getElementById('entity-editor-container'));
-                      new SuperUsers().load(tableBody
-                          = document.getElementById('datatable-body'), currentPage, data);
+                      new SuperUsers().render(infoPage.offset, infoPage.currentPage, infoPage.search);
                   }, 100);
               });
           };
@@ -766,10 +839,10 @@ export class SuperUsers {
                     deleteEntity('User', entityId)
                     .then((res) => {
                       setTimeout(async () => {
-                        let data = await getUsers(SUser);
+                        //let data = await getUsers(SUser);
                           const tableBody = document.getElementById('datatable-body');
                           new CloseDialog().x(dialogContent);
-                          new SuperUsers().load(tableBody, currentPage, data);
+                          new SuperUsers().render(infoPage.offset, infoPage.currentPage, infoPage.search);
                       }, 1000);
                   });
                 };
@@ -830,7 +903,25 @@ export class SuperUsers {
             const _values = {
                 exportOption: document.getElementsByName('exportOption')
             };
-            const users = dataPage; //await getUsers(SUser);
+            let rawExport = JSON.stringify({
+              "filter": {
+                  "conditions": [
+                      {
+                          "property": "customer.id",
+                          "operator": "=",
+                          "value": `${customerId}`
+                      },
+                      {
+                          "property": "isSuper",
+                          "operator": "=",
+                          "value": `${SUser}`
+                      }
+                  ],
+              },
+              sort: "-createdDate",
+              fetchPlan: 'full',
+          });
+          const users = await getFilterEntityData("User", rawExport); //await getUsers(SUser)
             for (let i = 0; i < _values.exportOption.length; i++) {
                 let ele = _values.exportOption[i];
                 if (ele.type = "radio") {
@@ -861,11 +952,11 @@ export class SuperUsers {
       const paginationWrapper = document.getElementById('pagination-container');
       paginationWrapper.innerHTML = '';
       let pageCount;
-      pageCount = Math.ceil(items.length / limitRows);
+      pageCount = Math.ceil(infoPage.count / limitRows);
       let button;
       if (pageCount <= Config.maxLimitPage) {
           for (let i = 1; i < pageCount + 1; i++) {
-              button = setupButtons(i, items, currentPage, tableBody, limitRows);
+              button = setupButtons(i /*, items, currentPage, tableBody, limitRows*/);
               paginationWrapper.appendChild(button);
           }
           fillBtnPagination(currentPage, Config.colorPagination);
@@ -873,32 +964,16 @@ export class SuperUsers {
       else {
           pagesOptions(items, currentPage);
       }
-      function setupButtons(page, items, currentPage, tableBody, limitRows) {
+      function setupButtons(page /*, items, currentPage, tableBody, limitRows*/) {
           const button = document.createElement('button');
           button.classList.add('pagination_button');
           button.setAttribute("name", "pagination-button");
             button.setAttribute("id", "btnPag" + page);
             button.innerText = page;
             button.addEventListener('click', () => {
-                const buttons = document.getElementsByName("pagination-button");
-                buttons.forEach(button => {
-                    button.style.background = "#ffffff";
-                });
+                infoPage.offset = Config.tableRows * (page - 1);
                 currentPage = page;
-                fillBtnPagination(page, Config.colorPagination);
-                new SuperUsers().load(tableBody, page, items);
-            });
-            return button;
-        }
-        function setupButtons2(page) {
-            const button = document.createElement('button');
-            button.classList.add('pagination_button');
-            button.setAttribute("id", "btnPag" + page);
-            button.innerText = page;
-            button.addEventListener('click', () => {
-                currentPage = page;
-                pagesOptions(items, currentPage);
-                new SuperUsers().load(tableBody, page, items);
+                new SuperUsers().render(infoPage.offset, currentPage, infoPage.search);
             });
             return button;
         }
@@ -913,8 +988,8 @@ export class SuperUsers {
             nextButton.classList.add('pagination_button');
             nextButton.innerText = ">>";
             for (let i = 0; i < pages.length; i++) {
-                if (pages[i] <= pageCount) {
-                    button = setupButtons2(pages[i]);
+                if (pages[i] > 0 && pages[i] <= pageCount) {
+                    button = setupButtons(pages[i]);
                     paginationWrapper.appendChild(button);
                 }
             }
@@ -924,12 +999,11 @@ export class SuperUsers {
         }
         function setupButtonsEvents(prevButton, nextButton) {
             prevButton.addEventListener('click', () => {
-                pagesOptions(items, 1);
-                new SuperUsers().load(tableBody, 1, items);
+                new SuperUsers().render(Config.offset, Config.currentPage, infoPage.search);
             });
             nextButton.addEventListener('click', () => {
-                pagesOptions(items, pageCount);
-                new SuperUsers().load(tableBody, pageCount, items);
+                infoPage.offset = Config.tableRows * (pageCount - 1);
+                new SuperUsers().render(infoPage.offset, pageCount, infoPage.search);
             });
         }
   }
@@ -1009,10 +1083,11 @@ export class SuperUsers {
                         updateEntity('User', entityId, updateRaw);
                         //setUserRole(roleRaw);
                         setTimeout(async () => {
-                            let data = await getUsers(SUser);
+                            //let data = await getUsers(SUser);
                             const tableBody = document.getElementById('datatable-body');
                             new CloseDialog().x(modalContainer);
-                            this.load(tableBody, currentPage, data);
+                            new SuperUsers().render(infoPage.offset, infoPage.currentPage, infoPage.search);
+                            //this.load(tableBody, currentPage, data);
                         }, 100);
                     }
                 });
@@ -1052,6 +1127,11 @@ export const setUserPassword = async (SUser) => {
                 "property": "customer.id",
                 "operator": "=",
                 "value": `${customerId}`
+            },
+            {
+                "property": "newUser",
+                "operator": "=",
+                "value": `${true}`
             }
         ]
     }
