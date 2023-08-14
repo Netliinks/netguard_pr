@@ -54,11 +54,6 @@ export class SignIn {
                             "operator": "=",
                             "value": `Enabled`
                           },
-                          {
-                            "property": "customer.state.name",
-                            "operator": "=",
-                            "value": `Enabled`
-                          },
                         ]
                     }
                 });
