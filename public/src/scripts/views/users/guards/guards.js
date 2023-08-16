@@ -229,7 +229,7 @@ export class Guards {
           <td>${client.username}</dt>
           <td class="key"><button class="button" data-userid="${client.id}" id="change-user-password"><i class="fa-regular fa-key"></i></button></td>
           <td class="tag"><span>${client.state.name}</span></td>
-          <td>${client.citadel.description}</dt>
+          <!-- <td>${client.citadel.description}</dt> -->
           <td class="entity_options">
             <button class="button" id="edit-entity" data-entityId="${client.id}">
               <i class="fa-solid fa-pen"></i>

@@ -1,6 +1,6 @@
 // @filename: Customers.ts
 import { registerEntity, getUserInfo, getEntityData, updateEntity, getFilterEntityData, getFilterEntityCount } from "../../endpoints.js";
-import { inputObserver, inputSelect, CloseDialog, filterDataByHeaderType, pageNumbers, fillBtnPagination } from "../../tools.js";
+import { drawTagsIntoTables, inputObserver, inputSelect, CloseDialog, filterDataByHeaderType, pageNumbers, fillBtnPagination } from "../../tools.js";
 import { Config } from "../../Configs.js";
 import { tableLayout, UIContact } from "./Layout.js";
 import { tableLayoutTemplate } from "./Template.js";
@@ -145,6 +145,7 @@ export class Customers {
           </dt>
         `;
                 table.appendChild(row);
+                drawTagsIntoTables();
             }
         }
         this.register();
