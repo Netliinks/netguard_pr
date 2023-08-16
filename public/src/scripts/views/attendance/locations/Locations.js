@@ -1,27 +1,81 @@
 // @filename: locations.ts
-import { deleteEntity, getEntitiesData, registerEntity, updateEntity, getEntityData } from "../../../endpoints.js";
-import { inputObserver, inputSelect, CloseDialog, filterDataByHeaderType } from "../../../tools.js";
+import { deleteEntity, getEntitiesData, registerEntity, updateEntity, getEntityData, getFilterEntityData, getFilterEntityCount } from "../../../endpoints.js";
+import { inputObserver, inputSelect, CloseDialog, filterDataByHeaderType, pageNumbers, fillBtnPagination } from "../../../tools.js";
 import { Config } from "../../../Configs.js";
 import { tableLayout } from "./Layout.js";
 import { tableLayoutTemplate } from "./Template.js";
 const tableRows = Config.tableRows;
 const currentPage = Config.currentPage;
 const customerId = localStorage.getItem('customer_id');
+let infoPage = {
+  count: 0,
+  offset: Config.offset,
+  currentPage: currentPage,
+  search: ""
+};
+let dataPage;
 const getLocations= async () => {
     //nombre de la entidad
-    const location = await getEntitiesData('Location');
+    /*const location = await getEntitiesData('Location');
     const FCustomer = location.filter((data) => `${data.customer?.id}` === `${customerId}`);
-    return FCustomer;
+    return FCustomer;*/
+    let raw = JSON.stringify({
+      "filter": {
+          "conditions": [
+              {
+                  "property": "customer.id",
+                  "operator": "=",
+                  "value": `${customerId}`
+              }
+          ],
+      },
+      sort: "-createdDate",
+      limit: Config.tableRows,
+      offset: infoPage.offset,
+      fetchPlan: 'full',
+  });
+  if (infoPage.search != "") {
+      raw = JSON.stringify({
+          "filter": {
+              "conditions": [
+                  {
+                      "group": "OR",
+                      "conditions": [
+                          {
+                              "property": "name",
+                              "operator": "contains",
+                              "value": `${infoPage.search.toLowerCase()}`
+                          }
+                      ]
+                  },
+                  {
+                      "property": "customer.id",
+                      "operator": "=",
+                      "value": `${customerId}`
+                  }
+              ]
+          },
+          sort: "-createdDate",
+          limit: Config.tableRows,
+          offset: infoPage.offset,
+          fetchPlan: 'full',
+      });
+  }
+  infoPage.count = await getFilterEntityCount("Location", raw);
+  dataPage = await getFilterEntityData("Location", raw);
+  return dataPage;
 };
 export class Locations {
     constructor() {
         this.dialogContainer = document.getElementById('app-dialogs');
         this.entityDialogContainer = document.getElementById('entity-editor-container');
         this.content = document.getElementById('datatable-container');
-        this.searchEntity = async (tableBody, data) => {
+        this.searchEntity = async (tableBody /*, data*/) => {
             const search = document.getElementById('search');
+            const btnSearch = document.getElementById('btnSearch');
+            search.value = infoPage.search;
             await search.addEventListener('keyup', () => {
-                const arrayData = data.filter((user) => `${user.name}`
+                /*const arrayData = data.filter((user) => `${user.name}`
                     .toLowerCase()
                     .includes(search.value.toLowerCase()));
                 let filteredResult = arrayData.length;
@@ -29,12 +83,18 @@ export class Locations {
                 if (filteredResult >= tableRows)
                     filteredResult = tableRows;
                 this.load(tableBody, currentPage, result);
-                this.pagination(result, tableRows, currentPage);
+                this.pagination(result, tableRows, currentPage);*/
+            });
+            btnSearch.addEventListener('click', async () => {
+              new Locations().render(Config.offset, Config.currentPage, search.value.toLowerCase().trim());
             });
         };
     }
 
-    async render() {
+    async render(offset, actualPage, search) {
+        infoPage.offset = offset;
+        infoPage.currentPage = actualPage;
+        infoPage.search = search;
         this.content.innerHTML = '';
         this.content.innerHTML = tableLayout;
         const tableBody = document.getElementById('datatable-body');
@@ -42,9 +102,9 @@ export class Locations {
         let data = await getLocations();
         tableBody.innerHTML = tableLayoutTemplate.repeat(tableRows);
         this.load(tableBody, currentPage, data);
-        this.searchEntity(tableBody, data);
+        this.searchEntity(tableBody /*, data*/);
         new filterDataByHeaderType().filter();
-        this.pagination(data, tableRows, currentPage);
+        this.pagination(data, tableRows, infoPage.currentPage);
     }
 
     load(table, currentPage, data) {
@@ -94,21 +154,58 @@ export class Locations {
       const paginationWrapper = document.getElementById('pagination-container');
       paginationWrapper.innerHTML = '';
       let pageCount;
-      pageCount = Math.ceil(items.length / limitRows);
+      pageCount = Math.ceil(infoPage.count / limitRows);
       let button;
-      for (let i = 1; i < pageCount + 1; i++) {
-          button = setupButtons(i, items, currentPage, tableBody, limitRows);
-          paginationWrapper.appendChild(button);
+      if (pageCount <= Config.maxLimitPage) {
+        for (let i = 1; i < pageCount + 1; i++) {
+            button = setupButtons(i /*, items, currentPage, tableBody, limitRows*/);
+            paginationWrapper.appendChild(button);
+        }
+        fillBtnPagination(currentPage, Config.colorPagination);
+        }
+      else {
+          pagesOptions(items, currentPage);
       }
-      function setupButtons(page, items, currentPage, tableBody, limitRows) {
-          const button = document.createElement('button');
-          button.classList.add('pagination_button');
-          button.innerText = page;
-          button.addEventListener('click', () => {
-              currentPage = page;
-              new Locations().load(tableBody, page, items);
+        function setupButtons(page /*, items, currentPage, tableBody, limitRows*/) {
+            const button = document.createElement('button');
+            button.classList.add('pagination_button');
+            button.setAttribute("name", "pagination-button");
+            button.setAttribute("id", "btnPag" + page);
+            button.innerText = page;
+            button.addEventListener('click', () => {
+                currentPage = page;
+                new Locations().render(infoPage.offset, currentPage, infoPage.search);
+            });
+            return button;
+        }
+        function pagesOptions(items, currentPage) {
+          paginationWrapper.innerHTML = '';
+          let pages = pageNumbers(items, Config.maxLimitPage, currentPage);
+          const prevButton = document.createElement('button');
+          prevButton.classList.add('pagination_button');
+          prevButton.innerText = "<<";
+          paginationWrapper.appendChild(prevButton);
+          const nextButton = document.createElement('button');
+          nextButton.classList.add('pagination_button');
+          nextButton.innerText = ">>";
+          for (let i = 0; i < pages.length; i++) {
+              if (pages[i] > 0 && pages[i] <= pageCount) {
+                  button = setupButtons(pages[i]);
+                  paginationWrapper.appendChild(button);
+              }
+          }
+          paginationWrapper.appendChild(nextButton);
+          fillBtnPagination(currentPage, Config.colorPagination);
+          setupButtonsEvents(prevButton, nextButton);
+      }
+      function setupButtonsEvents(prevButton, nextButton) {
+          prevButton.addEventListener('click', () => {
+              new Locations().render(Config.offset, Config.currentPage, infoPage.search);
           });
-          return button;
+          nextButton.addEventListener('click', () => {
+              infoPage.offset = Config.tableRows * (pageCount - 1);
+              new Locations().render(infoPage.offset, pageCount, infoPage.search);
+          });
       }
     }
     register() {
@@ -148,11 +245,11 @@ export class Locations {
               <label for="entity-name">Ubicación</label>
             </div>
             <div class="material_input">
-              <input type="text" id="entity-cords" autocomplete="none">
+              <input type="text" id="entity-cords" autocomplete="none" readonly>
               <label for="entity-cords">Coordenadas</label>
               </div>
             <div class="material_input">
-              <input type="text" id="entity-distance" autocomplete="none">
+              <input type="number" id="entity-distance" autocomplete="none" value=0 min=0>
               <label for="entity-distance">Distancia</label>
             </div>          
           </div>
@@ -187,12 +284,20 @@ export class Locations {
                         "id": `${customerId}`
                     }
                 });
-                registerEntity(raw, 'Location');
-                setTimeout(() => {
-                    const container = document.getElementById('entity-editor-container');
-                    new CloseDialog().x(container);
-                    new Locations().render();
-                }, 1000);
+                if(inputsCollection.name.value == "" || inputsCollection.name.value == undefined){
+                  alert("Nombre de Ubicación vacía");
+                }else if(inputsCollection.cords.value == "" || inputsCollection.cords.value == undefined){
+                  alert("No se ha seleccionado una ubicación");
+                }else if(inputsCollection.distance.value == "" || inputsCollection.distance.value == undefined || inputsCollection.distance.value < 0){
+                  alert("Distancia inválida");
+                }else{
+                  registerEntity(raw, 'Location');
+                  setTimeout(() => {
+                      const container = document.getElementById('entity-editor-container');
+                      new CloseDialog().x(container);
+                      new Locations().render(Config.offset, Config.currentPage, infoPage.search);
+                  }, 1000);
+                }
             });
             const btnObtCords = document.getElementById('obtCords');
             btnObtCords.addEventListener('click', () => {
@@ -212,50 +317,55 @@ export class Locations {
                 }
                 });
             });
-            async function initAutocomplete(lat, lng, zoom) {
-              //var map = new google.maps.Map(document.getElementById('map'), {
-              var marker1;
-              const { Map } = await google.maps.importLibrary("maps");
-
-              var map = new Map(document.getElementById("map"), {
-                center: {
-                  lat: lat,
-                  lng: lng
-                },
-                zoom: zoom,
-                mapTypeId: 'hybrid'
-              });
-      
-               // Create the search box and link it to the UI element.
-              var input = document.getElementById('pac-input');
-              console.log(input);
-              var searchBox = new google.maps.places.SearchBox(input);       
-              //map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-      
-                // Bias the SearchBox results towards current map's viewport.
-                map.addListener('bounds_changed', function() {
-                    searchBox.setBounds(map.getBounds());
-                });
-                map.addListener('click', function(event) {
-                    let location = event.latLng;
-                    if (marker1) {
-                        marker1.setPosition(location);
-                      } else {
-                        marker1 = new google.maps.Marker({
-                            position: location,
-                            map: map,
-                            title: 'Mi marcador'
-                        });
-                      }
-                      
-                      var latitud = location.lat();
-                      var longitud = location.lng();
-                      //console.log('Latitud2: ' + latitud);
-                      //console.log('Longitud2: ' + longitud)
+             
             
-                });
-          }  
         };
+        async function initAutocomplete(lat, lng, zoom) {
+          //var map = new google.maps.Map(document.getElementById('map'), {
+          var marker1;
+          const { Map } = await google.maps.importLibrary("maps");
+    
+          var map = new Map(document.getElementById("map"), {
+            center: {
+              lat: lat,
+              lng: lng
+            },
+            zoom: zoom,
+            mapTypeId: 'hybrid'
+          });
+    
+           // Create the search box and link it to the UI element.
+          var input = document.getElementById('pac-input');
+          //console.log(input);
+          var searchBox = new google.maps.places.SearchBox(input);       
+          //map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+    
+            // Bias the SearchBox results towards current map's viewport.
+            map.addListener('bounds_changed', function() {
+                searchBox.setBounds(map.getBounds());
+            });
+            map.addListener('click', function(event) {
+                let location = event.latLng;
+                console.log(location)
+                if (marker1) {
+                    marker1.setPosition(location);
+                  } else {
+                    marker1 = new google.maps.Marker({
+                        position: location,
+                        map: map,
+                        title: 'Mi marcador'
+                    });
+                  }
+                  const cords = document.getElementById('entity-cords');
+                  cords.classList.add('input_filled');
+                  cords.setAttribute('value', `${location.lat()}, ${location.lng()}`);
+                  //var latitud = location.lat();
+                  //var longitud = location.lng();
+                  //console.log('Latitud2: ' + latitud);
+                  //console.log('Longitud2: ' + longitud)
+        
+            });
+          } 
         
 
     }
@@ -273,7 +383,7 @@ export class Locations {
           this.entityDialogContainer.innerHTML = '';
           this.entityDialogContainer.style.display = 'flex';
           this.entityDialogContainer.innerHTML = `
-      <div class="entity_editor" id="entity-editor">
+      <div class="entity_editor" id="entity-editor" style="max-width:80%">
         <div class="entity_editor_header">
           <div class="user_info">
             <div class="avatar"><i class="fa-regular fa-briefcase"></i></div>
@@ -283,31 +393,38 @@ export class Locations {
         </div>
         <!-- EDITOR BODY -->
         <div class="entity_editor_body">
-          <div class="material_input">
-            <input type="text"
-              id="entity-name"
-              class="input_filled"
-              maxlength="30"
-              value="${data?.name ?? ''}">
-            <label for="entity-name">Ubicación</label>
+          <div class="fila" style="display: flex">
+            <div class="elemento" style ="flex: 1;">
+              <div  style="padding-bottom:20px"> 
+                <input id="pac-input" class="controls pac-target-input" type="text" placeholder="Ciudad, lugar o calle" autocomplete="off">
+                  <button id="obtCords">Buscar</button>
+              </div>
+              <div id="map" style="height: 400px;width: 600px"></div>
+            </div>
+            <div class="elemento" style ="flex: 0.6">
+              <div class="material_input">
+                <input type="text"
+                  id="entity-name"
+                  class="input_filled"
+                  value="${data?.name ?? ''}">
+                <label for="entity-name">Ubicación</label>
+              </div>
+              <div class="material_input">
+                <input type="text"
+                  id="entity-cords"
+                  class="input_filled"
+                  value="${data?.cords ?? ''}" readonly>
+                <label for="entity-cords">Coordenadas</label>
+              </div>
+              <div class="material_input">
+                <input type="number"
+                  id="entity-distance"
+                  class="input_filled"
+                  value="${data?.distance ?? ''}" min=0>
+                <label for="entity-distance">Distancia</label>
+              </div>
+            </div>
           </div>
-          <div class="material_input">
-            <input type="text"
-              id="entity-cords"
-              class="input_filled"
-              maxlength="40"
-              value="${data?.cords ?? ''}">
-            <label for="entity-cords">Coordenadas</label>
-          </div>
-          <div class="material_input">
-            <input type="text"
-              id="entity-distance"
-              class="input_filled"
-              maxlength="4"
-              value="${data?.distance ?? ''}">
-            <label for="entity-distance">Distancia</label>
-          </div>
-          
         </div>
         <!-- END EDITOR BODY -->
         <div class="entity_editor_footer">
@@ -315,9 +432,14 @@ export class Locations {
         </div>
       </div>
     `;
-
+          const coords = data?.cords.split(',');
+          console.log(coords)
+          const latitud = parseFloat(coords[0].trim());
+          console.log(latitud)
+          const longitud = parseFloat(coords[1].trim());
+          console.log(longitud)
           inputObserver();
-
+          initAutocomplete(latitud, longitud, 20);
           this.close();
           UUpdate(entityID);
       };
@@ -341,8 +463,34 @@ export class Locations {
                 // @ts-ignore
                 "distance": `${$value.distance.value}`,
             });
-            update(raw);
+            if($value.name.value == "" || $value.name.value == undefined){
+              alert("Nombre de Ubicación vacía");
+            }else if($value.cords.value == "" || $value.cords.value == undefined){
+              alert("No se ha seleccionado una ubicación");
+            }else if($value.distance.value == "" || $value.distance.value == undefined || $value.distance.value < 0){
+              alert("Distancia inválida");
+            }else{
+              update(raw);
+            }
           });
+          const btnObtCords = document.getElementById('obtCords');
+            btnObtCords.addEventListener('click', () => {
+                var geocoder = new google.maps.Geocoder();
+                var direccion = document.getElementById('pac-input').value; // Obtén la dirección ingresada por el usuario desde un campo de entrada de texto
+            
+                geocoder.geocode({ 'address': direccion }, function(results, status) {
+                if (status === google.maps.GeocoderStatus.OK) {
+                    var latitud = results[0].geometry.location.lat();
+                    var longitud = results[0].geometry.location.lng();
+                    //console.log('Latitud: ' + latitud);
+                    //console.log('Longitud: ' + longitud);
+                    initAutocomplete(latitud, longitud, 20);
+                } else {
+                    //console.log('Geocodificación fallida: ' + status);
+                    alert("No encontrado "+status);
+                }
+                });
+            });
           const update = (raw) => {
             updateEntity('Location', entityId, raw)
                 .then((res) => {
@@ -350,16 +498,75 @@ export class Locations {
                     let tableBody;
                     let container;
                     let data;
-                    data = await getLocations();
+                    //data = await getLocations();
                     new CloseDialog()
                         .x(container =
                         document.getElementById('entity-editor-container'));
-                    new Locations().load(tableBody
-                        = document.getElementById('datatable-body'), currentPage, data);
+                    new Locations().render(infoPage.offset, infoPage.currentPage, infoPage.search);
+                    //new Locations().load(tableBody
+                    //    = document.getElementById('datatable-body'), currentPage, data);
                 }, 100);
             });
         };
       };
+      async function initAutocomplete(lat, lng, zoom) {
+        //var map = new google.maps.Map(document.getElementById('map'), {
+        var marker1;
+        var marker2;
+        const { Map } = await google.maps.importLibrary("maps");
+  
+        var map = new Map(document.getElementById("map"), {
+          center: {
+            lat: lat,
+            lng: lng
+          },
+          zoom: zoom,
+          mapTypeId: 'hybrid'
+        });
+  
+         // Create the search box and link it to the UI element.
+        var input = document.getElementById('pac-input');
+        //console.log(input);
+        var searchBox = new google.maps.places.SearchBox(input);       
+        //map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+  
+          // Bias the SearchBox results towards current map's viewport.
+          map.addListener('bounds_changed', function() {
+              searchBox.setBounds(map.getBounds());
+          });
+          map.addListener('click', function(event) {
+              let location = event.latLng;
+              console.log(location)
+              if (marker1) {
+                  marker1.setPosition(location);
+                } else {
+                  marker1 = new google.maps.Marker({
+                      position: location,
+                      map: map,
+                      title: 'Mi marcador'
+                  });
+                }
+                const cords = document.getElementById('entity-cords');
+                cords.classList.add('input_filled');
+                cords.setAttribute('value', `${location.lat()}, ${location.lng()}`);
+                if(marker2 != undefined)
+                  marker2.setMap(null);
+                //var latitud = location.lat();
+                //var longitud = location.lng();
+                //console.log('Latitud2: ' + latitud);
+                //console.log('Longitud2: ' + longitud)
+      
+          });
+          if(lat != "" || lng != ""){
+              const myLatLng = { lat: lat, lng: lng };
+              marker2 =  new google.maps.Marker({
+                position: myLatLng,
+                map,
+                title: "Posición Actual",
+                });
+                marker2.setMap(map);
+            }
+        } 
   }
     remove() {
         const remove = document.querySelectorAll('#remove-entity');
@@ -393,7 +600,7 @@ export class Locations {
                 const dialogContent = document.getElementById('dialog-content');
                 deleteButton.onclick = () => {
                     deleteEntity('Location', entityId)
-                        .then(res => new Locations().render());
+                        .then(res => new Locations().render(infoPage.offset, infoPage.currentPage, infoPage.search));
                     new CloseDialog().x(dialogContent);
                 };
                 cancelButton.onclick = () => {
@@ -410,6 +617,7 @@ export class Locations {
             new CloseDialog().x(editor);
         });
     }
+    
 
     /*placeMarker(location) {
         if (marker1) {
@@ -439,7 +647,7 @@ export class Locations {
         
 
 }
-export const setNewPassword = async () => {
+/*export const setNewPassword = async () => {
     const users = await getEntitiesData('User');
     const FNewUsers = users.filter((data) => data.isSuper === false);
     FNewUsers.forEach((newUser) => {
@@ -448,4 +656,4 @@ export const setNewPassword = async () => {
     console.log(FNewUsers);
     console.time(FNewUsers);
     console.groupEnd();
-};
+};*/

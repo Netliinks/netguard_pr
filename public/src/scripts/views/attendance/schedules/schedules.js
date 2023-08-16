@@ -1,6 +1,6 @@
 // @filename: Blacklist.ts
-import { deleteEntity, getEntitiesData, getEntityData, registerEntity, setPassword, setUserRole, updateEntity, getUserInfo, getFilterEntityData } from "../../../endpoints.js";
-import { drawTagsIntoTables, inputObserver, inputSelect, CloseDialog, filterDataByHeaderType } from "../../../tools.js";
+import { deleteEntity, getEntitiesData, getEntityData, registerEntity, setPassword, setUserRole, updateEntity, getUserInfo, getFilterEntityData, getFilterEntityCount } from "../../../endpoints.js";
+import { drawTagsIntoTables, inputObserver, inputSelect, CloseDialog, filterDataByHeaderType, pageNumbers, fillBtnPagination } from "../../../tools.js";
 import { Config } from "../../../Configs.js";
 import { tableLayout } from "./Layout.js";
 import { tableLayoutTemplate } from "./Templates.js";
@@ -9,23 +9,77 @@ const tableRows = Config.tableRows;
 const currentPage = Config.currentPage;
 let currentUserInfo; 
 const customerId = localStorage.getItem('customer_id');
+let infoPage = {
+    count: 0,
+    offset: Config.offset,
+    currentPage: currentPage,
+    search: ""
+};
+let dataPage;
 const getSchedules = async () => {
     const currentUser = await getUserInfo();
     const user = await getEntityData('User', `${currentUser.attributes.id}`);
     currentUserInfo = user;
-    const schedules = await getEntitiesData('Schedule');
+    /*const schedules = await getEntitiesData('Schedule');
     const FCustomer = schedules.filter((data) => `${data.customer?.id}` === `${customerId}`);
-    return FCustomer;
+    return FCustomer;*/
+    let raw = JSON.stringify({
+        "filter": {
+            "conditions": [
+                {
+                    "property": "customer.id",
+                    "operator": "=",
+                    "value": `${customerId}`
+                }
+            ],
+        },
+        sort: "-createdDate",
+        limit: Config.tableRows,
+        offset: infoPage.offset,
+        fetchPlan: 'full',
+    });
+    if (infoPage.search != "") {
+        raw = JSON.stringify({
+            "filter": {
+                "conditions": [
+                    {
+                        "group": "OR",
+                        "conditions": [
+                            {
+                                "property": "name",
+                                "operator": "contains",
+                                "value": `${infoPage.search.toLowerCase()}`
+                            }
+                        ]
+                    },
+                    {
+                        "property": "customer.id",
+                        "operator": "=",
+                        "value": `${customerId}`
+                    }
+                ]
+            },
+            sort: "-createdDate",
+            limit: Config.tableRows,
+            offset: infoPage.offset,
+            fetchPlan: 'full',
+        });
+    }
+    infoPage.count = await getFilterEntityCount("Schedule", raw);
+    dataPage = await getFilterEntityData("Schedule", raw);
+    return dataPage;
 };
 export class Schedules {
     constructor() {
         this.dialogContainer = document.getElementById('app-dialogs');
         this.entityDialogContainer = document.getElementById('entity-editor-container');
         this.content = document.getElementById('datatable-container');
-        this.searchEntity = async (tableBody, data) => {
+        this.searchEntity = async (tableBody /*, data*/) => {
             const search = document.getElementById('search');
+            const btnSearch = document.getElementById('btnSearch');
+            search.value = infoPage.search;
             await search.addEventListener('keyup', () => {
-                const arrayData = data.filter((schedules) => `${schedules.name}
+                /*const arrayData = data.filter((schedules) => `${schedules.name}
                  ${schedules.ingressTime}
                  ${schedules.egressTime}`
                     .toLowerCase()
@@ -34,11 +88,17 @@ export class Schedules {
                 let result = arrayData;
                 if (filteredResult >= tableRows)
                     filteredResult = tableRows;
-                this.load(tableBody, currentPage, result);
+                this.load(tableBody, currentPage, result);*/
+            });
+            btnSearch.addEventListener('click', async () => {
+                new Schedules().render(Config.offset, Config.currentPage, search.value.toLowerCase().trim());
             });
         };
     }
-    async render() {
+    async render(offset, actualPage, search) {
+        infoPage.offset = offset;
+        infoPage.currentPage = actualPage;
+        infoPage.search = search;
         this.content.innerHTML = '';
         this.content.innerHTML = tableLayout;
         const tableBody = document.getElementById('datatable-body');
@@ -46,9 +106,9 @@ export class Schedules {
         let data = await getSchedules();
         tableBody.innerHTML = tableLayoutTemplate.repeat(tableRows);
         this.load(tableBody, currentPage, data);
-        this.searchEntity(tableBody, data);
+        this.searchEntity(tableBody /*, data*/);
         new filterDataByHeaderType().filter();
-        this.pagination(data, tableRows, currentPage);
+        this.pagination(data, tableRows, infoPage.currentPage);
     }
     load(table, currentPage, data) {
         table.innerHTML = '';
@@ -221,11 +281,11 @@ export class Schedules {
             registerEntity(raw, 'Schedule')
                 .then((res) => {
                 setTimeout(async () => {
-                    let data = await getSchedules();
+                    //let data = await getSchedules();
                     const tableBody = document.getElementById('datatable-body');
                     const container = document.getElementById('entity-editor-container');
                     new CloseDialog().x(container);
-                    new Schedules().load(tableBody, currentPage, data);
+                    new Schedules().render(Config.offset, Config.currentPage, infoPage.search);
                 }, 1000);
             });
         };
@@ -351,9 +411,9 @@ export class Schedules {
                         let data;
                         tableBody = document.getElementById('datatable-body');
                         container = document.getElementById('entity-editor-container');
-                        data = await getSchedules();
+                        //data = await getSchedules();
                         new CloseDialog().x(container);
-                        new Schedules().load(tableBody, currentPage, data);
+                        new Schedules().render(infoPage.offset, infoPage.currentPage, infoPage.search);
                     }, 100);
                 });
             };
@@ -395,16 +455,16 @@ export class Schedules {
                     deleteEntity('Schedule', entityId)
                     .then((res) => {
                         setTimeout(async () => {
-                            let data = await getSchedules();
+                            //let data = await getSchedules();
                             const tableBody = document.getElementById('datatable-body');
                             new CloseDialog().x(dialogContent);
-                            new Schedules().load(tableBody, currentPage, data);
+                            new Schedules().render(infoPage.offset, infoPage.currentPage, infoPage.search);
                         }, 1000);
                     });
                 };
                 cancelButton.onclick = () => {
                     new CloseDialog().x(dialogContent);
-                    this.render();
+                    //this.render();
                 };
             });
         });
@@ -563,21 +623,59 @@ export class Schedules {
         const paginationWrapper = document.getElementById('pagination-container');
         paginationWrapper.innerHTML = '';
         let pageCount;
-        pageCount = Math.ceil(items.length / limitRows);
+        pageCount = Math.ceil(infoPage.count / limitRows);
         let button;
-        for (let i = 1; i < pageCount + 1; i++) {
-            button = setupButtons(i, items, currentPage, tableBody, limitRows);
-            paginationWrapper.appendChild(button);
+        if (pageCount <= Config.maxLimitPage) {
+            for (let i = 1; i < pageCount + 1; i++) {
+                button = setupButtons(i /*, items, currentPage, tableBody, limitRows*/);
+                paginationWrapper.appendChild(button);
+            }
+            fillBtnPagination(currentPage, Config.colorPagination);
         }
-        function setupButtons(page, items, currentPage, tableBody, limitRows) {
+        else {
+            pagesOptions(items, currentPage);
+        }
+        function setupButtons(page /*, items, currentPage, tableBody, limitRows*/) {
             const button = document.createElement('button');
             button.classList.add('pagination_button');
+            button.setAttribute("name", "pagination-button");
+            button.setAttribute("id", "btnPag" + page);
             button.innerText = page;
             button.addEventListener('click', () => {
+                infoPage.offset = Config.tableRows * (page - 1);
                 currentPage = page;
-                new Schedules().load(tableBody, page, items);
+                new Schedules().render(infoPage.offset, currentPage, infoPage.search);
             });
             return button;
+        }
+        function pagesOptions(items, currentPage) {
+            paginationWrapper.innerHTML = '';
+            let pages = pageNumbers(items, Config.maxLimitPage, currentPage);
+            const prevButton = document.createElement('button');
+            prevButton.classList.add('pagination_button');
+            prevButton.innerText = "<<";
+            paginationWrapper.appendChild(prevButton);
+            const nextButton = document.createElement('button');
+            nextButton.classList.add('pagination_button');
+            nextButton.innerText = ">>";
+            for (let i = 0; i < pages.length; i++) {
+                if (pages[i] > 0 && pages[i] <= pageCount) {
+                    button = setupButtons(pages[i]);
+                    paginationWrapper.appendChild(button);
+                }
+            }
+            paginationWrapper.appendChild(nextButton);
+            fillBtnPagination(currentPage, Config.colorPagination);
+            setupButtonsEvents(prevButton, nextButton);
+        }
+        function setupButtonsEvents(prevButton, nextButton) {
+            prevButton.addEventListener('click', () => {
+                new Schedules().render(Config.offset, Config.currentPage, infoPage.search);
+            });
+            nextButton.addEventListener('click', () => {
+                infoPage.offset = Config.tableRows * (pageCount - 1);
+                new Schedules().render(infoPage.offset, pageCount, infoPage.search);
+            });
         }
     }
     close() {

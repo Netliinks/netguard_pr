@@ -233,11 +233,11 @@ renders() {
   });
     // render AssistControl
     document.getElementById('render-schedules')?.addEventListener('click', () => {
-      new Schedules().render();
+      new Schedules().render(Config.offset, Config.currentPage, "");
   });
   // render Locations
     document.getElementById('render-location')?.addEventListener('click', () => {
-      new Locations().render();
+      new Locations().render(Config.offset, Config.currentPage, "");
   });
     // render AssistControl
     document.getElementById('render-events')?.addEventListener('click', () => {

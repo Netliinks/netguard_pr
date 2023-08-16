@@ -13,6 +13,11 @@ export const tableLayout = `
         placeholder="Buscar"
         id="search">
         <button
+            class="datatable_button add_user"
+            id="btnSearch">
+            <i class="fa-solid fa-search"></i>
+        </button>
+        <button
           class="datatable_button add_location"
           id="new-entity">
           <i class="fa-solid fa-add"></i>
