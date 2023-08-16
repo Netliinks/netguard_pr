@@ -1,8 +1,8 @@
 // @filename: SuperUsers.ts
-import { deleteEntity, getEntitiesData, getEntityData, registerEntity, setPassword, setUserRole, updateEntity, getUserInfo, sendMail, getFilterEntityData } from "../../../endpoints.js";
-import { drawTagsIntoTables, inputObserver, inputSelect, inputSelectType, CloseDialog, filterDataByHeaderType, verifyUserType, getVerifyEmail, getVerifyUsername } from "../../../tools.js";
+import { deleteEntity, getEntityData, registerEntity, setPassword, setUserRole, updateEntity, getUserInfo, sendMail, getFilterEntityData, getFilterEntityCount } from "../../../endpoints.js";
+import { drawTagsIntoTables, inputObserver, inputSelect, inputSelectType, CloseDialog, filterDataByHeaderType, verifyUserType, getVerifyEmail, getVerifyUsername, pageNumbers, fillBtnPagination } from "../../../tools.js";
 import { Config } from "../../../Configs.js";
-import { tableLayout } from "./Layout.js";
+import { tableLayout, UIConvertToSU } from "./Layout.js";
 import { tableLayoutTemplate } from "./Templates.js";
 import { exportSuperCsv, exportSuperPdf, exportSuperXls } from "../../../exportFiles/superUsers.js";
 const tableRows = Config.tableRows;
@@ -11,6 +11,13 @@ const SUser = true;
 let currentUserInfo; 
 let currentCustomer;
 const customerId = localStorage.getItem('customer_id');
+let infoPage = {
+  count: 0,
+  offset: Config.offset,
+  currentPage: currentPage,
+  search: ""
+};
+let dataPage;
 const currentUserData = async() => {
   const currentUser = await getUserInfo();
   const user = await getEntityData('User', `${currentUser.attributes.id}`);
@@ -24,22 +31,103 @@ const currentCustomerData = async() => {
 const getUsers = async (superUser) => {
     const currentUser = await currentUserData(); //usuario logueado
     currentCustomer = await currentCustomerData();
-    const users = await getEntitiesData('User');
+    /*const users = await getEntitiesData('User');
     const FSuper = users.filter((data) => data.isSuper === superUser);
     const admin = FSuper.filter((data) => data.username != `admin`);
     const consulta = admin.filter((data) => data.username != `consulta`);
-    const FCustomer = consulta.filter((data) => `${data.customer?.id}` === `${customerId}`);
-    return FCustomer;
+    const FCustomer = consulta.filter((data) => `${data.customer?.id}` === `${customerId}`);*/
+    let raw = JSON.stringify({
+      "filter": {
+          "conditions": [
+              {
+                  "property": "customer.id",
+                  "operator": "=",
+                  "value": `${customerId}`
+              },
+              {
+                  "property": "isSuper",
+                  "operator": "=",
+                  "value": `${superUser}`
+              }
+          ],
+      },
+      sort: "-createdDate",
+      limit: Config.tableRows,
+      offset: infoPage.offset,
+      fetchPlan: 'full',
+  });
+  if (infoPage.search != "") {
+    raw = JSON.stringify({
+        "filter": {
+            "conditions": [
+                {
+                    "group": "OR",
+                    "conditions": [
+                        {
+                            "property": "dni",
+                            "operator": "contains",
+                            "value": `${infoPage.search.toLowerCase()}`
+                        },
+                        {
+                            "property": "firstName",
+                            "operator": "contains",
+                            "value": `${infoPage.search.toLowerCase()}`
+                        },
+                        {
+                            "property": "lastName",
+                            "operator": "contains",
+                            "value": `${infoPage.search.toLowerCase()}`
+                        },
+                        {
+                            "property": "secondLastName",
+                            "operator": "contains",
+                            "value": `${infoPage.search.toLowerCase()}`
+                        },
+                        {
+                            "property": "username",
+                            "operator": "contains",
+                            "value": `${infoPage.search.toLowerCase()}`
+                        },
+                        {
+                            "property": "email",
+                            "operator": "contains",
+                            "value": `${infoPage.search.toLowerCase()}`
+                        }
+                    ]
+                },
+                {
+                    "property": "customer.id",
+                    "operator": "=",
+                    "value": `${customerId}`
+                },
+                {
+                    "property": "isSuper",
+                    "operator": "=",
+                    "value": `${superUser}`
+                }
+            ]
+        },
+        sort: "-createdDate",
+        limit: Config.tableRows,
+        offset: infoPage.offset,
+        fetchPlan: 'full',
+    });
+  }
+  infoPage.count = await getFilterEntityCount("User", raw);
+  dataPage = await getFilterEntityData("User", raw);
+  return dataPage;
 };
 export class SuperUsers {
     constructor() {
         this.dialogContainer = document.getElementById('app-dialogs');
         this.entityDialogContainer = document.getElementById('entity-editor-container');
         this.content = document.getElementById('datatable-container');
-        this.searchEntity = async (tableBody, data) => {
+        this.searchEntity = async (tableBody /*, data: any*/) => {
             const search = document.getElementById('search');
+            const btnSearch = document.getElementById('btnSearch');
+            search.value = infoPage.search;
             await search.addEventListener('keyup', () => {
-                const arrayData = data.filter((user) => `${user.firstName}
+                /*const arrayData = data.filter((user) => `${user.firstName}
                  ${user.lastName}
                  ${user.username}`
                     .toLowerCase()
@@ -49,7 +137,10 @@ export class SuperUsers {
                 if (filteredResult >= tableRows)
                     filteredResult = tableRows;
                 this.load(tableBody, currentPage, result);
-                this.pagination(result, tableRows, currentPage);
+                this.pagination(result, tableRows, currentPage);*/
+            });
+            btnSearch.addEventListener('click', async () => {
+              new SuperUsers().render(Config.offset, Config.currentPage, search.value.toLowerCase().trim());
             });
         };
         this.generateUserName = async () => {
@@ -82,7 +173,10 @@ export class SuperUsers {
             });
         };
     }
-    async render() {
+    async render(offset, actualPage, search) {
+        infoPage.offset = offset;
+        infoPage.currentPage = actualPage;
+        infoPage.search = search;
         this.content.innerHTML = '';
         this.content.innerHTML = tableLayout;
         const tableBody = document.getElementById('datatable-body');
@@ -90,9 +184,9 @@ export class SuperUsers {
         let data = await getUsers(SUser);
         tableBody.innerHTML = tableLayoutTemplate.repeat(tableRows);
         this.load(tableBody, currentPage, data);
-        this.searchEntity(tableBody, data);
+        this.searchEntity(tableBody  /*, data*/);
         new filterDataByHeaderType().filter();
-        this.pagination(data, tableRows, currentPage);
+        this.pagination(data, tableRows, infoPage.currentPage);
     }
     load(table, currentPage, data) {
         setUserPassword(SUser);
@@ -127,6 +221,10 @@ export class SuperUsers {
           <td>${client.verifiedSuper ? 'Si' : 'No'}</td>
 
           <td class="entity_options">
+            <button class="button" id="convert-entity" data-entityId="${client.id}">
+                <i class="fa-solid fa-envelope"></i>
+            </button>
+
             <button class="button" id="edit-entity" data-entityId="${client.id}">
               <i class="fa-solid fa-pen"></i>
             </button>
@@ -145,7 +243,7 @@ export class SuperUsers {
         this.export(SUser);
         this.edit(this.entityDialogContainer, data);
         this.remove();
-        //this.convertToSuper();
+        this.convertToSuper();
         this.changeUserPassword();
     }
     register() {
@@ -377,11 +475,11 @@ export class SuperUsers {
                 .then(res => {
                 sendMail(mailRaw);
                 setTimeout(async () => {
-                  let data = await getUsers(SUser);
+                  //let data = await getUsers(SUser);
                     const tableBody = document.getElementById('datatable-body');
                     const container = document.getElementById('entity-editor-container');
                     new CloseDialog().x(container);
-                    new SuperUsers().load(tableBody, currentPage, data);
+                    new SuperUsers().render(Config.offset, Config.currentPage, infoPage.search);
                 }, 1000);
                 //setNewPassword();
             });
@@ -624,12 +722,11 @@ export class SuperUsers {
                       let tableBody;
                       let container;
                       let data;
-                      data = await getUsers(SUser);
+                      //data = await getUsers(SUser);
                       new CloseDialog()
                           .x(container =
                           document.getElementById('entity-editor-container'));
-                      new SuperUsers().load(tableBody
-                          = document.getElementById('datatable-body'), currentPage, data);
+                      new SuperUsers().render(infoPage.offset, infoPage.currentPage, infoPage.search);
                   }, 100);
               });
           };
@@ -742,10 +839,10 @@ export class SuperUsers {
                     deleteEntity('User', entityId)
                     .then((res) => {
                       setTimeout(async () => {
-                        let data = await getUsers(SUser);
+                        //let data = await getUsers(SUser);
                           const tableBody = document.getElementById('datatable-body');
                           new CloseDialog().x(dialogContent);
-                          new SuperUsers().load(tableBody, currentPage, data);
+                          new SuperUsers().render(infoPage.offset, infoPage.currentPage, infoPage.search);
                       }, 1000);
                   });
                 };
@@ -806,7 +903,25 @@ export class SuperUsers {
             const _values = {
                 exportOption: document.getElementsByName('exportOption')
             };
-            const users = await getUsers(SUser);
+            let rawExport = JSON.stringify({
+              "filter": {
+                  "conditions": [
+                      {
+                          "property": "customer.id",
+                          "operator": "=",
+                          "value": `${customerId}`
+                      },
+                      {
+                          "property": "isSuper",
+                          "operator": "=",
+                          "value": `${SUser}`
+                      }
+                  ],
+              },
+              sort: "-createdDate",
+              fetchPlan: 'full',
+          });
+          const users = await getFilterEntityData("User", rawExport); //await getUsers(SUser)
             for (let i = 0; i < _values.exportOption.length; i++) {
                 let ele = _values.exportOption[i];
                 if (ele.type = "radio") {
@@ -837,24 +952,157 @@ export class SuperUsers {
       const paginationWrapper = document.getElementById('pagination-container');
       paginationWrapper.innerHTML = '';
       let pageCount;
-      pageCount = Math.ceil(items.length / limitRows);
+      pageCount = Math.ceil(infoPage.count / limitRows);
       let button;
-      for (let i = 1; i < pageCount + 1; i++) {
-          button = setupButtons(i, items, currentPage, tableBody, limitRows);
-          paginationWrapper.appendChild(button);
+      if (pageCount <= Config.maxLimitPage) {
+          for (let i = 1; i < pageCount + 1; i++) {
+              button = setupButtons(i /*, items, currentPage, tableBody, limitRows*/);
+              paginationWrapper.appendChild(button);
+          }
+          fillBtnPagination(currentPage, Config.colorPagination);
       }
-      function setupButtons(page, items, currentPage, tableBody, limitRows) {
+      else {
+          pagesOptions(items, currentPage);
+      }
+      function setupButtons(page /*, items, currentPage, tableBody, limitRows*/) {
           const button = document.createElement('button');
           button.classList.add('pagination_button');
-          button.innerText = page;
-          button.addEventListener('click', () => {
-              currentPage = page;
-              new SuperUsers().load(tableBody, page, items);
-          });
-          return button;
-      }
+          button.setAttribute("name", "pagination-button");
+            button.setAttribute("id", "btnPag" + page);
+            button.innerText = page;
+            button.addEventListener('click', () => {
+                infoPage.offset = Config.tableRows * (page - 1);
+                currentPage = page;
+                new SuperUsers().render(infoPage.offset, currentPage, infoPage.search);
+            });
+            return button;
+        }
+        function pagesOptions(items, currentPage) {
+            paginationWrapper.innerHTML = '';
+            let pages = pageNumbers(items, Config.maxLimitPage, currentPage);
+            const prevButton = document.createElement('button');
+            prevButton.classList.add('pagination_button');
+            prevButton.innerText = "<<";
+            paginationWrapper.appendChild(prevButton);
+            const nextButton = document.createElement('button');
+            nextButton.classList.add('pagination_button');
+            nextButton.innerText = ">>";
+            for (let i = 0; i < pages.length; i++) {
+                if (pages[i] > 0 && pages[i] <= pageCount) {
+                    button = setupButtons(pages[i]);
+                    paginationWrapper.appendChild(button);
+                }
+            }
+            paginationWrapper.appendChild(nextButton);
+            fillBtnPagination(currentPage, Config.colorPagination);
+            setupButtonsEvents(prevButton, nextButton);
+        }
+        function setupButtonsEvents(prevButton, nextButton) {
+            prevButton.addEventListener('click', () => {
+                new SuperUsers().render(Config.offset, Config.currentPage, infoPage.search);
+            });
+            nextButton.addEventListener('click', () => {
+                infoPage.offset = Config.tableRows * (pageCount - 1);
+                new SuperUsers().render(infoPage.offset, pageCount, infoPage.search);
+            });
+        }
+  }
+  convertToSuper() {
+    const convert = document.querySelectorAll('#convert-entity');
+    convert.forEach((convert) => {
+        const entityId = convert.dataset.entityid;
+        convert.addEventListener('click', async () => {
+            const user = await getEntityData('User', entityId);
+            if (!user.verifiedSuper) {
+                this.dialogContainer.style.display = 'block';
+                this.dialogContainer.innerHTML = UIConvertToSU;
+                const modalUsername = document.getElementById('username');
+                modalUsername.innerHTML = user.firstName;
+                inputObserver();
+                // modal functionality
+                const nextButton = document.getElementById('button-next-userconverter');
+                const cancelButton = document.getElementById('button-cancel');
+                const buttonBack = document.getElementById('button-back');
+                const buttonSubmit = document.getElementById('button-submit');
+                const modalViews = document.querySelectorAll('.modal_view');
+                const buttonGroups = document.querySelectorAll('.modal_button_group');
+                const stepCount = document.getElementById('stepCount');
+                const resultMail = document.getElementById('result-mail');
+                const inputMail = document.getElementById('input-email');
+                const confirmationCode = document.getElementById('confirmation-code');
+                const modalContainer = document.getElementById('modal_container');
+                let mailRaw = [];
+                let updateRaw = [];
+                //let roleRaw = [];
+                inputMail.value = user.email;
+                nextButton.addEventListener('click', async () => {
+                    const randomKey = { key: Math.floor(Math.random() * 999999) };
+                    const existEmail = await getVerifyEmail(inputMail.value);
+                    if (inputMail.value === '' || inputMail.value == null) {
+                        alert('Debe ingresar un correo para continuar.');
+                    }
+                    else if (inputMail.value != user.email && existEmail == true) {
+                        alert("¡Correo electrónico ya existe!");
+                    }
+                    else {
+                        modalViews.forEach((modalView) => {
+                            modalView.classList.toggle('modal_view-isHidden');
+                            stepCount.innerText = '2';
+                        });
+                        buttonGroups.forEach((buttonGroup) => {
+                            buttonGroup.classList.toggle('modal_button_group-isHidden');
+                        });
+                        resultMail.innerText = inputMail.value;
+                        confirmationCode.innerText = randomKey.key;
+                        //let roleCode;
+                        let plataform
+                        if(user.userType === 'GUARD'){
+                          //roleCode = 'app_web_guardias'
+                          plataform = 'Netguard'
+                        }else if(user.userType === 'CUSTOMER'){
+                          //roleCode = 'app_web_clientes'
+                          plataform = 'Netvisitors'
+                        }
+                        
+                        mailRaw = JSON.stringify({
+                            "address": inputMail.value,
+                            "subject": "Netliinks - Clave de validación.",
+                            "body": `Estimado ${user.firstName}, el código de confirmación para ingresar a la plataforma de ${plataform} es: \n
+                                                                        ${randomKey.key}\nNo responder a este correo.\nSaludos.\n\n\nNetliinks S.A.`
+                        });
+                        updateRaw = JSON.stringify({
+                            "email": inputMail.value,
+                            "hashSuper": randomKey.key,
+                        });
+                        
+                        /*roleRaw = JSON.stringify({
+                            "id": `${user.id}`,
+                            "roleCode": `${roleCode}`
+                        });*/
+                        sendMail(mailRaw);
+                        updateEntity('User', entityId, updateRaw);
+                        //setUserRole(roleRaw);
+                        setTimeout(async () => {
+                            //let data = await getUsers(SUser);
+                            const tableBody = document.getElementById('datatable-body');
+                            new CloseDialog().x(modalContainer);
+                            //new SuperUsers().render(infoPage.offset, infoPage.currentPage, infoPage.search);
+                            //this.load(tableBody, currentPage, data);
+                        }, 100);
+                    }
+                });
+                cancelButton.onclick = () => {
+                    new CloseDialog().x(modalContainer);
+                };
+            }
+            else {
+                alert(`Usuario ${user.username} ya está verificado.`);
+            }
+        });
+    });
   }
 }
+
 export const setNewPassword = async () => {
     const users = await getEntitiesData('User');
     const FNewUsers = users.filter((data) => data.isSuper === false);
@@ -879,6 +1127,11 @@ export const setUserPassword = async (SUser) => {
                 "property": "customer.id",
                 "operator": "=",
                 "value": `${customerId}`
+            },
+            {
+                "property": "newUser",
+                "operator": "=",
+                "value": `${true}`
             }
         ]
     }

@@ -73,7 +73,7 @@ export class RenderApplicationUI {
             //new CloseDialog().x(settingOptions);
         });
         changeCustomer.addEventListener("click", () => {
-            new SelectCustomer().render();
+            new SelectCustomer().render(0, 1, '');
             //new CloseDialog().x(settingOptions);
         });
         logoutButton.addEventListener("click", () => {

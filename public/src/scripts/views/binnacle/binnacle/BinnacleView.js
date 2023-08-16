@@ -1,7 +1,7 @@
 // @filename: EvetnsView.ts
 import { Config } from "../../../Configs.js";
-import { getEntityData, getEntitiesData, getUserInfo, getFilterEntityData } from "../../../endpoints.js";
-import { CloseDialog, renderRightSidebar, filterDataByHeaderType, inputObserver } from "../../../tools.js";
+import { getEntityData, getFilterEntityData, getFilterEntityCount } from "../../../endpoints.js";
+import { CloseDialog, renderRightSidebar, filterDataByHeaderType, inputObserver, pageNumbers, fillBtnPagination } from "../../../tools.js";
 import { UIContentLayout, UIRightSidebar } from "./Layout.js";
 import { UITableSkeletonTemplate } from "./Template.js";
 import { exportBinnacleCsv, exportBinnaclePdf, exportBinnacleXls } from "../../../exportFiles/binnacle.js";
@@ -10,8 +10,15 @@ const tableRows = Config.tableRows;
 let currentPage = Config.currentPage;
 const pageName = 'Bitácora';
 const customerId = localStorage.getItem('customer_id');
+let infoPage = {
+    count: 0,
+    offset: Config.offset,
+    currentPage: currentPage,
+    search: ""
+};
+let dataPage;
 const getEvents = async () => {
-    const eventsRaw = await getEntitiesData('Notification');
+    /*const eventsRaw = await getEntitiesData('Notification');
     const events = eventsRaw.filter((data) => data.customer?.id === `${customerId}`);
     // notificationType.name
     const removeOtroFromList = events.filter((data) => data.notificationType.name !== "Otro");
@@ -19,15 +26,127 @@ const getEvents = async () => {
     const removeCaidoFromList = removeFuegoFromList.filter((data) => data.notificationType.name !== '🚨 Hombre Caído');
     const removeIntrusionFromList = removeCaidoFromList.filter((data) => data.notificationType.name !== '🚪 Intrusión');
     const removeRoboFromList = removeIntrusionFromList.filter((data) => data.notificationType.name !== '🏚 Robo');
-    const removePanicoFromList = removeRoboFromList.filter((data) => data.notificationType.name !== 'Botón Pánico');
-    return removePanicoFromList;
+    const removePanicoFromList = removeRoboFromList.filter((data) => data.notificationType.name !== 'Botón Pánico');*/
+    let raw = JSON.stringify({
+        "filter": {
+            "conditions": [
+                {
+                    "property": "customer.id",
+                    "operator": "=",
+                    "value": `${customerId}`
+                },
+                {
+                    "property": "notificationType.name",
+                    "operator": "<>",
+                    "value": `Otro`
+                },
+                {
+                    "property": "notificationType.name",
+                    "operator": "<>",
+                    "value": `🔥 Fuego`
+                },
+                {
+                    "property": "notificationType.name",
+                    "operator": "<>",
+                    "value": `🚨 Hombre Caído`
+                },
+                {
+                    "property": "notificationType.name",
+                    "operator": "<>",
+                    "value": `🚪 Intrusión`
+                },
+                {
+                    "property": "notificationType.name",
+                    "operator": "<>",
+                    "value": `🏚 Robo`
+                },
+                {
+                    "property": "notificationType.name",
+                    "operator": "<>",
+                    "value": `Botón Pánico`
+                },
+            ],
+        },
+        sort: "-createdDate",
+        limit: Config.tableRows,
+        offset: infoPage.offset,
+        fetchPlan: 'full',
+    });
+    if (infoPage.search != "") {
+        raw = JSON.stringify({
+            "filter": {
+                "conditions": [
+                    {
+                        "group": "OR",
+                        "conditions": [
+                            {
+                                "property": "title",
+                                "operator": "contains",
+                                "value": `${infoPage.search.toLowerCase()}`
+                            },
+                            {
+                                "property": "description",
+                                "operator": "contains",
+                                "value": `${infoPage.search.toLowerCase()}`
+                            }
+                        ]
+                    },
+                    {
+                        "property": "customer.id",
+                        "operator": "=",
+                        "value": `${customerId}`
+                    },
+                    {
+                        "property": "notificationType.name",
+                        "operator": "<>",
+                        "value": `Otro`
+                    },
+                    {
+                        "property": "notificationType.name",
+                        "operator": "<>",
+                        "value": `🔥 Fuego`
+                    },
+                    {
+                        "property": "notificationType.name",
+                        "operator": "<>",
+                        "value": `🚨 Hombre Caído`
+                    },
+                    {
+                        "property": "notificationType.name",
+                        "operator": "<>",
+                        "value": `🚪 Intrusión`
+                    },
+                    {
+                        "property": "notificationType.name",
+                        "operator": "<>",
+                        "value": `🏚 Robo`
+                    },
+                    {
+                        "property": "notificationType.name",
+                        "operator": "<>",
+                        "value": `Botón Pánico`
+                    },
+                ]
+            },
+            sort: "-createdDate",
+            limit: Config.tableRows,
+            offset: infoPage.offset,
+            fetchPlan: 'full',
+        });
+    }
+    infoPage.count = await getFilterEntityCount("Notification", raw);
+    dataPage = await getFilterEntityData("Notification", raw);
+    return dataPage;
 };
 export class Binnacle {
     constructor() {
         this.dialogContainer = document.getElementById('app-dialogs');
         this.siebarDialogContainer = document.getElementById('entity-editor-container');
         this.appContainer = document.getElementById('datatable-container');
-        this.render = async () => {
+        this.render = async (offset, actualPage, search) => {
+            infoPage.offset = offset;
+            infoPage.currentPage = actualPage;
+            infoPage.search = search;
             this.appContainer.innerHTML = '';
             this.appContainer.innerHTML = UIContentLayout;
             // Getting interface elements
@@ -40,9 +159,9 @@ export class Binnacle {
             tableBody.innerHTML = UITableSkeletonTemplate.repeat(tableRows);
             // Exec functions
             this.load(tableBody, currentPage, eventsArray);
-            this.searchNotes(tableBody, eventsArray);
+            this.searchNotes(tableBody /*, eventsArray*/);
             new filterDataByHeaderType().filter();
-            this.pagination(eventsArray, tableRows, currentPage);
+            this.pagination(eventsArray, tableRows, infoPage.currentPage);
             this.export();
             // Rendering icons
         };
@@ -88,10 +207,12 @@ export class Binnacle {
                 this.previewEvent();
             }
         };
-        this.searchNotes = async (tableBody, events) => {
+        this.searchNotes = async (tableBody /*, events: any*/) => {
             const search = document.getElementById('search');
+            const btnSearch = document.getElementById('btnSearch');
+            search.value = infoPage.search;
             await search.addEventListener('keyup', () => {
-                const arrayEvents = events.filter((event) => `${event.title}
+                /*const arrayEvents = events.filter((event) => `${event.title}
                 ${event.description}
                 ${event.creationDate}`
                     .toLowerCase()
@@ -102,7 +223,10 @@ export class Binnacle {
                     filteredEvents = Config.tableRows;
                 this.load(tableBody, currentPage, result);
                 this.pagination(result, tableRows, currentPage);
-                // Rendering icons
+                // Rendering icons*/
+            });
+            btnSearch.addEventListener('click', async () => {
+                new Binnacle().render(Config.offset, Config.currentPage, search.value.toLowerCase().trim());
             });
         };
         this.previewEvent = async () => {
@@ -215,7 +339,60 @@ export class Binnacle {
                         end: document.getElementById('end-date'),
                         exportOption: document.getElementsByName('exportOption')
                     }
-                    const events = await getEvents();
+                    let rawExport = JSON.stringify({
+                        "filter": {
+                            "conditions": [
+                                {
+                                    "property": "customer.id",
+                                    "operator": "=",
+                                    "value": `${customerId}`
+                                },
+                                {
+                                    "property": "notificationType.name",
+                                    "operator": "<>",
+                                    "value": `Otro`
+                                },
+                                {
+                                    "property": "notificationType.name",
+                                    "operator": "<>",
+                                    "value": `🔥 Fuego`
+                                },
+                                {
+                                    "property": "notificationType.name",
+                                    "operator": "<>",
+                                    "value": `🚨 Hombre Caído`
+                                },
+                                {
+                                    "property": "notificationType.name",
+                                    "operator": "<>",
+                                    "value": `🚪 Intrusión`
+                                },
+                                {
+                                    "property": "notificationType.name",
+                                    "operator": "<>",
+                                    "value": `🏚 Robo`
+                                },
+                                {
+                                    "property": "notificationType.name",
+                                    "operator": "<>",
+                                    "value": `Botón Pánico`
+                                },
+                                {
+                                    "property": "creationDate",
+                                    "operator": ">=",
+                                    "value": `${_values.start.value}`
+                                },
+                                {
+                                    "property": "creationDate",
+                                    "operator": "<=",
+                                    "value": `${_values.end.value}`
+                                }
+                            ],
+                        },
+                        sort: "-createdDate",
+                        fetchPlan: 'full',
+                    });
+                    const events = await getFilterEntityData("Notification", rawExport); //await getEvents();
                     for (let i = 0; i < _values.exportOption.length; i++) {
                         let ele = _values.exportOption[i];
                         if (ele.type = "radio") {
@@ -247,21 +424,59 @@ export class Binnacle {
         const paginationWrapper = document.getElementById('pagination-container');
         paginationWrapper.innerHTML = '';
         let pageCount;
-        pageCount = Math.ceil(items.length / limitRows);
+        pageCount = Math.ceil(infoPage.count / limitRows);
         let button;
-        for (let i = 1; i < pageCount + 1; i++) {
-            button = setupButtons(i, items, currentPage, tableBody, limitRows);
-            paginationWrapper.appendChild(button);
+        if (pageCount <= Config.maxLimitPage) {
+            for (let i = 1; i < pageCount + 1; i++) {
+                button = setupButtons(i /*, items, currentPage, tableBody, limitRows*/);
+                paginationWrapper.appendChild(button);
+            }
+            fillBtnPagination(currentPage, Config.colorPagination);
         }
-        function setupButtons(page, items, currentPage, tableBody, limitRows) {
+        else {
+            pagesOptions(items, currentPage);
+        }
+        function setupButtons(page /*, items, currentPage, tableBody, limitRows*/) {
             const button = document.createElement('button');
             button.classList.add('pagination_button');
+            button.setAttribute("name", "pagination-button");
+            button.setAttribute("id", "btnPag" + page);
             button.innerText = page;
             button.addEventListener('click', () => {
+                infoPage.offset = Config.tableRows * (page - 1);
                 currentPage = page;
-                new Binnacle().load(tableBody, page, items);
+                new Binnacle().render(infoPage.offset, currentPage, infoPage.search); //new Binnacle().load(tableBody, page, items)
             });
             return button;
+        }
+        function pagesOptions(items, currentPage) {
+            paginationWrapper.innerHTML = '';
+            let pages = pageNumbers(pageCount, Config.maxLimitPage, currentPage);
+            const prevButton = document.createElement('button');
+            prevButton.classList.add('pagination_button');
+            prevButton.innerText = "<<";
+            paginationWrapper.appendChild(prevButton);
+            const nextButton = document.createElement('button');
+            nextButton.classList.add('pagination_button');
+            nextButton.innerText = ">>";
+            for (let i = 0; i < pages.length; i++) {
+                if (pages[i] > 0 && pages[i] <= pageCount) {
+                    button = setupButtons(pages[i]);
+                    paginationWrapper.appendChild(button);
+                }
+            }
+            paginationWrapper.appendChild(nextButton);
+            fillBtnPagination(currentPage, Config.colorPagination);
+            setupButtonsEvents(prevButton, nextButton);
+        }
+        function setupButtonsEvents(prevButton, nextButton) {
+            prevButton.addEventListener('click', () => {
+                new Binnacle().render(Config.offset, Config.currentPage, infoPage.search);
+            });
+            nextButton.addEventListener('click', () => {
+                infoPage.offset = Config.tableRows * (pageCount - 1);
+                new Binnacle().render(infoPage.offset, pageCount, infoPage.search);
+            });
         }
     }
 }

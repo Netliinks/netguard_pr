@@ -38,7 +38,7 @@ export const exportVehicularPdf = (ar, start, end) => {
     for (let i = 0; i < ar.length; i++) {
         let vehicular = ar[i];
         // @ts-ignore
-        if (vehicular.ingressDate >= start && vehicular.ingressDate <= end) {
+        //if (vehicular.ingressDate >= start && vehicular.ingressDate <= end) {
             doc.setFontSize(9);
             doc.setFont(undefined, 'normal');
             doc.setTextColor(0, 0, 0);
@@ -80,7 +80,7 @@ export const exportVehicularPdf = (ar, start, end) => {
                 doc.text(10, 200, `Página ${pagina}`);
             }
             lineas++;
-        }
+        //}
     }
     // Save the PDF
     var d = new Date();
@@ -92,7 +92,7 @@ export const exportVehicularCsv = (ar, start, end) => {
     for (let i = 0; i < ar.length; i++) {
         let vehicular = ar[i];
         // @ts-ignore
-        if (vehicular.ingressDate >= start && vehicular.ingressDate <= end) {
+        //if (vehicular.ingressDate >= start && vehicular.ingressDate <= end) {
             let obj = {
                 "Placa": `${vehicular?.licensePlate.split("\n").join("(salto)") ?? ''}`,
                 "Conductor": `${vehicular?.driver.split("\n").join("(salto)") ?? ''}`,
@@ -113,7 +113,7 @@ export const exportVehicularCsv = (ar, start, end) => {
                 "Observación": `${vehicular?.observation.split("\n").join("(salto)") ?? ''}`,
               }
               rows.push(obj);
-        }
+        //}
     }
     generateFile(rows, "Vehicular", "csv");
 };
@@ -122,7 +122,7 @@ export const exportVehicularXls = (ar, start, end) => {
     for (let i = 0; i < ar.length; i++) {
         let vehicular = ar[i];
         // @ts-ignore
-        if (vehicular.ingressDate >= start && vehicular.ingressDate <= end) {
+        //if (vehicular.ingressDate >= start && vehicular.ingressDate <= end) {
             let obj = {
                 "Placa": `${vehicular?.licensePlate.split("\n").join("(salto)") ?? ''}`,
                 "Conductor": `${vehicular?.driver.split("\n").join("(salto)") ?? ''}`,
@@ -143,7 +143,7 @@ export const exportVehicularXls = (ar, start, end) => {
                 "Observación": `${vehicular?.observation.split("\n").join("(salto)") ?? ''}`,
             };
             rows.push(obj);
-        }
+        //}
     }
     generateFile(rows, "Vehicular", "xls");
 };

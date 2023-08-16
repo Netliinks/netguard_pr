@@ -42,7 +42,7 @@ export const exportReportPdf = (ar, start, end) => {
         doc.text(50, row + 15, `${report.usuario}`);
         doc.text(90, row + 15, `${report.titulo}`);
         var description = report.contenido.split("\n").join("(salto)");
-        console.log(description.length);
+        //console.log(description.length);
         if (description.length > 550)
             doc.setFontSize(7);
         var lMargin = 140; //left margin in mm
@@ -92,7 +92,7 @@ export const exportReportCsv = (ar, start, end) => {
         let noteCreationDate = noteCreationDateAndTime[0];
         let noteCreationTime = noteCreationDateAndTime[1];
         // @ts-ignore
-        if (noteCreationDate >= start && noteCreationDate <= end) {
+        //if (noteCreationDate >= start && noteCreationDate <= end) {
             let obj = {
                 "Título": `${note.title.split("\n").join("(salto)")}`,
                 "Fecha": `${noteCreationDate}`,
@@ -101,7 +101,7 @@ export const exportReportCsv = (ar, start, end) => {
                 "Contenido": `${note.content.split("\n").join("(salto)")}`,
             };
             rows.push(obj);
-        }
+        //}
     }
     generateFile(rows, "Reportes", "csv");
 };
@@ -113,7 +113,7 @@ export const exportReportXls = (ar, start, end) => {
         let noteCreationDate = noteCreationDateAndTime[0];
         let noteCreationTime = noteCreationDateAndTime[1];
         // @ts-ignore
-        if (noteCreationDate >= start && noteCreationDate <= end) {
+        //if (noteCreationDate >= start && noteCreationDate <= end) {
             let obj = {
                 "Título": `${note.title.split("\n").join("(salto)")}`,
                 "Fecha": `${noteCreationDate}`,
@@ -122,7 +122,7 @@ export const exportReportXls = (ar, start, end) => {
                 "Contenido": `${note.content.split("\n").join("(salto)")}`,
             };
             rows.push(obj);
-        }
+        //}
     }
     generateFile(rows, "Reportes", "xls");
 };

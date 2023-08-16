@@ -1,6 +1,6 @@
 // @filename: Blacklist.ts
-import { deleteEntity, getEntitiesData, getEntityData, registerEntity, setPassword, setUserRole, updateEntity, getUserInfo, getFilterEntityData } from "../../../endpoints.js";
-import { drawTagsIntoTables, inputObserver, inputSelect, CloseDialog, filterDataByHeaderType } from "../../../tools.js";
+import { deleteEntity, getEntityData, registerEntity, updateEntity, getFilterEntityData, getFilterEntityCount } from "../../../endpoints.js";
+import { drawTagsIntoTables, inputObserver, inputSelect, CloseDialog, filterDataByHeaderType, pageNumbers, fillBtnPagination } from "../../../tools.js";
 import { Config } from "../../../Configs.js";
 import { tableLayout } from "./Layout.js";
 import { tableLayoutTemplate } from "./Templates.js";
@@ -8,20 +8,88 @@ import { exportBlackListCsv, exportBlackListPdf, exportBlackListXls } from "../.
 const tableRows = Config.tableRows;
 const currentPage = Config.currentPage;
 const customerId = localStorage.getItem('customer_id');
+let infoPage = {
+    count: 0,
+    offset: Config.offset,
+    currentPage: currentPage,
+    search: ""
+};
+let dataPage;
 const getUsers = async () => {
-    const users = await getEntitiesData('BlacklistedUser');
-    const FCustomer = users.filter((data) => `${data.customer?.id}` === `${customerId}`);
-    return FCustomer;
+    //const users = await getEntitiesData('BlacklistedUser');
+    //const FCustomer = users.filter((data) => `${data.customer?.id}` === `${customerId}`);
+    let raw = JSON.stringify({
+        "filter": {
+            "conditions": [
+                {
+                    "property": "customer.id",
+                    "operator": "=",
+                    "value": `${customerId}`
+                }
+            ],
+        },
+        sort: "-createdDate",
+        limit: Config.tableRows,
+        offset: infoPage.offset,
+        fetchPlan: 'full',
+    });
+    if (infoPage.search != "") {
+        raw = JSON.stringify({
+            "filter": {
+                "conditions": [
+                    {
+                        "group": "OR",
+                        "conditions": [
+                            {
+                                "property": "dni",
+                                "operator": "contains",
+                                "value": `${infoPage.search.toLowerCase()}`
+                            },
+                            {
+                                "property": "firstName",
+                                "operator": "contains",
+                                "value": `${infoPage.search.toLowerCase()}`
+                            },
+                            {
+                                "property": "firstLastName",
+                                "operator": "contains",
+                                "value": `${infoPage.search.toLowerCase()}`
+                            },
+                            {
+                                "property": "secondLastName",
+                                "operator": "contains",
+                                "value": `${infoPage.search.toLowerCase()}`
+                            }
+                        ]
+                    },
+                    {
+                        "property": "customer.id",
+                        "operator": "=",
+                        "value": `${customerId}`
+                    }
+                ]
+            },
+            sort: "-createdDate",
+            limit: Config.tableRows,
+            offset: infoPage.offset,
+            fetchPlan: 'full',
+        });
+    }
+    infoPage.count = await getFilterEntityCount("BlacklistedUser", raw);
+    dataPage = await getFilterEntityData("BlacklistedUser", raw);
+    return dataPage;
 };
 export class Blacklist {
     constructor() {
         this.dialogContainer = document.getElementById('app-dialogs');
         this.entityDialogContainer = document.getElementById('entity-editor-container');
         this.content = document.getElementById('datatable-container');
-        this.searchEntity = async (tableBody, data) => {
+        this.searchEntity = async (tableBody /*, data: any*/) => {
             const search = document.getElementById('search');
+            const btnSearch = document.getElementById('btnSearch');
+            search.value = infoPage.search;
             await search.addEventListener('keyup', () => {
-                const arrayData = data.filter((user) => `${user.firstName}
+                /*const arrayData = data.filter((user) => `${user.firstName}
                  ${user.dni}
                  ${user.firstName}
                  ${user.firstLastName}
@@ -32,11 +100,17 @@ export class Blacklist {
                 let result = arrayData;
                 if (filteredResult >= tableRows)
                     filteredResult = tableRows;
-                this.load(tableBody, currentPage, result);
+                this.load(tableBody, currentPage, result);*/
+            });
+            btnSearch.addEventListener('click', async () => {
+                new Blacklist().render(Config.offset, Config.currentPage, search.value.toLowerCase().trim());
             });
         };
     }
-    async render() {
+    async render(offset, actualPage, search) {
+        infoPage.offset = offset;
+        infoPage.currentPage = actualPage;
+        infoPage.search = search;
         this.content.innerHTML = '';
         this.content.innerHTML = tableLayout;
         const tableBody = document.getElementById('datatable-body');
@@ -44,9 +118,9 @@ export class Blacklist {
         let data = await getUsers();
         tableBody.innerHTML = tableLayoutTemplate.repeat(tableRows);
         this.load(tableBody, currentPage, data);
-        this.searchEntity(tableBody, data);
+        this.searchEntity(tableBody /*, data*/);
         new filterDataByHeaderType().filter();
-        this.pagination(data, tableRows, currentPage);
+        this.pagination(data, tableRows, infoPage.currentPage);
     }
     load(table, currentPage, data) {
         table.innerHTML = '';
@@ -188,11 +262,12 @@ export class Blacklist {
             registerEntity(raw, 'BlacklistedUser')
                 .then((res) => {
                 setTimeout(async () => {
-                    let data = await getUsers();
+                    //let data = await getUsers();
                     const tableBody = document.getElementById('datatable-body');
                     const container = document.getElementById('entity-editor-container');
                     new CloseDialog().x(container);
-                    new Blacklist().load(tableBody, currentPage, data);
+                    new Blacklist().render(Config.offset, Config.currentPage, infoPage.search);
+                    //new Blacklist().load(tableBody, currentPage, data);
                 }, 1000);
             });
         };
@@ -292,9 +367,9 @@ export class Blacklist {
                         let data;
                         tableBody = document.getElementById('datatable-body');
                         container = document.getElementById('entity-editor-container');
-                        data = await getUsers();
+                        //data = await getUsers();
                         new CloseDialog().x(container);
-                        new Blacklist().load(tableBody, currentPage, data);
+                        new Blacklist().render(infoPage.offset, infoPage.currentPage, infoPage.search);
                     }, 100);
                 });
             };
@@ -336,16 +411,16 @@ export class Blacklist {
                     deleteEntity('BlacklistedUser', entityId)
                     .then((res) => {
                         setTimeout(async () => {
-                            let data = await getUsers();
+                            //let data = await getUsers();
                             const tableBody = document.getElementById('datatable-body');
                             new CloseDialog().x(dialogContent);
-                            new Blacklist().load(tableBody, currentPage, data);
+                            new Blacklist().render(infoPage.offset, infoPage.currentPage, infoPage.search);
                         }, 1000);
                     });
                 };
                 cancelButton.onclick = () => {
                     new CloseDialog().x(dialogContent);
-                    this.render();
+                    //this.render();
                 };
             });
         });
@@ -373,7 +448,7 @@ export class Blacklist {
                                     <i class="fa-solid fa-file-csv"></i>
                                     <div class="description">
                                         <p class="filename">Plantilla de Lista Negra</p>
-                                        <a href="./public/src/templates/NetguardBlackList.csv" download="./public/src/templates/NetguardContractors.csv" rel="noopener" target="_self" class="filelink">Descargar</a>
+                                        <a href="./public/src/templates/NetguardBlackList.csv" download="./public/src/templates/NetguardBlackList.csv" rel="noopener" target="_self" class="filelink">Descargar</a>
                                     </div>
                                 </div>
                             </div>
@@ -415,11 +490,11 @@ export class Blacklist {
                             registerEntity(user, 'BlacklistedUser')
                                 .then((res) => {
                                 setTimeout(async () => {
-                                    let data = await getUsers();
+                                    //let data = await getUsers();
                                     const tableBody = document.getElementById('datatable-body');
                                     const container = document.getElementById('entity-editor-container');
                                     new CloseDialog().x(container);
-                                    new Blacklist().load(tableBody, currentPage, data);
+                                    new Blacklist().render(Config.offset, Config.currentPage, '');
                                 }, 1000);
                             });
                         });
@@ -472,7 +547,20 @@ export class Blacklist {
                     const _values = {
                         exportOption: document.getElementsByName('exportOption')
                     };
-                    const users = await getUsers();
+                    let rawExport = JSON.stringify({
+                        "filter": {
+                            "conditions": [
+                                {
+                                    "property": "customer.id",
+                                    "operator": "=",
+                                    "value": `${customerId}`
+                                }
+                            ],
+                        },
+                        sort: "-createdDate",
+                        fetchPlan: 'full',
+                    });
+                    const users = await getFilterEntityData("BlacklistedUser", rawExport); //await getUsers();
                     for (let i = 0; i < _values.exportOption.length; i++) {
                         let ele = _values.exportOption[i];
                         if (ele.type = "radio") {
@@ -503,21 +591,59 @@ export class Blacklist {
         const paginationWrapper = document.getElementById('pagination-container');
         paginationWrapper.innerHTML = '';
         let pageCount;
-        pageCount = Math.ceil(items.length / limitRows);
+        pageCount = Math.ceil(infoPage.count / limitRows);
         let button;
-        for (let i = 1; i < pageCount + 1; i++) {
-            button = setupButtons(i, items, currentPage, tableBody, limitRows);
-            paginationWrapper.appendChild(button);
+        if (pageCount <= Config.maxLimitPage) {
+            for (let i = 1; i < pageCount + 1; i++) {
+                button = setupButtons(i /*, items, currentPage, tableBody, limitRows*/);
+                paginationWrapper.appendChild(button);
+            }
+            fillBtnPagination(currentPage, Config.colorPagination);
         }
-        function setupButtons(page, items, currentPage, tableBody, limitRows) {
+        else {
+            pagesOptions(items, currentPage);
+        }
+        function setupButtons(page /*, items, currentPage, tableBody, limitRows*/) {
             const button = document.createElement('button');
             button.classList.add('pagination_button');
+            button.setAttribute("name", "pagination-button");
+            button.setAttribute("id", "btnPag" + page);
             button.innerText = page;
             button.addEventListener('click', () => {
+                infoPage.offset = Config.tableRows * (page - 1);
                 currentPage = page;
-                new Blacklist().load(tableBody, page, items);
+                new Blacklist().render(infoPage.offset, currentPage, infoPage.search);
             });
             return button;
+        }
+        function pagesOptions(items, currentPage) {
+            paginationWrapper.innerHTML = '';
+            let pages = pageNumbers(items, Config.maxLimitPage, currentPage);
+            const prevButton = document.createElement('button');
+            prevButton.classList.add('pagination_button');
+            prevButton.innerText = "<<";
+            paginationWrapper.appendChild(prevButton);
+            const nextButton = document.createElement('button');
+            nextButton.classList.add('pagination_button');
+            nextButton.innerText = ">>";
+            for (let i = 0; i < pages.length; i++) {
+                if (pages[i] > 0 && pages[i] <= pageCount) {
+                    button = setupButtons(pages[i]);
+                    paginationWrapper.appendChild(button);
+                }
+            }
+            paginationWrapper.appendChild(nextButton);
+            fillBtnPagination(currentPage, Config.colorPagination);
+            setupButtonsEvents(prevButton, nextButton);
+        }
+        function setupButtonsEvents(prevButton, nextButton) {
+            prevButton.addEventListener('click', () => {
+                new Blacklist().render(Config.offset, Config.currentPage, infoPage.search);
+            });
+            nextButton.addEventListener('click', () => {
+                infoPage.offset = Config.tableRows * (pageCount - 1);
+                new Blacklist().render(infoPage.offset, pageCount, infoPage.search);
+            });
         }
     }
     close() {

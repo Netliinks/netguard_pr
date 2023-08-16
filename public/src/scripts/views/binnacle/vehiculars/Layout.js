@@ -10,7 +10,11 @@ export const UIContentLayout = `
 
             <div class="datatable_tools" id="datatable-tools">
                 <input type="search" class="search_input" placeholder="Buscar" id="search">
-
+                <button
+                    class="datatable_button add_user"
+                    id="btnSearch">
+                    <i class="fa-solid fa-search"></i>
+                </button>
                 <button class="datatable_button import_user" id="export-entities">Exportar</button>
             </div>
         </div>
@@ -59,7 +63,7 @@ export const UIRightSidebar = `
 <div class="entity_editor" id="entity-editor">
 <div class="entity_editor_header">
   <div class="user_info">
-    <div class="avatar"><i class="fa-regular fa-user"></i></div>
+    <div class="avatar"><i class="fa-regular fa-car"></i></div>
     <h1 class="entity_editor_title">Detalles de <br><small>Ingreso Vehicular</small></h1>
   </div>
 

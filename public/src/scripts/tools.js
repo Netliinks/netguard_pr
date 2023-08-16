@@ -361,3 +361,36 @@ export const registryPlataform = async (id) => {
         console.log("Registrado");
     }).catch(err => console.log(err));
 };
+export const pageNumbers = (totalPages, max, currentPage) => {
+    let limitMin;
+    let limitMax;
+    let ranges = [];
+    if (currentPage == 1) {
+        limitMin = 1;
+        limitMax = max;
+        for (let i = limitMin; i <= limitMax; i++) {
+            ranges.push(i);
+        }
+    }
+    /*else if(currentPage == totalPages){
+        let limit = totalPages - max
+        for(let i = limit; i <= totalPages; i++){
+                ranges.push(i)
+        }
+    }*/ else {
+        limitMin = currentPage - 4;
+        for (let i = limitMin; i < currentPage; i++) {
+            ranges.push(i);
+        }
+        limitMax = currentPage + 5;
+        for (let i = currentPage; i <= limitMax; i++) {
+            ranges.push(i);
+        }
+    }
+    return ranges;
+};
+export const fillBtnPagination = (currentPage, color) => {
+    let btnActive = document.getElementById("btnPag" + currentPage);
+    if(btnActive) btnActive.style.backgroundColor = color;
+    //btnActive.focus();
+};

@@ -12,7 +12,11 @@ export const tableLayout = `
       class="search_input"
       placeholder="Buscar"
       id="search">
-
+      <button
+          class="datatable_button add_user"
+          id="btnSearch">
+          <i class="fa-solid fa-search"></i>
+      </button>
       <button
         class="datatable_button add_user"
         id="new-entity">
@@ -45,9 +49,9 @@ export const tableLayout = `
         Estado <i class="fa-regular fa-filter"></i>
       </span></th>
 
-      <th><span data-type="citadel">
+      <!-- <th><span data-type="citadel">
         Ciudadela <i class="fa-regular fa-filter"></i>
-      </span></th>
+      </span></th> -->
 
       <th class="header_filled"></th>
 

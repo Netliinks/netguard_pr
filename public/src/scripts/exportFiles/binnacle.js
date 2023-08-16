@@ -34,7 +34,7 @@ export const exportBinnaclePdf = (ar, start, end) => {
     for (let i = 0; i < ar.length; i++) {
         let event = ar[i];
         // @ts-ignore
-        if (event.creationDate >= start && event.creationDate <= end) {
+        //if (event.creationDate >= start && event.creationDate <= end) {
             doc.setFontSize(9);
             doc.setFont(undefined, 'normal');
             doc.setTextColor(0, 0, 0);
@@ -78,7 +78,7 @@ export const exportBinnaclePdf = (ar, start, end) => {
                 doc.text(10, 200, `Página ${pagina}`);
             }
             lineas++;
-        }
+        //}
     }
     // Save the PDF
     var d = new Date();
@@ -90,7 +90,7 @@ export const exportBinnacleCsv = (ar, start, end) => {
     for (let i = 0; i < ar.length; i++) {
         let event = ar[i];
         // @ts-ignore
-        if (event.creationDate >= _values.start.value && event.creationDate <= _values.end.value) {
+        //if (event.creationDate >= _values.start.value && event.creationDate <= _values.end.value) {
             let obj = {
                 "Título": `${event.title.split("\n").join("(salto)")}`,
                 "Fecha": `${event.creationDate}`,
@@ -99,7 +99,7 @@ export const exportBinnacleCsv = (ar, start, end) => {
                 "Descripción": `${event.description.split("\n").join("(salto)")}`
             };
             rows.push(obj);
-        }
+        //}
     }
     generateFile(rows, "Bitácora", "csv");
 };
@@ -108,7 +108,7 @@ export const exportBinnacleXls = (ar, start, end) => {
     for (let i = 0; i < ar.length; i++) {
         let event = ar[i];
         // @ts-ignore
-        if (event.creationDate >= start && event.creationDate <= end) {
+        //if (event.creationDate >= start && event.creationDate <= end) {
             let obj = {
                 "Título": `${event.title.split("\n").join("(salto)")}`,
                 "Fecha": `${event.creationDate}`,
@@ -117,7 +117,7 @@ export const exportBinnacleXls = (ar, start, end) => {
                 "Descripción": `${event.description.split("\n").join("(salto)")}`
             };
             rows.push(obj);
-        }
+        //}
     }
     generateFile(rows, "Bitácora", "xls");
 };

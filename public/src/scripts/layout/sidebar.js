@@ -1,4 +1,5 @@
 // Views
+import { Config } from ".././Configs.js";
 import { Dashboard } from "../views/dashboard/dashboard.js";
 import { Notes } from "../views/binnacle/notes/NotesView.js";
 import { Guards } from "../views/users/guards/guards.js";
@@ -193,44 +194,38 @@ renders() {
     document.getElementById('render-dashboard')?.addEventListener('click', () => {
       new Dashboard().render();
     });
-    document.getElementById('render-clients')?.addEventListener('click', () => {
-      new Clients().render();
-    });
-    document.getElementById('render-dashboard')?.addEventListener('click', () => {
-        new Dashboard().render();
-    });
     document.getElementById('render-customers')?.addEventListener('click', () => {
-      new Customers().render();
+      new Customers().render(Config.offset, Config.currentPage, "");
     });
     document.getElementById('render-guards')?.addEventListener('click', () => {
-        new Guards().render();
+        new Guards().render(Config.offset, Config.currentPage, "");
     });
     document.getElementById('render-clients')?.addEventListener('click', () => {
-        new Clients().render();
+        new Clients().render(Config.offset, Config.currentPage, "");
     });
     document.getElementById('render-employees')?.addEventListener('click', () => {
-        new Employees().render();
+        new Employees().render(Config.offset, Config.currentPage, "");
     });
     document.getElementById('render-contractors')?.addEventListener('click', () => {
-        new Contractors().render();
+        new Contractors().render(Config.offset, Config.currentPage, "");
     });
     document.getElementById('render-blacklist')?.addEventListener('click', () => {
-        new Blacklist().render();
+        new Blacklist().render(Config.offset, Config.currentPage, "");
     });
     // render notes
     document.getElementById('render-notes')?.addEventListener('click', () => {
-        new Notes().render();
+        new Notes().render(Config.offset, Config.currentPage, "");
     });
     // render visits
     document.getElementById('render-visits')?.addEventListener('click', () => {
-        new Visits().render();
+        new Visits().render(Config.offset, Config.currentPage, "");
     });
     document.getElementById('render-binnacle')?.addEventListener('click', () => {
-      new Binnacle().render();
+      new Binnacle().render(Config.offset, Config.currentPage, "");
   });
     // render AssistControl
     document.getElementById('render-assistControl')?.addEventListener('click', () => {
-        new AssistControl().render();
+      new AssistControl().render(Config.offset, Config.currentPage, "");
     });
     // render AssistControl
     document.getElementById('render-assistGestion')?.addEventListener('click', () => {
@@ -246,19 +241,19 @@ renders() {
   });
     // render AssistControl
     document.getElementById('render-events')?.addEventListener('click', () => {
-        new Events().render();
+        new Events().render(Config.offset, Config.currentPage, "");
     });
     // render AssistControl
     document.getElementById('render-vehiculars')?.addEventListener('click', () => {
-      new Vehiculars().render();
+      new Vehiculars().render(Config.offset, Config.currentPage, "");
     });
     // render Deparments
     document.getElementById('render-deparments')?.addEventListener('click', () => {
-        new Departments().render();
+        new Departments().render(Config.offset, Config.currentPage, "");
     });
     // render Superusers
     document.getElementById('render-superusers')?.addEventListener('click', () => {
-        new SuperUsers().render();
+        new SuperUsers().render(Config.offset, Config.currentPage, "");
     });
   }
 }

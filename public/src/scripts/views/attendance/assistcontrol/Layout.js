@@ -10,7 +10,11 @@ export const UIContentLayout = `
 
             <div class="datatable_tools" id="datatable-tools">
                 <input type="search" class="search_input" placeholder="Buscar" id="search">
-
+                <button
+                    class="datatable_button add_user"
+                    id="btnSearch">
+                    <i class="fa-solid fa-search"></i>
+                </button>
                 <button class="datatable_button import_user" id="export-entities">Exportar</button>
             </div>
         </div>
@@ -26,15 +30,19 @@ export const UIContentLayout = `
             </span></th>
 
             <th class="thead_centered" width=100><span data-type="start-date">
-            Fecha <i class="fa-regular fa-filter"></i>
-            </span></th>
-
-            <th class="thead_centered" width=100><span data-type="start">
             Inicio <i class="fa-regular fa-filter"></i>
             </span></th>
 
-            <th class="thead_centered" width=120><span data-type="end">
+            <th class="thead_centered" width=100><span data-type="start">
+            Hora <i class="fa-regular fa-filter"></i>
+            </span></th>
+
+            <th class="thead_centered" width=100><span data-type="end-date">
             Fin <i class="fa-regular fa-filter"></i>
+            </span></th>
+
+            <th class="thead_centered" width=100><span data-type="end">
+            Hora <i class="fa-regular fa-filter"></i>
             </span></th>
 
             <th class="thead_centered" width=110><span data-type="state">

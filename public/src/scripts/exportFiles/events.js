@@ -34,7 +34,7 @@ export const exportEventPdf = (ar, start, end) => {
     for (let i = 0; i < ar.length; i++) {
         let event = ar[i];
         // @ts-ignore
-        if (event.creationDate >= start && event.creationDate <= end) {
+        //if (event.creationDate >= start && event.creationDate <= end) {
             doc.setFontSize(9);
             doc.setFont(undefined, 'normal');
             doc.setTextColor(0, 0, 0);
@@ -68,7 +68,7 @@ export const exportEventPdf = (ar, start, end) => {
                 doc.text(10, 200, `Página ${pagina}`);
             }
             lineas++;
-        }
+        //}
     }
     // Save the PDF
     var d = new Date();
@@ -80,7 +80,7 @@ export const exportEventCsv = (ar, start, end) => {
     for (let i = 0; i < ar.length; i++) {
         let event = ar[i];
         // @ts-ignore
-        if (event.creationDate >= start && event.creationDate <= end) {
+        //if (event.creationDate >= start && event.creationDate <= end) {
             let obj = {
                 "Título": `${event.title.split("\n").join("(salto)")}`,
                 "Fecha": `${event.creationDate}`,
@@ -89,7 +89,7 @@ export const exportEventCsv = (ar, start, end) => {
                 "Descripción": `${event.description.split("\n").join("(salto)")}`
             };
             rows.push(obj);
-        }
+        //}
     }
     generateFile(rows, "Eventos", "csv");
 };
@@ -98,7 +98,7 @@ export const exportEventXls = (ar, start, end) => {
     for (let i = 0; i < ar.length; i++) {
         let event = ar[i];
         // @ts-ignore
-        if (event.creationDate >= start && event.creationDate <= end) {
+        //if (event.creationDate >= start && event.creationDate <= end) {
             let obj = {
                 "Título": `${event.title.split("\n").join("(salto)")}`,
                 "Fecha": `${event.creationDate}`,
@@ -107,7 +107,7 @@ export const exportEventXls = (ar, start, end) => {
                 "Descripción": `${event.description.split("\n").join("(salto)")}`
             };
             rows.push(obj);
-        }
+        //}
     }
     generateFile(rows, "Eventos", "xls");
 };

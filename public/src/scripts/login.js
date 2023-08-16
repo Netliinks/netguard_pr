@@ -43,7 +43,17 @@ export class SignIn {
                             "property": "email",
                             "operator": "=",
                             "value": `${email}`
-                          }
+                          },
+                          {
+                            "property": "state.name",
+                            "operator": "=",
+                            "value": `Enabled`
+                          },
+                          {
+                            "property": "business.state.name",
+                            "operator": "=",
+                            "value": `Enabled`
+                          },
                         ]
                     }
                 });
@@ -81,7 +91,7 @@ export class SignIn {
             }else{
                 if(customerId == null){
                     let user = await getEntityData('User', currentUser.attributes.id);
-                    if(user.customer.id){
+                    if(user.customer?.id != null || user.customer?.id != undefined){
                         localStorage.setItem('customer_id', user.customer?.id);
                         window.location.reload();
                     }else{
@@ -98,7 +108,13 @@ export class SignIn {
                     alert('Usuario no es tipo guardia.');
                 }
                 if (currentUser.attributes.verifiedSuper === true) {
-                    new RenderApplicationUI().render();
+                    let user = await getEntityData('User', currentUser.attributes.id);
+                    let business = await getEntityData('Business', user?.business?.id);
+                    if(user?.state?.name == 'Enabled' && business?.state?.name == 'Enabled'){
+                        new RenderApplicationUI().render();
+                    }else{
+                        this.signOut();
+                    }
                 }else{
                     this.showVerified(currentUser.attributes.id, currentUser.attributes?.hashSuper);
                 }
