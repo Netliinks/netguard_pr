@@ -17,6 +17,8 @@ import { Vehiculars } from "../views/binnacle/vehiculars/Vehiculars.js";
 import { Binnacle } from "../views/binnacle/binnacle/BinnacleView.js";
 import { Blacklist } from "../views/users/blacklist/blacklist.js";
 import { AssistGestion } from "../views/attendance/assistgestion/AssistGestion.js";
+import { Procedures } from "../views/assignment/procedures/Procedures.js";
+//import { Tasks } from "../views/assignment/tasks/Tasks.js";
 export class Sidebar {
   constructor() {
       this.sidebarContainer = document.getElementById('app-sidebar');
@@ -168,6 +170,27 @@ export class Sidebar {
 
               </div>
             </div>
+            <div class="sidebar_item">
+              <span class="sidebar_item_label">
+              <i class="fa-regular fa-walkie-talkie"></i></i> <div class="label">Asignaciones</div>
+              </span>
+
+              <div class="sidebar_subitems">
+
+                <div class="sidebar_subitem" id="render-tasks">
+                  <span class="sidebar_subitem_label">
+                    <i class="fa-regular fa-walkie-talkie"></i> <div class="label">Consignas</div>
+                  </span>
+                </div>
+
+                <div class="sidebar_subitem" id="render-procedures">
+                  <span class="sidebar_subitem_label">
+                    <i class="fa-regular fa-file"></i> <div class="label">Procedimientos</div>
+                  </span>
+                </div>
+
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -232,6 +255,14 @@ renders() {
     // render Superusers
     document.getElementById('render-superusers')?.addEventListener('click', () => {
         new SuperUsers().render(Config.offset, Config.currentPage, "");
+    });
+     // render Tasks
+     document.getElementById('render-tasks')?.addEventListener('click', () => {
+      new Tasks().render();
+    });
+    // render Procedures
+    document.getElementById('render-procedures')?.addEventListener('click', () => {
+      new Procedures().render();
     });
   }
 }

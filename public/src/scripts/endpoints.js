@@ -246,6 +246,7 @@ export const getFile = async (fileUrl) => {
     return file;
 };
 export const setFile = async (file) => {
+    console.log(file.name)
     const url = `https://backend.netliinks.com:443/rest/files?name=${file.name}`;
     const requestOptions = {
         method: 'POST',
