@@ -520,7 +520,7 @@ export class Employees {
                     "phone": `${_values.phoneNumer.value}`,
                     "dni": `${_values.dni.value}`,
                     "userType": "EMPLOYEE",
-                    "username": `${_values.username.value}@${currentCustomer.name.toLowerCase().replace(/\s+/g, '')}.com`,
+                    "username": `${_values.username.value.replace(/\s+/g, '')}@${currentCustomer.name.toLowerCase().replace(/\s+/g, '')}.com`,
                     "createVisit": `${_values.allowVisits.checked ? true : false}`
                 });
                 /*const existEmail = await getVerifyEmail(_values.email.value);

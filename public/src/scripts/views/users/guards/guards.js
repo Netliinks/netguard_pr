@@ -424,7 +424,7 @@ export class Guards {
                     },
                     "phone": `${inputsCollection.phoneNumer.value}`,
                     "userType": "GUARD",
-                    "username": `${inputsCollection.username.value}@${currentCustomer.name.toLowerCase().replace(/\s+/g, '')}.com`
+                    "username": `${inputsCollection.username.value.replace(/\s+/g, '')}@${currentCustomer.name.toLowerCase().replace(/\s+/g, '')}.com`
                 });    
                 const existEmail = await getVerifyEmail(inputsCollection.email.value);
                 const existUsername = await getVerifyUsername(`${inputsCollection.username.value}@${currentUserInfo.customer.name.toLowerCase().replace(/\s+/g, '')}.com`);
