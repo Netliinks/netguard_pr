@@ -1,20 +1,20 @@
-// @filename: Procedures.ts
-import { deleteEntity, getEntitiesData, registerEntity, updateEntity, getEntityData,setFile } from "../../../endpoints.js";
-import { inputObserver, inputSelect, CloseDialog, filterDataByHeaderType } from "../../../tools.js";
-import { Config } from "../../../Configs.js";
+// @filename: Fixed.ts
+import { deleteEntity, getEntitiesData, registerEntity, updateEntity, getEntityData,setFile,getUserInfo,getFile,postNotificationPush } from "../../../../endpoints.js";
+import { inputObserver, inputSelect, CloseDialog, filterDataByHeaderType } from "../../../../tools.js";
+import { Config } from "../../../../Configs.js";
 import { tableLayout } from "./Layout.js";
 import { tableLayoutTemplate } from "./Template.js";
+
 const tableRows = Config.tableRows;
 const currentPage = Config.currentPage;
 const customerId = localStorage.getItem('customer_id');
-const getProcedures= async () => {
+const getTaksTime= async () => {
     //nombre de la entidad
-    const procedures = await getEntitiesData('Procedure_');
-  
-    const FCustomer = procedures.filter((data) => `${data.customer?.id}` === `${customerId}`);
+    const TaksTime = await getEntitiesData('TaskTime');
+    const FCustomer = TaksTime.filter((data) => `${data.customer?.id}` === `${customerId}`);
     return FCustomer;
 };
-export class Tasks {
+export class TasksTime {
     constructor() {
         this.dialogContainer = document.getElementById('app-dialogs');
         this.entityDialogContainer = document.getElementById('entity-editor-container');
@@ -40,7 +40,7 @@ export class Tasks {
         this.content.innerHTML = tableLayout;
         const tableBody = document.getElementById('datatable-body');
         tableBody.innerHTML = '.Cargando...';
-        let data = await getProcedures();
+        let data = await getTaksTime();
         tableBody.innerHTML = tableLayoutTemplate.repeat(tableRows);
         this.load(tableBody, currentPage, data);
         this.searchEntity(tableBody, data);
@@ -67,17 +67,17 @@ export class Tasks {
         }
         else {
             for (let i = 0; i < paginatedItems.length; i++) {
-                let procedure = paginatedItems[i];
+                let taskFixed = paginatedItems[i];
                 let row = document.createElement('tr');
                 row.innerHTML += `
-          <td>${procedure.name}</dt>
-          <td>${procedure.file}</dt>
+          <td>${taskFixed.name}</dt>
           
+          <td>${taskFixed.execTime}</dt>
           <td class="entity_options">
-          <button class="button" id="edit-entity" data-entityId="${procedure.id}">
-            <i class="fa-solid fa-pen"></i>
-          </button>
-            <button class="button" id="remove-entity" data-entityId="${procedure.id}">
+            <button class="button" id="edit-entity" data-entityId="${taskFixed.id}">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+            <button class="button" id="remove-entity" data-entityId="${taskFixed.id}">
               <i class="fa-solid fa-trash"></i>
             </button>
           </dt>
@@ -85,13 +85,15 @@ export class Tasks {
                 table.appendChild(row);
             }
         }
-        this.register();
         this.edit(this.entityDialogContainer, data);
+        this.register(); 
         this.remove();
+        
         //FUNCION PARA DESCARGAR EL ARCHIVO
         
 
     }
+    
     pagination(items, limitRows, currentPage) {
       const tableBody = document.getElementById('datatable-body');
       const paginationWrapper = document.getElementById('pagination-container');
@@ -109,7 +111,7 @@ export class Tasks {
           button.innerText = page;
           button.addEventListener('click', () => {
               currentPage = page;
-              new Procedures().load(tableBody, page, items);
+              new TaksTime().load(tableBody, page, items);
           });
           return button;
       }
@@ -129,7 +131,7 @@ export class Tasks {
           <div class="entity_editor_header">
             <div class="user_info">
               <div class="avatar"><i class="fa-solid fa-building"></i></div>
-              <h1 class="entity_editor_title">Registrar <br><small>Procedimiento</small></h1>
+              <h1 class="entity_editor_title">Registrar <br><small>Tiempo</small></h1>
             </div>
 
             <button class="btn btn_close_editor" id="close"><i class="fa-regular fa-x"></i></button>
@@ -137,14 +139,24 @@ export class Tasks {
 
           <!-- EDITOR BODY -->
           <div class="entity_editor_body">
-            <div class="material_input">
-              <input type="text" id="entity-name" autocomplete="none">
-              <label for="entity-name">Procedimiento</label>
-            </div>
             
-            <div class="sidebar_section">
-                <input type="file" id="file-handler"  accept="application/pdf">
-            </div> 
+            <div class="form_group">
+                <div class="form_input">
+                    <label class="form_label" for="tasktime">Horas:</label>
+                    <input type="radio" class="input_time input_tasktime" id="tasktime" name="tasktime">
+                </div>
+                <div class="form_input">
+                  <label class="form_label" for="tasktime">Días:</label>
+                  <input type="radio" class="input_time input_tasktime" id="tasktime" name="tasktime">
+                </div>
+               
+            </div>
+            <br>
+            <br> 
+            <div class="material_input">
+              <input type="number" id="entity-name" autocomplete="none" required>
+              <label for="entity-name"></label>
+            </div>
             
             
         </div>
@@ -163,64 +175,73 @@ export class Tasks {
             this.close();
             const _fileHandler = document.getElementById('file-handler');
             const registerButton = document.getElementById('register-entity');
-            let fileProcedure;
-            _fileHandler.addEventListener('change', async() => {
-           
-              console.log(_fileHandler.files[0]);
-              let size = _fileHandler.files[0].size;
-              let sizekiloBytes = size / 1024;
-              let sizeMegaBytes = sizekiloBytes / 1024;
-              if(sizeMegaBytes > 2){
-                alert(`Archivo no debe exceder los 2 Mb`);
-                _fileHandler.value = '';
-              }else{
-                let file = await setFile(_fileHandler.files[0]);
-                let body = JSON.stringify(file);
-                let parse = JSON.parse(body);
-                fileProcedure = parse.fileRef;
-                
-              }
-              
-            });
+            const fecha = new Date();
+            const day = fecha.getDate();
+            const month = fecha.getMonth() + 1; 
+            const year = fecha.getFullYear();
+
+            const dateFormat = year + '-' + month + '-' + day;
             
-            
-            registerButton.addEventListener('click', () => {
+            const hour = fecha.getHours();
+            const minutes  = fecha.getMinutes();
+            const seconds = fecha.getSeconds();
+
+            const hourFormat = `${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+   
+            registerButton.addEventListener('click', async(e) => {
+                e.preventDefault();
                
-                const inputsCollection = {
-                    name: document.getElementById('entity-name'),
+                const tasktime = document.getElementById('tasktime')
+                
+                if(tasktime.value.trim() === '' || tasktime.value.trim() === null){
+                  alert('Debe especificar la hora de ejecución de la consigna')
+                }
+                else{
+                  const inputsCollection = {
+                      tasktime: tasktime
+                      
                     
+                  };
+                  let _userInfo = await getUserInfo();
+                  const customerId = localStorage.getItem('customer_id');
                   
-                };
-                const raw = JSON.stringify({
-                    "name": `${inputsCollection.name.value}`,
-                    "file":  fileProcedure,
-                    "task" : "FIJAS",        
-                    "customer": {
-                        "id": `${customerId}`
-                    }
-                    
-                });
-                console.log('esperando los datos')
-                console.log(raw)
-                //registerEntity(raw, 'Procedure_');
-                setTimeout(() => {
-                    const container = document.getElementById('entity-editor-container');
-                    new CloseDialog().x(container);
-                    new Procedures().render();
-                }, 1000);
+                  const raw = JSON.stringify({
+                      "timeTask": `${inputsCollection.tasktime.value}`,
+                   
+                      "user":  {
+                        "id": `${_userInfo['attributes']['id']}`
+                      },   
+                      "customer": {
+                          "id": `${customerId}`
+                      },
+                   
+                      
+                  });
+                  
+                  
+                  registerEntity(raw, 'TaskTime');
+                  
+                
+                  setTimeout(() => {
+                      const container = document.getElementById('entity-editor-container');
+                      new CloseDialog().x(container);
+                      new Fixed().render();
+                  }, 1000);
+                }
             });
+          
             
         };
-        const reg = async (raw) => {
-        };
+       
     }
     edit(container, data) {
-     
+      // Edit entity
       const edit = document.querySelectorAll('#edit-entity');
       edit.forEach((edit) => {
           const entityId = edit.dataset.entityid;
           edit.addEventListener('click', () => {
-              RInterface('Procedures', entityId);
+              RInterface('TaskTime', entityId);
           });
       });
       const RInterface = async (entities, entityID) => {
@@ -228,54 +249,37 @@ export class Tasks {
           this.entityDialogContainer.innerHTML = '';
           this.entityDialogContainer.style.display = 'flex';
           this.entityDialogContainer.innerHTML = `
-      <div class="entity_editor" id="entity-editor">
-        <div class="entity_editor_header">
-          <div class="user_info">
-            <div class="avatar"><i class="fa-regular fa-briefcase"></i></div>
-            <h1 class="entity_editor_title">Editar <br><small>${data.name}</small></h1>
-          </div>
+              <div class="entity_editor" id="entity-editor">
+              <div class="entity_editor_header">
+                  <div class="user_info">
+                  <div class="avatar"><i class="fa-regular fa-user"></i></div>
+                  <h1 class="entity_editor_title">Editar <br><small>${data.name} </small></h1>
+                  </div>
 
-          <button class="btn btn_close_editor" id="close"><i class="fa-solid fa-x"></i></button>
-        </div>
+                  <button class="btn btn_close_editor" id="close"><i class="fa-solid fa-x"></i></button>
+              </div>
 
-        <!-- EDITOR BODY -->
-        <div class="entity_editor_body">
-          <div class="material_input">
-            <input type="text"
-              id="entity-name"
-              class="input_filled"
-              maxlength="30"
-              value="${data?.name ?? ''}">
-            <label for="entity-name">Procedimiento</label>
-          </div>
-          <div class="material_input">
-            <input type="text"
-              id="entity-cords"
-              class="input_filled"
-              maxlength="40"
-              value="${data?.cords ?? ''}">
-            <label for="entity-cords">Coordenadas</label>
-          </div>
-          <div class="material_input">
-            <input type="text"
-              id="entity-distance"
-              class="input_filled"
-              maxlength="4"
-              value="${data?.distance ?? ''}">
-            <label for="entity-distance">Distancia</label>
-          </div>
+              <!-- EDITOR BODY -->
+              <div class="entity_editor_body">
+                  <div class="material_input">
+                    <input type="text" id="entity-name" class="input_filled" value="${data.name}" >
+                    <label for="entity-name">Nombre</label>
+                  </div>
+                  <div class="form_group">
+                      <div class="form_input">
+                          <label class="form_label" for="execution-time">Hora de ejecución:</label>
+                          <input type="time" class="input_time input_time-execution" id="execution-time" name="execution-time" value="${data.execTime}">
+                      </div>
+                  </div>
+              </div>
+              <!-- END EDITOR BODY -->
 
+              <div class="entity_editor_footer">
+                  <button class="btn btn_primary btn_widder" id="update-changes">Guardar</button>
+              </div>
+              </div>
+          `;
           
-
-        </div>
-        <!-- END EDITOR BODY -->
-
-        <div class="entity_editor_footer">
-          <button class="btn btn_primary btn_widder" id="update-changes">Guardar</button>
-        </div>
-      </div>
-    `;
-         
           inputObserver();
           
           this.close();
@@ -287,44 +291,57 @@ export class Tasks {
             // @ts-ignore
             name: document.getElementById('entity-name'),
             // @ts-ignore
-            cords: document.getElementById('entity-cords'),
+            execTime: document.getElementById('execution-time'),
             // @ts-ignore
-            distance: document.getElementById('entity-distance'),
+           
            
         };
-          updateButton.addEventListener('click', () => {
-            let raw = JSON.stringify({
-                // @ts-ignore
-                "name": `${$value.name.value}`,
-                // @ts-ignore
-                "cords": `${$value.cords.value}`,
-                // @ts-ignore
-                "distance": `${$value.distance.value}`,
-            });
-            update(raw);
+          updateButton.addEventListener('click', (e) => {
+            e.preventDefault()
+            const name = document.getElementById('entity-name')
+            const executionTime = document.getElementById('execution-time')
+                if(name.value.trim() === '' || name.value.trim() === null){
+                  alert('Nombre del consigna fija vacío')
+                }
+                else if(executionTime.value.trim() === '' || executionTime.value.trim() === null){
+                  alert('Debe especificar la hora de ejecución de la consigna')
+                }
+                else{
+                  let raw = JSON.stringify({
+                      // @ts-ignore
+                      "name": `${$value.name.value}`,
+                      // @ts-ignore
+                      "execTime": `${$value.execTime.value}`,
+                      
+                  });
+                  update(raw);
+                }
           });
           const update = (raw) => {
-            updateEntity('Procedures', entityId, raw)
+            updateEntity('TaskTime', entityId, raw)
                 .then((res) => {
                 setTimeout(async () => {
                     let tableBody;
                     let container;
                     let data;
-                    data = await getProcedures();
+                    data = await getTaksTime();
                     new CloseDialog()
                         .x(container =
                         document.getElementById('entity-editor-container'));
-                    new Procedures().load(tableBody
+                    new Fixed().load(tableBody
                         = document.getElementById('datatable-body'), currentPage, data);
                 }, 100);
             });
         };
+        const data = {"title": "Notificación fija", "body":`${$value.name.value}` }
+        const envioPush = await postNotificationPush(data);
       };
   }
     remove() {
         const remove = document.querySelectorAll('#remove-entity');
         remove.forEach((remove) => {
             const entityId = remove.dataset.entityid;
+            console.log(entityId)
             remove.addEventListener('click', () => {
                 this.dialogContainer.style.display = 'flex';
                 this.dialogContainer.innerHTML = `
@@ -332,7 +349,7 @@ export class Tasks {
             <div class="dialog dialog_danger">
               <div class="dialog_container">
                 <div class="dialog_header">
-                  <h2>¿Deseas eliminar esta Horario?</h2>
+                  <h2>¿Deseas eliminar este Consigna fija?</h2>
                 </div>
 
                 <div class="dialog_message">
@@ -354,8 +371,8 @@ export class Tasks {
                 const cancelButton = document.getElementById('cancel');
                 const dialogContent = document.getElementById('dialog-content');
                 deleteButton.onclick = () => {
-                    deleteEntity('Procedures', entityId)
-                        .then(res => new Procedures().render());
+                    deleteEntity('TaskTime', entityId)
+                        .then(res => new Fixed().render());
                     new CloseDialog().x(dialogContent);
                 };
                 cancelButton.onclick = () => {

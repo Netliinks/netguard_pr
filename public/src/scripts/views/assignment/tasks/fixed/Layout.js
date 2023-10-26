@@ -6,7 +6,7 @@
 export const tableLayout = `
   <div class="datatable" id="datatable">
     <div class="datatable_header">
-      <div class="datatable_title" id="datatable-title"><h1>Procedimientos</h1></div>
+      <div class="datatable_title" id="datatable-title"><h1>Generales</h1></div>
       <div class="datatable_tools" id="datatable-tools">
         <input type="search"
         class="search_input"
@@ -24,9 +24,11 @@ export const tableLayout = `
     <table class="datatable_content">
       <thead><tr>
         <th><span data-type="name">
-        Procedimiento <i class="fa-regular fa-filter"></i>
+        Generales<i class="fa-regular fa-filter"></i>
         </span></th>
-       
+        <th><span data-type="execTime">
+        Hora de ejecución <i class="fa-regular fa-filter"></i>
+        </span></th>
         <th class="header_filled"></th>
 
       </tr></thead>

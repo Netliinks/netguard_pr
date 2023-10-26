@@ -246,7 +246,7 @@ export const getFile = async (fileUrl) => {
     return file;
 };
 export const setFile = async (file) => {
-    console.log(file.name)
+
     const url = `https://backend.netliinks.com:443/rest/files?name=${file.name}`;
     const requestOptions = {
         method: 'POST',
@@ -263,3 +263,29 @@ export const setFile = async (file) => {
         .catch(err => alert(`Error subiendo archivo ${err}`));
     return res;
 };
+
+export const postNotificationPush = async(data)=>{
+    var myHeaders = new Headers();
+myHeaders.append("Authorization", "key=AAAAQ1NOq3s:APA91bEXEqZ2ozsXg7JmQrOKqWPTPTQOSYqLmExWQsWB0LvA825JDiYisngPUOLXrJKgZpxN-v0i4fQw1G_ZbUgH41FVENrLV4bompTF_q8LxlN4jBdYPxut38fOa0nSCCOS6kGXHOUb");
+myHeaders.append("Content-Type", "application/json");
+
+var raw = JSON.stringify({
+  "to": "exZk0nTDQDGsfzoYkf9xRp:APA91bFZ0Dk8VJyO2kyuhGJnJcVp3uh8yM6N-jpeELf1crsMQWlKdH-WL17SNhoHhIAC-a6_svTc2fqVJlS6Wd4FLe_Ntp8gs5hIlbfg-IHWj4VurMdxMeQIkX9hjlaugHJBSL3Z4yGR",
+  "notification": {
+    "title": data['title'],
+    "body": data['body']
+  }
+});
+
+var requestOptions = {
+  method: 'POST',
+  headers: myHeaders,
+  body: raw,
+  redirect: 'follow'
+};
+
+fetch("https://fcm.googleapis.com/fcm/send", requestOptions)
+  .then(response => response.text())
+  .then(result => console.log(result))
+  .catch(error => console.log('error', error));
+}
