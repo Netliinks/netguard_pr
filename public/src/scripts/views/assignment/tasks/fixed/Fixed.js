@@ -1,9 +1,10 @@
 // @filename: Fixed.ts
-import { deleteEntity, getEntitiesData, registerEntity, updateEntity, getEntityData,setFile,getUserInfo,getFile,postNotificationPush } from "../../../../endpoints.js";
+import { deleteEntity, getEntitiesData, registerEntity, updateEntity, getEntityData,setFile,getUserInfo,getFile,postNotificationPush,getFilterEntityData } from "../../../../endpoints.js";
 import { inputObserver, inputSelect, CloseDialog, filterDataByHeaderType } from "../../../../tools.js";
 import { Config } from "../../../../Configs.js";
 import { tableLayout } from "./Layout.js";
 import { tableLayoutTemplate } from "./Template.js";
+import { exportFixedCsv, exportFixedPdf, exportFixedXls } from "../../../../exportFiles/taskFixed.js";
 
 const tableRows = Config.tableRows;
 const currentPage = Config.currentPage;
@@ -89,6 +90,7 @@ export class Fixed {
         this.edit(this.entityDialogContainer, data);
         this.register(); 
         this.remove();
+        this.export();
 
 
     }
@@ -382,6 +384,127 @@ export class Fixed {
             });
         });
     }
+    export = () => {
+      console.log('entre')
+      const exportNotes = document.getElementById('export-entities');
+      exportNotes.addEventListener('click', async() => {
+          this.dialogContainer.style.display = 'block';
+          this.dialogContainer.innerHTML = `
+              <div class="dialog_content" id="dialog-content">
+                  <div class="dialog">
+                      <div class="dialog_container padding_8">
+                          <div class="dialog_header">
+                              <h2>Seleccionar la hora</h2>
+                          </div>
+
+                          <div class="dialog_message padding_8">
+                              <div class="form_group">
+                                  <div class="form_input">
+                                      <label class="form_label" for="start-date">Desde:</label>
+                                      <input type="time" class="input_date input_time-start" id="start-time" name="start-time">
+                                  </div>
+                  
+                                  <div class="form_input">
+                                      <label class="form_label" for="end-date">Hasta:</label>
+                                      <input type="time" class="input_date input_time-end" id="end-time" name="end-time">
+                                  </div>
+
+                                  <label for="exportCsv">
+                                      <input type="radio" id="exportCsv" name="exportOption" value="csv" /> CSV
+                                  </label>
+
+                                  <label for="exportXls">
+                                      <input type="radio" id="exportXls" name="exportOption" value="xls" checked /> XLS
+                                  </label>
+
+                                  <label for="exportPdf">
+                                      <input type="radio" id="exportPdf" name="exportOption" value="pdf" /> PDF
+                                  </label>
+                              </div>
+                          </div>
+
+                          <div class="dialog_footer">
+                              <button class="btn btn_primary" id="cancel">Cancelar</button>
+                              <button class="btn btn_danger" id="export-data">Exportar</button>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          `;
+          const fecha = new Date();
+          
+          const hour = fecha.getHours();
+          const minutes  = fecha.getMinutes();
+          const seconds = fecha.getSeconds();
+
+          const hourFormat = `${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+
+          document.getElementById("start-time").value = "00:00"
+          document.getElementById("end-time").value = hourFormat
+          inputObserver();
+          const _closeButton = document.getElementById('cancel');
+          const exportButton = document.getElementById('export-data');
+          const _dialog = document.getElementById('dialog-content');
+          exportButton.addEventListener('click', async() => {
+              const _values = {
+                  start: document.getElementById('start-time'),
+                  end: document.getElementById('end-time'),
+                  exportOption: document.getElementsByName('exportOption')
+              }
+              let rawExport = JSON.stringify({
+                  "filter": {
+                      "conditions": [
+                            {
+                              "property": "taskType",
+                              "operator": "=",
+                              "value": `FIJAS`
+                          },
+                          {
+                              "property": "customer.id",
+                              "operator": "=",
+                              "value": `${customerId}`
+                          },
+                          {
+                              "property": "execTime",
+                              "operator": ">=",
+                              "value": `${_values.start.value}`
+                          },
+                          {
+                              "property": "execTime",
+                              "operator": "<=",
+                              "value": `${_values.end.value}`
+                          }
+                      ],
+                  },
+                  sort: "+execTime",
+                  fetchPlan: 'full',
+              });
+              const fixed = await getFilterEntityData("Task_", rawExport); 
+              for (let i = 0; i < _values.exportOption.length; i++) {
+                  let ele = _values.exportOption[i];
+                  if (ele.type = "radio") {
+                      if (ele.checked) {
+                          if (ele.value == "xls") {
+                              // @ts-ignore
+                              exportFixedXls(fixed, _values.start.value, _values.end.value);
+                          }
+                          else if (ele.value == "csv") {
+                              // @ts-ignore
+                              exportFixedCsv(fixed, _values.start.value, _values.end.value);
+                          }
+                          else if (ele.value == "pdf") {
+                              // @ts-ignore
+                              exportFixedPdf(fixed, _values.start.value, _values.end.value);
+                          }
+                      }
+                  }
+              }
+          });
+          _closeButton.onclick = () => {
+              new CloseDialog().x(_dialog);
+          };
+      });
+    };
     close() {
         const closeButton = document.getElementById('close');
         const editor = document.getElementById('entity-editor-container');

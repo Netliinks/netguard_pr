@@ -18,6 +18,7 @@ export const tableLayout = `
           id="new-entity">
           <i class="fa-solid fa-add"></i>
         </button>
+        <button class="datatable_button import_sporadic" id="export-entities">Exportar</button>
       </div>
     </div>
 
