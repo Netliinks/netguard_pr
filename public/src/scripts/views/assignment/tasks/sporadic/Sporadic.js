@@ -11,7 +11,7 @@ const customerId = localStorage.getItem('customer_id');
 const getTakSporadic= async () => {
     //nombre de la entidad
     const takSporadic = await getEntitiesData('Task_');
-    console.log(takSporadic)
+    
     const FCustomer = takSporadic.filter((data) => `${data.customer?.id}` === `${customerId}` &&  `${data.taskType}`==='ESPORADICAS');
     return FCustomer;
 };
@@ -75,9 +75,17 @@ export class Sporadic {
           
           <td>${taskSporadic.execDate}</dt>
 
-          <td>${taskSporadic.execTime}</dt>  
+          <td>${taskSporadic.execTime}</dt>`;  
           
-          
+          if(taskSporadic.isRead == false){
+            
+            row.innerHTML += `<td><i class="fa-solid fa-eye-slash"></i></span></td>`;
+          }
+          else{
+            row.innerHTML += `<td><span><i class="fa-solid fa-eye"></i></span></td>`;
+          } 
+
+          row.innerHTML += `
           <td class="entity_options">
           <button class="button" id="edit-entity" data-entityId="${taskSporadic.id}">
           <i class="fa-solid fa-pen"></i>
@@ -113,7 +121,7 @@ export class Sporadic {
           button.innerText = page;
           button.addEventListener('click', () => {
               currentPage = page;
-              new TakSporadic().load(tableBody, page, items);
+              new Sporadic().load(tableBody, page, items);
           });
           return button;
       }
@@ -253,9 +261,16 @@ export class Sporadic {
     
 
                 registerEntity(raw, 'Task_');
-                const data = {"title": "Específica", "body":`${inputsCollection.name.value}` }
-                const envioPush = await postNotificationPush(data);
-              
+                const users = await getEntitiesData('User');
+                const FUsers = users.filter((data) => `${data.customer?.id}` === `${customerId}` && `${data.userType}` === `GUARD`);
+                for(let i =0; i<FUsers.length;i++){
+                    if(FUsers[i]['token']!=undefined){
+                        const data = {"token":FUsers[i]['token'],"title": "Específica", "body":`${inputsCollection.name.value}` }
+                        const envioPush = await postNotificationPush(data);
+                        console.log(envioPush)
+                    }  
+                }
+               
                 setTimeout(() => {
                     const container = document.getElementById('entity-editor-container');
                     new CloseDialog().x(container);
@@ -399,17 +414,26 @@ export class Sporadic {
                     let tableBody;
                     let container;
                     let data;
-                    data = await Sporadic();
+                    data = await getTakSporadic();
                     new CloseDialog()
                         .x(container =
                         document.getElementById('entity-editor-container'));
-                    new Fixed().load(tableBody
+                    new Sporadic().load(tableBody
                         = document.getElementById('datatable-body'), currentPage, data);
                 }, 100);
             });
         };
-        const data = {"title": "Específica", "body":`${$value.name.value}` }
-        const envioPush = await postNotificationPush(data);
+        const users = await getEntitiesData('User');
+        const FUsers = users.filter((data) => `${data.customer?.id}` === `${customerId}` && `${data.userType}` === `GUARD`);
+        for(let i =0; i<FUsers.length;i++){
+            if(FUsers[i]['token']!=undefined){
+                const data = {"token":FUsers[i]['token'],"title": "Específica", "body":`${$value.name.value}` }
+                const envioPush = await postNotificationPush(data);
+               
+            }  
+        }
+        //const data = {"title": "Específica", "body":`${$value.name.value}` }
+        //const envioPush = await postNotificationPush(data);
       };
     }
     remove() {

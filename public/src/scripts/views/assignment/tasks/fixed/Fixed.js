@@ -74,7 +74,17 @@ export class Fixed {
                 row.innerHTML += `
           <td>${taskFixed.name}</dt>
           
-          <td>${taskFixed.execTime}</dt>
+          <td>${taskFixed.execTime}</dt>`;
+          if(taskFixed.isRead == false){
+            
+            row.innerHTML += `<td><i class="fa-solid fa-eye-slash"></i></span></td>`;
+          }
+          else{
+            row.innerHTML += `<td><span><i class="fa-solid fa-eye"></i></span></td>`;
+          } 
+
+          row.innerHTML += `
+
           <td class="entity_options">
             <button class="button" id="edit-entity" data-entityId="${taskFixed.id}">
               <i class="fa-solid fa-pen"></i>
@@ -205,32 +215,39 @@ export class Fixed {
                   let _userInfo = await getUserInfo();
                   const customerId = localStorage.getItem('customer_id');
                   
-                  const raw = JSON.stringify({
-                      "taskType": `Generales`,
-                      "name": `${inputsCollection.name.value}`,
-                      "execDate": `${dateFormat}`,
-                      "user":  {
-                        "id": `${_userInfo['attributes']['id']}`
-                      },   
-                      "customer": {
-                          "id": `${customerId}`
-                      },
-                      "execTime":`${inputsCollection.executionTime.value}`,
-                      "startTime": `${hourFormat}`,
-                      "startDate": `${dateFormat}`,
+                    const raw = JSON.stringify({
+                        "taskType": `FIJAS`,
+                        "name": `${inputsCollection.name.value}`,
+                        "execDate": `${dateFormat}`,
+                        "user":  {
+                            "id": `${_userInfo['attributes']['id']}`
+                        },   
+                        "customer": {
+                            "id": `${customerId}`
+                        },
+                        "execTime":`${inputsCollection.executionTime.value}`,
+                        "startTime": `${hourFormat}`,
+                        "startDate": `${dateFormat}`,
                       
-                  });
+                    });
                   
                   
-                  registerEntity(raw, 'Task_');
-                  const data = {"title": "Notificación fija", "body":`${inputsCollection.name.value}` }
-                  const envioPush = await postNotificationPush(data);
+                    registerEntity(raw, 'Task_');
+                    const users = await getEntitiesData('User');
+                    const FUsers = users.filter((data) => `${data.customer?.id}` === `${customerId}` && `${data.userType}` === `GUARD`);
+                    for(let i =0; i<FUsers.length;i++){
+                        if(FUsers[i]['token']!=undefined){
+                            const data = {"token":FUsers[i]['token'],"title": "Generales", "body":`${inputsCollection.name.value}` }
+                            const envioPush = await postNotificationPush(data);
+                            console.log(envioPush)
+                        }  
+                    }
                 
-                  setTimeout(() => {
-                      const container = document.getElementById('entity-editor-container');
-                      new CloseDialog().x(container);
-                      new Fixed().render();
-                  }, 1000);
+                    setTimeout(() => {
+                        const container = document.getElementById('entity-editor-container');
+                        new CloseDialog().x(container);
+                        new Fixed().render();
+                    }, 1000);
                 }
             });
           
@@ -336,8 +353,16 @@ export class Fixed {
                 }, 100);
             });
         };
-        const data = {"title": "Notificación fija", "body":`${$value.name.value}` }
-        const envioPush = await postNotificationPush(data);
+        const users = await getEntitiesData('User');
+        const FUsers = users.filter((data) => `${data.customer?.id}` === `${customerId}` && `${data.userType}` === `GUARD`);
+        for(let i =0; i<FUsers.length;i++){
+            if(FUsers[i]['token']!=undefined){
+                const data = {"token":FUsers[i]['token'],"title": "Generales", "body":`${$value.name.value}` }
+                const envioPush = await postNotificationPush(data);
+                console.log(envioPush)
+            }  
+        }
+        
       };
     }
     remove() {

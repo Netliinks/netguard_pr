@@ -102,6 +102,7 @@ export class Procedures {
 
             const entityId = downfile.dataset.entityid;
             const splitEntity = entityId.split('%');
+            console.log(splitEntity)
             const nameFile = splitEntity[0];
             const entityIdFile = splitEntity[1];
             

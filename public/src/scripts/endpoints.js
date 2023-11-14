@@ -270,7 +270,7 @@ myHeaders.append("Authorization", "key=AAAAQ1NOq3s:APA91bEXEqZ2ozsXg7JmQrOKqWPTP
 myHeaders.append("Content-Type", "application/json");
 
 var raw = JSON.stringify({
-  "to": "exZk0nTDQDGsfzoYkf9xRp:APA91bFZ0Dk8VJyO2kyuhGJnJcVp3uh8yM6N-jpeELf1crsMQWlKdH-WL17SNhoHhIAC-a6_svTc2fqVJlS6Wd4FLe_Ntp8gs5hIlbfg-IHWj4VurMdxMeQIkX9hjlaugHJBSL3Z4yGR",
+  "to": data['token'],
   "notification": {
     "title": data['title'],
     "body": data['body']
