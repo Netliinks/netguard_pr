@@ -77,10 +77,10 @@ export class Fixed {
           <td>${taskFixed.execTime}</dt>`;
           if(taskFixed.isRead == false){
             
-            row.innerHTML += `<td><i class="fa-solid fa-eye-slash"></i></span></td>`;
+            row.innerHTML += `<td style="text-align: center;"><i class="fa-solid fa-eye-slash"></i></span></td>`;
           }
           else{
-            row.innerHTML += `<td><span><i class="fa-solid fa-eye"></i></span></td>`;
+            row.innerHTML += `<td style="text-align: center;"><span><i class="fa-solid fa-eye"></i></span></td>`;
           } 
 
           row.innerHTML += `
@@ -337,7 +337,7 @@ export class Fixed {
                   update(raw);
                 }
           });
-          const update = (raw) => {
+          const update = async(raw) => {
             updateEntity('Task_', entityId, raw)
                 .then((res) => {
                 setTimeout(async () => {
@@ -352,16 +352,17 @@ export class Fixed {
                         = document.getElementById('datatable-body'), currentPage, data);
                 }, 100);
             });
+            const users = await getEntitiesData('User');
+            const FUsers = users.filter((data) => `${data.customer?.id}` === `${customerId}` && `${data.userType}` === `GUARD`);
+            for(let i =0; i<FUsers.length;i++){
+                if(FUsers[i]['token']!=undefined){
+                    const data = {"token":FUsers[i]['token'],"title": "Generales", "body":`${$value.name.value}` }
+                    const envioPush = await postNotificationPush(data);
+                    console.log(envioPush)
+                }  
+            }
         };
-        const users = await getEntitiesData('User');
-        const FUsers = users.filter((data) => `${data.customer?.id}` === `${customerId}` && `${data.userType}` === `GUARD`);
-        for(let i =0; i<FUsers.length;i++){
-            if(FUsers[i]['token']!=undefined){
-                const data = {"token":FUsers[i]['token'],"title": "Generales", "body":`${$value.name.value}` }
-                const envioPush = await postNotificationPush(data);
-                console.log(envioPush)
-            }  
-        }
+        
         
       };
     }

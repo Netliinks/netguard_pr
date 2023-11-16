@@ -28,7 +28,7 @@ export const tableLayout = `
         </span></th>
        
         <th class="header_filled"></th>
-
+        <th class="header_filled"></th>
       </tr></thead>
       <tbody id="datatable-body" class="datatable_body">
 

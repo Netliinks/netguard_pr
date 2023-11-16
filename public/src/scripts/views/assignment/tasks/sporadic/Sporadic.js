@@ -79,10 +79,10 @@ export class Sporadic {
           
           if(taskSporadic.isRead == false){
             
-            row.innerHTML += `<td><i class="fa-solid fa-eye-slash"></i></span></td>`;
+            row.innerHTML += `<td style="text-align: center;"><i class="fa-solid fa-eye-slash"></i></span></td>`;
           }
           else{
-            row.innerHTML += `<td><span><i class="fa-solid fa-eye"></i></span></td>`;
+            row.innerHTML += `<td style="text-align: center;"><span><i class="fa-solid fa-eye"></i></span></td>`;
           } 
 
           row.innerHTML += `
@@ -309,9 +309,12 @@ export class Sporadic {
 
               <!-- EDITOR BODY -->
               <div class="entity_editor_body">
+                 
                   <div class="material_input">
+                    
                     <input type="text" id="entity-name" class="input_filled" value="${data.name}" >
                     <label for="entity-name">Nombre</label>
+                    
                   </div>
                   <div class="form_group">
                     <div class="form_input">
@@ -407,7 +410,7 @@ export class Sporadic {
               update(raw);
             }
           });
-          const update = (raw) => {
+          const update = async (raw)  => {
             updateEntity('Task_', entityId, raw)
                 .then((res) => {
                 setTimeout(async () => {
@@ -422,16 +425,17 @@ export class Sporadic {
                         = document.getElementById('datatable-body'), currentPage, data);
                 }, 100);
             });
+            const users = await getEntitiesData('User');
+            const FUsers = users.filter((data) => `${data.customer?.id}` === `${customerId}` && `${data.userType}` === `GUARD`);
+            for(let i =0; i<FUsers.length;i++){
+                if(FUsers[i]['token']!=undefined){
+                    const data = {"token":FUsers[i]['token'],"title": "Específica", "body":`${$value.name.value}` }
+                    const envioPush = await postNotificationPush(data);
+                
+                }  
+            }
         };
-        const users = await getEntitiesData('User');
-        const FUsers = users.filter((data) => `${data.customer?.id}` === `${customerId}` && `${data.userType}` === `GUARD`);
-        for(let i =0; i<FUsers.length;i++){
-            if(FUsers[i]['token']!=undefined){
-                const data = {"token":FUsers[i]['token'],"title": "Específica", "body":`${$value.name.value}` }
-                const envioPush = await postNotificationPush(data);
-               
-            }  
-        }
+        
         //const data = {"title": "Específica", "body":`${$value.name.value}` }
         //const envioPush = await postNotificationPush(data);
       };

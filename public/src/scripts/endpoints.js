@@ -274,6 +274,9 @@ var raw = JSON.stringify({
   "notification": {
     "title": data['title'],
     "body": data['body']
+  },
+  "data":{
+    "type": "tasks"
   }
 });
 
