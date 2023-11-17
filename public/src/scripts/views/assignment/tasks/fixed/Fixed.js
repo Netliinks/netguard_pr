@@ -332,7 +332,7 @@ export class Fixed {
                       "name": `${$value.name.value}`,
                       // @ts-ignore
                       "execTime": `${$value.execTime.value}`,
-                      
+                      "isRead": false
                   });
                   update(raw);
                 }

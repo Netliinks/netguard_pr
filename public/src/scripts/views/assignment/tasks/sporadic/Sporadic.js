@@ -285,17 +285,33 @@ export class Sporadic {
     }
     edit(container, data) {
       // Edit entity
-      const edit = document.querySelectorAll('#edit-entity');
-      edit.forEach((edit) => {
-          const entityId = edit.dataset.entityid;
-          edit.addEventListener('click', () => {
-              RInterface('Task_', entityId);
-          });
+        const fecha = new Date();
+        const day = fecha.getDate();
+        const month = fecha.getMonth() + 1; 
+        const year = fecha.getFullYear();
+
+        const dateFormat = year + '-' + month + '-' + day;
+        let dateToday = new Date(dateFormat);
+        const edit = document.querySelectorAll('#edit-entity');
+        edit.forEach((edit) => {
+            const entityId = edit.dataset.entityid;
+            edit.addEventListener('click', () => {
+                RInterface('Task_', entityId);
+            });
       });
       const RInterface = async (entities, entityID) => {
+          
           const data = await getEntityData(entities, entityID);
+          const executionDate = data.execDate;
+          
+          let dateExec = new Date(executionDate);
+          
+          if(dateToday >= dateExec){
+            
+          }
           this.entityDialogContainer.innerHTML = '';
           this.entityDialogContainer.style.display = 'flex';
+          
           this.entityDialogContainer.innerHTML = `
               <div class="entity_editor" id="entity-editor">
               <div class="entity_editor_header">
@@ -336,7 +352,13 @@ export class Sporadic {
               </div>
               </div>
           `;
-          
+            if(dateToday >= dateExec){
+                document.getElementById('entity-name').disabled = true;
+                document.getElementById('execution-date').disabled = true;
+                document.getElementById('execution-time').disabled = true;
+                document.getElementById('update-changes').disabled = true;
+            }
+            
           inputObserver();
           
           this.close();
@@ -405,7 +427,7 @@ export class Sporadic {
                   "execDate": `${$value.execDate.value}`,
                   // @ts-ignore
                   "execTime": `${$value.execTime.value}`,
-                  
+                  "isRead": false
               });
               update(raw);
             }

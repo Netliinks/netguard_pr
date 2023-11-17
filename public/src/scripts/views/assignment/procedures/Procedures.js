@@ -197,7 +197,7 @@ export class Procedures {
             let fileProcedure;
             _fileHandler.addEventListener('change', async() => {
            
-              console.log(_fileHandler.files[0]);
+            
               let size = _fileHandler.files[0].size;
               let sizekiloBytes = size / 1024;
               let sizeMegaBytes = sizekiloBytes / 1024;

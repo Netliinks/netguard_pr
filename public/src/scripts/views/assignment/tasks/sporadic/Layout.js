@@ -25,7 +25,7 @@ export const tableLayout = `
     <table class="datatable_content">
       <thead><tr>
         <th><span data-type="name">
-        Específicas<i class="fa-regular fa-filter"></i>
+        Específicas <i class="fa-regular fa-filter"></i>
         </span></th>
 
         <th><span data-type="execution-date">
@@ -34,7 +34,7 @@ export const tableLayout = `
         <th><span data-type="execution-time">
           Hora <i class="fa-regular fa-filter"></i>
         </span></th>
-        <th class="header_filled"><span data-type="view-task"><i class="fa-regular fa-filter"></i></span></th>
+        <th class="header_filled"><span data-type="view-task">Visualización <i class="fa-regular fa-filter"></i></span></th>
         <th class="header_filled"></th>
       </tr></thead>
       <tbody id="datatable-body" class="datatable_body">

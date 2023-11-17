@@ -269,11 +269,18 @@ export const postNotificationPush = async(data)=>{
 myHeaders.append("Authorization", "key=AAAAQ1NOq3s:APA91bEXEqZ2ozsXg7JmQrOKqWPTPTQOSYqLmExWQsWB0LvA825JDiYisngPUOLXrJKgZpxN-v0i4fQw1G_ZbUgH41FVENrLV4bompTF_q8LxlN4jBdYPxut38fOa0nSCCOS6kGXHOUb");
 myHeaders.append("Content-Type", "application/json");
 
+let bodyNoti = data['body'];
+let contBody = bodyNoti.length;
+console.log(contBody)
+if(contBody>30){
+    bodyNoti = bodyNoti.substring(0,20);
+    bodyNoti = `${bodyNoti}...`;
+}
 var raw = JSON.stringify({
   "to": data['token'],
   "notification": {
-    "title": data['title'],
-    "body": data['body']
+    "title": `Notificación ${data['title']}`,
+    "body":bodyNoti
   },
   "data":{
     "type": "tasks"
