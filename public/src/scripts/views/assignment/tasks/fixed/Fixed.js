@@ -237,7 +237,7 @@ export class Fixed {
                     const FUsers = users.filter((data) => `${data.customer?.id}` === `${customerId}` && `${data.userType}` === `GUARD`);
                     for(let i =0; i<FUsers.length;i++){
                         if(FUsers[i]['token']!=undefined){
-                            const data = {"token":FUsers[i]['token'],"title": "Generales", "body":`${inputsCollection.name.value}` }
+                            const data = {"token":FUsers[i]['token'],"title": "General", "body":`${inputsCollection.name.value}` }
                             const envioPush = await postNotificationPush(data);
                             console.log(envioPush)
                         }  
@@ -356,7 +356,7 @@ export class Fixed {
             const FUsers = users.filter((data) => `${data.customer?.id}` === `${customerId}` && `${data.userType}` === `GUARD`);
             for(let i =0; i<FUsers.length;i++){
                 if(FUsers[i]['token']!=undefined){
-                    const data = {"token":FUsers[i]['token'],"title": "Generales", "body":`${$value.name.value}` }
+                    const data = {"token":FUsers[i]['token'],"title": "General", "body":`${$value.name.value}` }
                     const envioPush = await postNotificationPush(data);
                     console.log(envioPush)
                 }  
