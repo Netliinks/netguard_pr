@@ -3,7 +3,7 @@
 import { SignIn } from "./login.js";
 // GENERAL URL
 // ===================================================
-const NetliinksUrl = 'http://localhost:8080/rest/entities/' //'https://backend.netliinks.com:443/rest/entities/';
+const NetliinksUrl = 'https://backend.netliinks.com:443/rest/entities/';
 // ===================================================
 // TOOLS
 // ===================================================
@@ -26,7 +26,7 @@ headers.append('Cookie', "JSESSIONID=CDD208A868EAABD1F523BB6F3C8946AF");
  * @returns token
  */
 export const getToken = async (mail, password) => {
-    const URL = 'http://localhost:8080/oauth/token'; //'https://backend.netliinks.com:443/oauth/token';
+    const URL = 'https://backend.netliinks.com:443/oauth/token';
     const ReqOptions = {
         method: 'POST',
         body: `grant_type=password&username=${mail}&password=${password}`,
@@ -51,7 +51,7 @@ export const getToken = async (mail, password) => {
  */
 export const getUserInfo = async () => {
     const userInfo = {
-        url: 'http://localhost:8080/rest/userInfo?fetchPlan=full', //'https://backend.netliinks.com:443/rest/userInfo?fetchPlan=full',
+        url: 'https://backend.netliinks.com:443/rest/userInfo?fetchPlan=full',
         method: 'GET'
     };
     const options = {
@@ -59,18 +59,9 @@ export const getUserInfo = async () => {
         headers: headers,
         redirect: 'follow'
     };
-    /*return fetch(userInfo.url, options)
+    return fetch(userInfo.url, options)
         .then((req) => req.json())
-        .catch((err) => console.info(err));*/
-    let userData = await fetch(userInfo.url, options)
-    .then((req) => req.json());
-    // .then((req) => {
-    //     console.log(req)
-    //     // if (req.error === 'invalid_token') {
-    //     //     new SignIn().showLogin()
-    //     // }
-    // })
-    return userData;
+        .catch((err) => console.info(err));
 };
 // ===================================================
 /**
@@ -98,7 +89,7 @@ export const getData = async (url) => {
  * entity (all bussines data for example).
  */
 export const getEntitiesData = async (entities) => {
-    const URL = `${NetliinksUrl}${entities}?fetchPlan=full&sort=-createdDate`;
+    const URL = `${NetliinksUrl}${entities}?fetchPlan=full&orderBy=createdDate`;
     return await getData(URL);
 };
 /**
@@ -111,36 +102,6 @@ export const getEntitiesData = async (entities) => {
 export const getEntityData = async (entities, entity) => {
     const URL = `${NetliinksUrl}${entities}/${entity}?fetchPlan=full&sort=-createdDate`;
     return getData(URL);
-};
-export const getFilterEntityCount = async (entities, raw) => {
-    const req = {
-        url: `${NetliinksUrl}${entities}/search/count`,
-        method: 'POST'
-    };
-    const requestOptions = {
-        method: req.method,
-        headers: headers,
-        body: raw,
-        redirect: 'follow'
-    };
-    const res = await fetch(req.url, requestOptions);
-    return await res.json()
-        .catch(err => new SignIn().signOut());
-};
-export const getFilterEntityData = async (entities, raw) => {
-    const req = {
-        url: `${NetliinksUrl}${entities}/search`,
-        method: 'POST'
-    };
-    const requestOptions = {
-        method: req.method,
-        headers: headers,
-        body: raw,
-        redirect: 'follow'
-    };
-    const res = await fetch(req.url, requestOptions);
-    return await res.json()
-        .catch(err => new SignIn().signOut());
 };
 export const updateEntity = async (entities, entity, raw) => {
     const URL = `${NetliinksUrl}${entities}/${entity}`;
@@ -167,7 +128,7 @@ export const deleteEntity = async (entities, entity) => {
 };
 export const registerEntity = async (raw, type) => {
     const req = {
-        url: 'http://localhost:8080/rest/entities/', //'https://backend.netliinks.com:443/rest/entities/',
+        url: 'https://backend.netliinks.com:443/rest/entities/',
         method: 'POST'
     };
     const requestOptions = {
@@ -182,7 +143,7 @@ export const registerEntity = async (raw, type) => {
 export const filterEntities = async (user) => { };
 export const setPassword = async (raw) => {
     const req = {
-        url: 'http://localhost:8080/rest/services/UserServiceBean/updatePassword', //'https://backend.netliinks.com:443/rest/services/UserServiceBean/updatePassword',
+        url: 'https://backend.netliinks.com:443/rest/services/UserServiceBean/updatePassword',
         method: 'POST'
     };
     const requestOptions = {
@@ -198,7 +159,7 @@ export const setPassword = async (raw) => {
 };
 export const setUserRole = async (raw) => {
     const req = {
-        url: 'http://localhost:8080/rest/services/UserServiceBean/assignRol', //'https://backend.netliinks.com:443/rest/services/UserServiceBean/assignRol',
+        url: 'https://backend.netliinks.com:443/rest/services/UserServiceBean/assignRol',
         method: 'POST'
     };
     const requestOptions = {
@@ -212,26 +173,8 @@ export const setUserRole = async (raw) => {
         .then(result => console.log(result))
         .catch(error => console.log('error', error));
 };
-export const sendMail = async (raw) => {
-    const req = {
-        url: 'http://localhost:8080/rest/services/UserServiceBean/sendByEmailInfo', //'https://backend.netliinks.com:443/rest/services/UserServiceBean/sendByEmailInfo',
-        method: 'POST'
-    }
-
-    const requestOptions = {
-        method: req.method,
-        headers: headers,
-        body: raw,
-        redirect: 'follow'
-    };
-
-    fetch(req.url, requestOptions)
-        .then(response => response.json())
-        .then(result => console.log(result))
-        .catch(error => console.log('error', error));
-}
 export const getFile = async (fileUrl) => {
-    const url = 'http://localhost:8080/rest/files?fileRef='; //'https://backend.netliinks.com:443/rest/files?fileRef=';
+    const url = 'https://backend.netliinks.com:443/rest/files?fileRef=';
     const requestOptions = {
         method: 'GET',
         headers: headers,
@@ -244,21 +187,4 @@ export const getFile = async (fileUrl) => {
         return file;
     });
     return file;
-};
-export const setFile = async (file) => {
-    const url = `http://localhost:8080/rest/files?name=${file.name}`; //`https://backend.netliinks.com:443/rest/files?name=${file.name}`;
-    const requestOptions = {
-        method: 'POST',
-        headers: {
-            "Authorization": `Bearer ${token}`,
-            "Cookie": "JSESSIONID=CDD208A868EAABD1F523BB6F3C8946AF",
-            "Content-Disposition": 'form-data; name="file"; filename="cat.jpg"',
-            'Content-Type': 'image/jpeg',
-        },
-        body: file
-    };
-    const res = await fetch(url, requestOptions)
-        .then(response => response.json())
-        .catch(err => alert(`Error subiendo archivo ${err}`));
-    return res;
 };

@@ -41,7 +41,7 @@ export const announcementCreatorController = `
             </div>
 
             <!-- BOOKMARK: PICTURE IMPORT -->
-            <input type="file" class="input_file margin_t_8 margin_b_16" accept="image/png, image/jpeg" id="announcement-picture">
+            <input type="file" class="input_file margin_t_8 margin_b_16" accept="image/png, image/jpeg">
 
             <!-- ANNOUNCEMENT CONTENT -->
             <div class="form_input">
@@ -49,11 +49,9 @@ export const announcementCreatorController = `
                 <textarea id="announcement-content" name="announcement-content" row="30" class="input_textarea"></textarea>
             </div>
 
-            <!--
             <div class="form_input">
                 <button class="btn btn_widder btn_placeholder_type">Agregar botón <i class="margin_l_8 fa-solid fa-plus"></i></button>
             </div>
-            -->
 
             <div class="sidebar_section">
                 <h5 class="section_title text_center">Duración</h5>
@@ -62,23 +60,23 @@ export const announcementCreatorController = `
             <div class="form_group">
                 <div class="v_inputs">
                     <div class="form_input">
-                        <label class="form_label" for="announcement-visualizationDate">Desde: </label>
-                        <input type="date" class="input_clear input_widder input_centertext" id="announcement-visualizationDate">
+                        <label class="form_label" for="from-in-date">Desde: </label>
+                        <input type="date" class="input_clear input_widder input_centertext">
                     </div>
 
                     <div class="form_input">
-                        <input type="time" class="input_clear input_widder input_centertext margin_t_16" id="announcement-visualizationTime">
+                        <input type="time" class="input_clear input_widder input_centertext margin_t_16">
                     </div>
                 </div>
 
                 <div class="v_inputs">
                     <div class="form_input">
-                        <label class="form_label" for="announcement-expirationDate">Hasta: </label>
-                        <input type="date" class="input_clear input_widder input_centertext" id="announcement-expirationDate">
+                        <label class="form_label" for="from-in-date">Hasta: </label>
+                        <input type="date" class="input_clear input_widder input_centertext">
                     </div>
 
                     <div class="form_input">
-                        <input type="time" class="input_clear input_widder input_centertext margin_t_16" id="announcement-expirationTime">
+                        <input type="time" class="input_clear input_widder input_centertext margin_t_16">
                     </div>
                 </div>
             </div>

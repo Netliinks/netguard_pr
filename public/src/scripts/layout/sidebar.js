@@ -1,59 +1,27 @@
 // Views
-import { Config } from ".././Configs.js";
 import { Dashboard } from "../views/dashboard/dashboard.js";
 import { Notes } from "../views/binnacle/notes/NotesView.js";
-import { Guards } from "../views/users/guards/guards.js";
 import { Clients } from "../views/users/clients/clients.js";
 import { Visits } from "../views/binnacle/visits/VisitsView.js";
 import { Employees } from "../views/users/employees/employees.js";
 // @ts-ignore
 import { Contractors } from "../views/users/contractors/Contractors.js";
-import { AssistControl } from "../views/attendance/assistcontrol/AssistControl.js";
+import { AssistControl } from "../views/binnacle/assistcontrol/AssistControl.js";
 import { Departments } from "../views/departments/Departments.js";
-import { Customers } from "../views/customers/Customers.js";
 import { SuperUsers } from "../views/users/SuperUsers/SuperUsers.js";
 import { Events } from "../views/binnacle/Events/EventsView.js";
-import { Vehiculars } from "../views/binnacle/vehiculars/Vehiculars.js";
-import { Binnacle } from "../views/binnacle/binnacle/BinnacleView.js";
-import { Blacklist } from "../views/users/blacklist/blacklist.js";
-import { AssistGestion } from "../views/attendance/assistgestion/AssistGestion.js";
-export class Sidebar {
-  constructor() {
-      this.sidebarContainer = document.getElementById('app-sidebar');
-      this.getSidebarItems = () => {
-          const sidebarItems = document.querySelectorAll('.sidebar_item');
-          const sidebarSubitems = document.querySelectorAll('.sidebar_subitem');
-          sidebarItems.forEach((sidebarItem) => {
-              sidebarItem.addEventListener('click', () => {
-                  sidebarItems.forEach((sidebarItem) => sidebarItem.classList.remove('isActive'));
-                  sidebarItem.classList.add('isActive');
-              });
-          });
-          sidebarSubitems.forEach((sidebarSubitem) => {
-              sidebarSubitem.addEventListener('click', () => {
-                  sidebarSubitems.forEach((sidebarSubitem) => sidebarSubitem.classList.remove('isActive'));
-                  sidebarSubitem.classList.add('isActive');
-              });
-          });
-      };
-  }
-  render() {
-      this.sidebarContainer.innerHTML = `
+export const renderSidebar = () => {
+    const sidebar = document.getElementById('app-sidebar');
+    sidebar.innerHTML = `
     <div class="app_sidebar_container">
       <div class="app_sidebar_container_menu">
         <div class="sidebar_top">
           <div class="sidebar_header"></div>
 
-          <div class="sidebar_items" style="overflow-y:scroll; height: 100%; max-height: 45rem;">
+          <div class="sidebar_items">
             <div class="sidebar_item">
               <span class="sidebar_item_label" id="render-dashboard">
                 <i class="fa-regular fa-chart-simple"></i> <div class="label">Dashboard</div>
-              </span>
-            </div>
-
-            <div class="sidebar_item" id="render-customers">
-              <span class="sidebar_item_label">
-                <i class="fa-regular fa-briefcase"></i> <div class="label">Empresas</div>
               </span>
             </div>
 
@@ -63,13 +31,6 @@ export class Sidebar {
               </span>
 
               <div class="sidebar_subitems">
-
-                <div class="sidebar_subitem" id="render-guards">
-                  <span class="sidebar_subitem_label">
-                    <i class="fa-regular fa-person-military-pointing"></i> <div class="label">Guardias</div>
-                  </span>
-                </div>
-
                 <div class="sidebar_subitem" id="render-clients">
                   <span class="sidebar_subitem_label">
                     <i class="fa-regular fa-user-group"></i> <div class="label">Clientes</div>
@@ -88,24 +49,18 @@ export class Sidebar {
                   </span>
                 </div>
 
-                <div class="sidebar_subitem">
-                  <span class="sidebar_subitem_label" id="render-blacklist">
-                    <i class="fa-regular fa-exclamation-triangle"></i> <div class="label">Lista Negra</div>
-                  </span>
-                </div>
-
               </div>
             </div>
 
             <div class="sidebar_item">
               <span class="sidebar_item_label">
-              <i class="fa-regular fa-cabinet-filing"></i></i> <div class="label">Registros</div>
+              <i class="fa-regular fa-book"></i> <div class="label">Bitácora</div>
               </span>
 
               <div class="sidebar_subitems">
                 <div class="sidebar_subitem" id="render-notes">
                   <span class="sidebar_subitem_label">
-                    <i class="fa-regular fa-notes"></i> <div class="label">Reportes</div>
+                    <i class="fa-regular fa-notes"></i> <div class="label">Notas</div>
                   </span>
                 </div>
 
@@ -115,21 +70,15 @@ export class Sidebar {
                   </span>
                 </div>
 
+                <div class="sidebar_subitem" id="render-assistControl">
+                  <span class="sidebar_subitem_label">
+                    <i class="fa-regular fa-marker"></i> <div class="label">Control de<br> asistencia</div>
+                  </span>
+                </div>
+
                 <div class="sidebar_subitem" id="render-events">
                   <span class="sidebar_subitem_label">
                     <i class="fa-regular fa-megaphone"></i> <div class="label">Eventos</div>
-                  </span>
-                </div>
-
-                <div class="sidebar_subitem" id="render-binnacle">
-                  <span class="sidebar_subitem_label">
-                    <i class="fa-regular fa-book"></i> <div class="label">Bitácora</div>
-                  </span>
-                </div>
-
-                <div class="sidebar_subitem" id="render-vehiculars">
-                  <span class="sidebar_subitem_label">
-                    <i class="fa-regular fa-car"></i> <div class="label">Ingreso Vehicular</div>
                   </span>
                 </div>
               </div>
@@ -146,97 +95,72 @@ export class Sidebar {
                 <i class="fa-regular fa-shield"></i> <div class="label">Superusuarios</div>
               </span>
             </div>
-
-            <div class="sidebar_item">
-              <span class="sidebar_item_label">
-              <i class="fa-regular fa-calendar"></i></i> <div class="label">Asistencia</div>
-              </span>
-
-              <div class="sidebar_subitems">
-
-                <div class="sidebar_subitem" id="render-assistControl">
-                  <span class="sidebar_subitem_label">
-                    <i class="fa-regular fa-marker"></i> <div class="label">Control</div>
-                  </span>
-                </div>
-
-                <div class="sidebar_subitem" id="render-assistGestion">
-                  <span class="sidebar_subitem_label">
-                    <i class="fa-regular fa-list-alt"></i> <div class="label">Gestión</div>
-                  </span>
-                </div>
-
-              </div>
-            </div>
           </div>
         </div>
       </div>
     </div>
   `;
-  this.getSidebarItems();
-  this.renders();
-}
-renders() {
+    //  @ts-ignore
+    feather.replace();
+    getSidebarItems();
+    renders();
+};
+const getSidebarItems = () => {
+    const sidebarItems = document.querySelectorAll('.sidebar_item');
+    const sidebarSubitems = document.querySelectorAll('.sidebar_subitem');
+    sidebarItems.forEach((sidebarItem) => {
+        sidebarItem.addEventListener('click', () => {
+            sidebarItems.forEach((sidebarItem) => sidebarItem.classList.remove('isActive'));
+            sidebarItem.classList.add('isActive');
+        });
+    });
+    sidebarSubitems.forEach((sidebarSubitem) => {
+        sidebarSubitem.addEventListener('click', () => {
+            sidebarSubitems.forEach((sidebarSubitem) => sidebarSubitem.classList.remove('isActive'));
+            sidebarSubitem.classList.add('isActive');
+        });
+    });
+};
+const renders = () => {
     document.getElementById('render-dashboard')?.addEventListener('click', () => {
-      new Dashboard().render();
-    });
-    document.getElementById('render-customers')?.addEventListener('click', () => {
-      new Customers().render(Config.offset, Config.currentPage, "");
-    });
-    document.getElementById('render-guards')?.addEventListener('click', () => {
-        new Guards().render(Config.offset, Config.currentPage, "");
+        new Dashboard().render();
     });
     document.getElementById('render-clients')?.addEventListener('click', () => {
-        new Clients().render(Config.offset, Config.currentPage, "");
+        new Clients().render();
     });
     document.getElementById('render-employees')?.addEventListener('click', () => {
-        new Employees().render(Config.offset, Config.currentPage, "");
+        new Employees().render();
     });
     document.getElementById('render-contractors')?.addEventListener('click', () => {
-        new Contractors().render(Config.offset, Config.currentPage, "");
-    });
-    document.getElementById('render-blacklist')?.addEventListener('click', () => {
-        new Blacklist().render(Config.offset, Config.currentPage, "");
+        new Contractors().render();
     });
     // render notes
     document.getElementById('render-notes')?.addEventListener('click', () => {
-        new Notes().render(Config.offset, Config.currentPage, "");
+        new Notes().render();
     });
     // render visits
     document.getElementById('render-visits')?.addEventListener('click', () => {
-        new Visits().render(Config.offset, Config.currentPage, "");
+        new Visits().render();
     });
-    document.getElementById('render-binnacle')?.addEventListener('click', () => {
-      new Binnacle().render(Config.offset, Config.currentPage, "");
-  });
     // render AssistControl
     document.getElementById('render-assistControl')?.addEventListener('click', () => {
-      new AssistControl().render(Config.offset, Config.currentPage, "");
+        new AssistControl().render();
     });
-    // render AssistControl
-    document.getElementById('render-assistGestion')?.addEventListener('click', () => {
-      new AssistGestion().render();
-  });
     // render AssistControl
     document.getElementById('render-events')?.addEventListener('click', () => {
-        new Events().render(Config.offset, Config.currentPage, "");
-    });
-    // render AssistControl
-    document.getElementById('render-vehiculars')?.addEventListener('click', () => {
-      new Vehiculars().render(Config.offset, Config.currentPage, "");
+        new Events().render();
     });
     // render Deparments
     document.getElementById('render-deparments')?.addEventListener('click', () => {
-        new Departments().render(Config.offset, Config.currentPage, "");
+        new Departments().render();
     });
     // render Superusers
     document.getElementById('render-superusers')?.addEventListener('click', () => {
-        new SuperUsers().render(Config.offset, Config.currentPage, "");
+        new SuperUsers().render();
     });
-  }
-}
+};
 // new Clients().render()
 // new AssistControl().render()
 // new Notes().render()
-//new Employees().render();
+// new Employees().render()
 // new Contractors().render()

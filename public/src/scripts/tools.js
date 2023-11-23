@@ -1,4 +1,4 @@
-import { getEntitiesData, getUserInfo, getFilterEntityData, getEntityData, registerEntity, _userAgent } from "./endpoints.js";
+import { getEntitiesData, getUserInfo } from "./endpoints.js";
 //
 export const inputObserver = () => {
     const inputs = document.querySelectorAll('input');
@@ -61,70 +61,6 @@ export const inputSelect = async (entity, selectId, currentStatus) => {
         });
     });
 };
-
-export const inputSelectType = async (selectId, currentType) => {
-    const data = [
-        {id: 'CUSTOMER', name: 'Cliente'},
-        {id: 'GUARD', name: 'Guardia'},
-    ]
-    const type = await currentType;
-    const select = document.querySelector(`#${selectId}`);
-    const inputParent = select.parentNode;
-    const optionsContent = inputParent.querySelector('#input-options');
-    const optionsContainer = document.createElement('div');
-    optionsContainer.classList.add('input_options_container');
-    optionsContent.appendChild(optionsContainer);
-
-    for (let i = 0; i < data.length; i++) {
-        const inputOption = document.createElement('div');
-        select.setAttribute('data-optionid', data[0].id);
-        select.setAttribute('value', data[0].name);
-        inputOption.classList.add('input_option');
-        inputOption.setAttribute('id', data[i].id);
-        let nameData = data[i].name;
-        inputOption.innerHTML = nameData;
-        optionsContainer.appendChild(inputOption);
-    }
-
-    const options = optionsContainer.querySelectorAll('.input_option');
-    if (type === "CUSTOMER") {
-        select.value = "Cliente";
-        select.setAttribute('data-optionid', type);
-    }
-    else if (type === 'GUARD') {
-        select.value = "Guardia";
-        select.setAttribute('data-optionid', type);
-    }
-    else {
-        select.value = data[0].name;
-    }
-    select.addEventListener('click', () => {
-        inputParent.classList.toggle('select_active');
-    });
-    options.forEach((option) => {
-        option.addEventListener('click', () => {
-            select.value = option.innerText;
-            select.removeAttribute('data-optionid');
-            select.setAttribute('data-optionid', option.getAttribute('id'));
-            inputParent.classList.remove('select_active');
-        });
-    });
-} 
-
-export const verifyUserType = (userType) =>{
-    if(userType == 'CUSTOMER'){
-      return 'Cliente'
-    }else if(userType == 'GUARD'){
-      return 'Guardia'
-    }else if(userType == 'EMPLOYEE'){
-      return 'Empleado'
-    }else if(userType == 'CONTRACTOR'){
-      return 'Contratista'
-    }else{
-      return userType
-    }
-  }
-
 export class FixStatusElement {
     fix(element) {
         const elementTextValue = element.innerText;
@@ -221,28 +157,14 @@ export class filterDataByHeaderType {
                     header.classList.remove('datatable_header_selected');
                 });
                 e.target.classList.add('datatable_header_selected');
-                this.sortGrid(th.cellIndex, span.dataset.type, span);
+                this.sortGrid(th.cellIndex, span.dataset.type);
             };
         };
-        this.sortGrid = (colNum, type, span) => {
+        this.sortGrid = (colNum, type) => {
             let tbody = this.datatable.querySelector('tbody');
             let rowsArray = Array.from(tbody.rows);
             let compare;
-            if (span.dataset.mode == "desc") {
-                compare = (rowA, rowB) => {
-                    return rowA.cells[colNum].innerHTML >
-                        rowB.cells[colNum].innerHTML ? -1 : 1;
-                };
-                span.setAttribute("data-mode", "asc");
-            }
-            else {
-                compare = (rowA, rowB) => {
-                    return rowA.cells[colNum].innerHTML >
-                        rowB.cells[colNum].innerHTML ? 1 : -1;
-                };
-                span.setAttribute("data-mode", "desc");
-            }
-            /*switch (type) {
+            switch (type) {
                 case 'name':
                     compare = (rowA, rowB) => {
                         return rowA.cells[colNum].innerHTML >
@@ -267,130 +189,10 @@ export class filterDataByHeaderType {
                             rowB.cells[colNum].innerHTML ? 1 : -1;
                     };
                     break;
-            }*/
+            }
             rowsArray.sort(compare);
             tbody.append(...rowsArray);
         };
     }
 }
 export const userInfo = getUserInfo();
-
-export const getVerifyEmail = async (email) => {
-    let value = false;
-    //console.log(email.includes("@"))
-    if(email.includes("@") === true){
-        /*const users = await getEntitiesData('User');
-        const data = users.filter((data) => `${data.email}`.includes(`${email}`));*/
-        let raw = JSON.stringify({
-            "filter": {
-                "conditions": [
-                  {
-                    "property": "email",
-                    "operator": "=",
-                    "value": `${email}`
-                  }
-                ]
-            }
-        });
-        let data = await getFilterEntityData("User", raw);
-        if(data.length != 0){
-            value = true;
-        }
-    }
-    return value;
-};
-export const getVerifyUsername = async (username) => {
-    let value = "none";
-    //console.log(email.includes("@"))
-    if (username != '') {
-        /*const users = await getEntitiesData('User');
-        const data = users.filter((data) => `${data.email}`.includes(`${email}`));*/
-        let raw = JSON.stringify({
-            "filter": {
-                "conditions": [
-                    {
-                        "property": "username",
-                        "operator": "=",
-                        "value": `${username}`
-                    }
-                ]
-            }
-        });
-        let data = await getFilterEntityData("User", raw);
-        if (data.length != 0) {
-            value = `${verifyUserType(data[0].userType)}, super: ${data[0].isSuper ? 'Si' : 'No'}`;
-        }
-    }
-    return value;
-};
-export const registryPlataform = async (id) => {
-    let platUser = await getEntityData('User', id);
-    const _date = new Date();
-    // TIME
-    const _hours = _date.getHours();
-    const _minutes = _date.getMinutes();
-    const _seconds = _date.getSeconds();
-    const _fixedHours = ('0' + _hours).slice(-2);
-    const _fixedMinutes = ('0' + _minutes).slice(-2);
-    const _fixedSeconds = ('0' + _seconds).slice(-2);
-    const currentTime = `${_fixedHours}:${_fixedMinutes}:${_fixedSeconds}`;
-    // DATE
-    const _day = _date.getDate();
-    const _month = _date.getMonth() + 1;
-    const _year = _date.getFullYear();
-    const date = `${_year}-${('0' + _month).slice(-2)}-${('0' + _day).slice(-2)}`;
-    let plataformRaw = JSON.stringify({
-        // @ts-ignore
-        "userAgent": `${_userAgent}`,
-        "customer": {
-            "id": `${platUser.customer.id}`
-        },
-        "system": {
-            "id": `8d457eb2-fe46-5797-7203-55aaa1813010`
-        },
-        "user": {
-            "id": `${platUser.id}`
-        },
-        // @ts-ignore
-        "creationDate": `${date}`,
-        // @ts-ignore
-        "creationTime": `${currentTime}`,
-    });
-    await registerEntity(plataformRaw, 'WebAccess')
-        .then(res => {
-        console.log("Registrado");
-    }).catch(err => console.log(err));
-};
-export const pageNumbers = (totalPages, max, currentPage) => {
-    let limitMin;
-    let limitMax;
-    let ranges = [];
-    if (currentPage == 1) {
-        limitMin = 1;
-        limitMax = max;
-        for (let i = limitMin; i <= limitMax; i++) {
-            ranges.push(i);
-        }
-    }
-    /*else if(currentPage == totalPages){
-        let limit = totalPages - max
-        for(let i = limit; i <= totalPages; i++){
-                ranges.push(i)
-        }
-    }*/ else {
-        limitMin = currentPage - 4;
-        for (let i = limitMin; i < currentPage; i++) {
-            ranges.push(i);
-        }
-        limitMax = currentPage + 5;
-        for (let i = currentPage; i <= limitMax; i++) {
-            ranges.push(i);
-        }
-    }
-    return ranges;
-};
-export const fillBtnPagination = (currentPage, color) => {
-    let btnActive = document.getElementById("btnPag" + currentPage);
-    if(btnActive) btnActive.style.backgroundColor = color;
-    //btnActive.focus();
-};

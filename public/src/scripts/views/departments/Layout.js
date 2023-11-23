@@ -12,11 +12,7 @@ export const tableLayout = `
         class="search_input"
         placeholder="Buscar"
         id="search">
-        <button
-            class="datatable_button add_user"
-            id="btnSearch">
-            <i class="fa-solid fa-search"></i>
-        </button>
+
         <button
           class="datatable_button add_user"
           id="new-entity">
@@ -39,8 +35,7 @@ export const tableLayout = `
       </tbody>
     </table>
 
-    </div>
-
     <div class="datatable_footer">
       <div class="datatable_pagination" id="pagination-container"></div>
-    </div>`;
+    </div>
+  </div>`;

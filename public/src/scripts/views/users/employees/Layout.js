@@ -12,11 +12,7 @@ export const tableLayout = `
         class="search_input"
         placeholder="Buscar"
         id="search">
-        <button
-            class="datatable_button add_user"
-            id="btnSearch">
-            <i class="fa-solid fa-search"></i>
-        </button>
+
         <button
           class="datatable_button add_user"
           id="new-entity">
@@ -28,8 +24,6 @@ export const tableLayout = `
           id="import-entities">
           Importar
         </button>
-
-        <button class="datatable_button import_user" id="export-entities">Exportar</button>
       </div>
     </div>
 
