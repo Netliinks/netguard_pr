@@ -130,13 +130,13 @@ export class Sidebar {
 
                 <div class="sidebar_subitem" id="render-vehicularsIng">
                   <span class="sidebar_subitem_label">
-                    <i class="fa-regular fa-car"></i> <div class="label">Ingreso Vehicular</div>
+                    <i class="fa-regular fa-car"></i> <div class="label">Ingreso V.</div>
                   </span>
                 </div>
 
                 <div class="sidebar_subitem" id="render-vehicularsExit">
                   <span class="sidebar_subitem_label">
-                    <i class="fa-regular fa-car"></i> <div class="label">Salida Vehicular</div>
+                    <i class="fa-regular fa-car"></i> <div class="label">Salida V.</div>
                   </span>
                 </div>
               </div>

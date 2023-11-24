@@ -149,8 +149,8 @@ export class VehicularsIng {
                     <td style="white-space: nowrap">${vehicular.licensePlate}</td>
                     <td>${vehicular.dni}</td>
                     <td>${vehicular.driver}</td>
-                    <td id="table-date">${vehicular.ingressDate} ${vehicular.ingressTime}</td>
-                    <td id="table-date">${vehicular?.egressDate ?? ''} ${vehicular?.egressTime ?? ''}</td>
+                    <td id="table-date">${vehicular.ingressDate}</td>
+                    <td id="table-date">${vehicular.ingressTime}</td>
 
                     <td>
                         <button class="button" id="entity-details" data-entityId="${vehicular.id}">
@@ -257,7 +257,7 @@ export class VehicularsIng {
                 //console.log(markingData);
                 renderRightSidebar(UIRightSidebar);
                 const _values = {
-                    status: document.getElementById('marking-status'),
+                    //status: document.getElementById('marking-status'),
                     name: document.getElementById('marking-name'),
                     dni: document.getElementById('marking-dni'),
                     license: document.getElementById('marking-license'),
@@ -281,7 +281,7 @@ export class VehicularsIng {
                     //endGuardID: document.getElementById('marking-end-guard-id'),
                     //endGuardName: document.getElementById('marking-end-guard-name')
                 };
-                _values.status.innerText = markingData.visitState.name;
+                //_values.status.innerText = markingData.visitState.name;
                 _values.name.value = markingData?.driver ?? '';
                 _values.dni.value = markingData?.dni ?? '';
                 _values.license.value = markingData?.licensePlate ?? '';
