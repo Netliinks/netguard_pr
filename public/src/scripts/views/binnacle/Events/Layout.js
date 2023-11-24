@@ -9,8 +9,12 @@ export const UIContentLayout = `
             <div class="datatable_title"><h1 id="view-title"></h1></div>
             <div class="datatable_tools" id="datatable-tools">
                 <input type="search" class="search_input" placeholder="Buscar" id="search">
-
-                <button class="datatable_button import_user" id="import-entities">Exportar</button>
+                <button
+                    class="datatable_button add_user"
+                    id="btnSearch">
+                    <i class="fa-solid fa-search"></i>
+                </button>
+                <button class="datatable_button import_user" id="export-entities">Exportar</button>
             </div>
         </div>
 
@@ -38,6 +42,14 @@ export const UIContentLayout = `
         </tbody>
         </table>
     </div>
+
+    <!-- The Modal -->
+    <div id="modalZoom" class="modal_zoom">
+        <span class="close-zoom" id="close-modalZoom">&times;</span>
+        <img class="modal-content-zoom" id="img01">
+        <div id="caption" class="caption-zoom"></div>
+    </div>
+    
     <div class="datatable_footer">
         <div class="datatable_pagination" id="pagination-container"></div>
     </div>

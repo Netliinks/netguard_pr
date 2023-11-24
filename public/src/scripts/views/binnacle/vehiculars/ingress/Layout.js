@@ -41,10 +41,6 @@ export const UIContentLayout = `
             Fin <i class="fa-regular fa-filter"></i>
             </span></th>
 
-            <th class="thead_centered" width=110><span data-type="state">
-            Estado <i class="fa-regular fa-filter"></i>
-            </span></th>
-
             <th class="thead_centered" width=120><span data-type="details">
             Detalles
             </span></th>
@@ -91,38 +87,23 @@ export const UIRightSidebar = `
     </div>
     <br>
     <div class="input_detail">
-        <label for="marking-department"><i class="fa-solid fa-building"></i> # Guía:</label>
-        <input type="text" id="marking-department" class="input_filled" readonly>
-    </div>
-    <br>
-    <div class="input_detail">
-        <label for="marking-contractor"><i class="fa-solid fa-briefcase"></i> Proveedor:</label>
-        <input type="text" id="marking-contractor" class="input_filled" readonly>
-    </div>
-    <br>
-    <div class="input_detail">
-        <label for="marking-product"><i class="fa-solid fa-briefcase"></i> Producto:</label>
-        <input type="text" id="marking-product" class="input_filled" readonly>
-    </div>
-    <br>
-    <div class="input_detail">
         <label for="marking-type"><i class="fa-solid fa-object-group"></i> Tipo:</label>
         <input type="text" id="marking-type" class="input_filled" readonly>
     </div>
     <br>
     <div class="input_detail">
+        <label for="marking-unregisteredDriver"><i class="fa-solid fa-user-unlock"></i> Conductor no registrado:</label>
+        <input type="text" id="marking-unregisteredDriver" class="input_filled" readonly>
+    </div>
+    <br>
+    <div class="input_detail">
+        <label for="marking-containerNro"><i class="fa-solid fa-truck-container"></i> Nro Contenedor:</label>
+        <input type="text" id="marking-containerNro" class="input_filled" readonly>
+    </div>
+    <br>
+    <div class="input_detail">
         <label for="marking-observation"><i class="fa-solid fa-address-card"></i> Observación:</label>
         <input type="text" id="marking-observation" class="input_filled" readonly>
-    </div>
-    <br>
-    <div class="input_detail">
-        <label for="marking-start-dayManager"><i class="fa-solid fa-user-police"></i> Resp. Diurno:</label>
-        <input type="text" id="marking-dayManager" class="input_filled" readonly>
-    </div>
-    <br>
-    <div class="input_detail">
-        <label for="marking-nightManager"><i class="fa-solid fa-user-police"></i> Resp. Nocturno:</label>
-        <input type="text" id="marking-nightManager" class="input_filled" readonly>
     </div>
     <br>
     <!-- Start marking -->
@@ -148,7 +129,9 @@ export const UIRightSidebar = `
         <input type="text" id="marking-start-guard-name" class="input_filled" readonly>
     </div>
     <br>
+    
     <!-- End marking -->
+    <!--
     <h3>Salida</h3>
     <br>
     <div class="input_detail">
@@ -170,7 +153,7 @@ export const UIRightSidebar = `
         <label for="marking-end-guard-name"><i class="fa-solid fa-user-police"></i></label>
         <input type="text" id="marking-end-guard-name" class="input_filled" readonly>
     </div>
-    <br>
+    <br> --!>
 </div>
 </div>
 `;
