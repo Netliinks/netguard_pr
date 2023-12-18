@@ -109,8 +109,30 @@ export class SignIn {
                 }
                 if (currentUser.attributes.verifiedSuper === true) {
                     let user = await getEntityData('User', currentUser.attributes.id);
-                    let business = await getEntityData('Business', user?.business?.id);
-                    if(user?.state?.name == 'Enabled' && business?.state?.name == 'Enabled'){
+                    //let business = await getEntityData('Business', user?.business?.id);
+                    let rawCustomer = JSON.stringify({
+                        "filter": {
+                            "conditions": [
+                              {
+                                "property": "id",
+                                "operator": "=",
+                                "value": `${customerId}`
+                              },
+                              {
+                                "property": "business.id",
+                                "operator": "=",
+                                "value": `${user?.business?.id}`
+                              },
+                              {
+                                "property": "business.state.name",
+                                "operator": "=",
+                                "value": `Enabled`
+                              },
+                            ]
+                        }
+                    });
+                    let customer = await getFilterEntityData("Customer", rawCustomer);
+                    if(user?.state?.name == 'Enabled' && customer.length != 0){
                         new RenderApplicationUI().render();
                     }else{
                         this.signOut();
