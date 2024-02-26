@@ -1,5 +1,6 @@
 // Views
 import { Config } from ".././Configs.js";
+import { currentDateTime } from ".././tools.js";
 import { Dashboard } from "../views/dashboard/dashboard.js";
 import { Notes } from "../views/binnacle/notes/NotesView.js";
 import { Guards } from "../views/users/guards/guards.js";
@@ -18,6 +19,13 @@ import { VehicularsExit } from "../views/binnacle/vehiculars/exit/Vehiculars.js"
 import { Binnacle } from "../views/binnacle/binnacle/BinnacleView.js";
 import { Blacklist } from "../views/users/blacklist/blacklist.js";
 import { AssistGestion } from "../views/attendance/assistgestion/AssistGestion.js";
+//import { TasksTime } from "../views/assignment/tasks/taskstime/TasksTime.js";
+import { Fixed } from "../views/assignment/tasks/fixed/Fixed.js";
+import { Sporadic } from "../views/assignment/tasks/sporadic/Sporadic.js";
+import { Procedures } from "../views/assignment/procedures/Procedures.js";
+//import { Tasks } from "../views/assignment/tasks/Tasks.js";
+import { Routines } from "../views/routines/routines/Routines.js";
+import { RoutineRegisters } from "../views/routines/details/Details.js";
 export class Sidebar {
   constructor() {
       this.sidebarContainer = document.getElementById('app-sidebar');
@@ -175,6 +183,68 @@ export class Sidebar {
 
               </div>
             </div>
+
+            <div class="sidebar_item">
+              <span class="sidebar_item_label">
+              <i class="fa-regular fa-walkie-talkie"></i></i> <div class="label">Asignaciones</div>
+              </span>
+
+              <div class="sidebar_subitems">
+
+                <div class="sidebar_subitem" id="render-tasks">
+                  <span class="sidebar_subitem_label">
+                    <i class="fa-regular fa-walkie-talkie"></i> <div class="label">Consignas</div>
+                  </span>
+                  <div class="sidebar_subitems">
+                    <!--div class="sidebar_subitem" id="render-taskstime">
+                      <span class="sidebar_subitem_label">
+                        <i class="fa-regular fa-timer"></i><div class="label">Tiempo</div>
+                      </span>
+                    </div-->
+                    <div class="sidebar_subitem" id="render-fixed">
+                      <span class="sidebar_subitem_label">
+                        <i class="fa-regular fa-calendar-check"></i><div class="label">Generales</div>
+                      </span>
+                    </div>
+                    <div class="sidebar_subitem" id="render-sporadic">
+                      <span class="sidebar_subitem_label">
+                        <i class="fa-regular fa-clock"></i> <div class="label">Específicas</div>
+                      </span>
+                  </div>
+                  </div> 
+
+                </div>
+
+                <div class="sidebar_subitem" id="render-procedures">
+                  <span class="sidebar_subitem_label">
+                    <i class="fa-regular fa-file"></i> <div class="label">Procedimientos</div>
+                  </span>
+                </div>
+
+              </div>
+            </div>
+            
+            <div class="sidebar_item">
+              <span class="sidebar_item_label">
+              <i class="fa-regular fa-alarm-clock"></i></i> <div class="label">Rutinas</div>
+              </span>
+
+              <div class="sidebar_subitems">
+
+                <div class="sidebar_subitem" id="render-routineConfiguration">
+                  <span class="sidebar_subitem_label">
+                    <i class="fa-regular fa-gear"></i> <div class="label">Configurar</div>
+                  </span>
+                </div>
+
+                <div class="sidebar_subitem" id="render-routineDetails">
+                  <span class="sidebar_subitem_label">
+                    <i class="fa-regular fa-clipboard-list"></i> <div class="label">Registros</div>
+                  </span>
+                </div>
+
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -222,7 +292,7 @@ renders() {
     });
     // render AssistControl
     document.getElementById('render-assistGestion')?.addEventListener('click', () => {
-      new AssistGestion().render();
+      new AssistGestion().render("", currentDateTime().date);
   });
     // render AssistControl
     document.getElementById('render-events')?.addEventListener('click', () => {
@@ -242,6 +312,31 @@ renders() {
     // render Superusers
     document.getElementById('render-superusers')?.addEventListener('click', () => {
         new SuperUsers().render(Config.offset, Config.currentPage, "");
+    });
+
+    // render Tasks Fixed
+    /*document.getElementById('render-taskstime')?.addEventListener('click', () => {
+      new TasksTime().render();
+    });*/
+    document.getElementById('render-fixed')?.addEventListener('click', () => {
+      new Fixed().render(Config.offset, Config.currentPage, "");
+    });
+     // render Tasks Sporadic
+    document.getElementById('render-sporadic')?.addEventListener('click', () => {
+      new Sporadic().render(Config.offset, Config.currentPage, "");
+    });
+
+    // render Procedures
+    document.getElementById('render-procedures')?.addEventListener('click', () => {
+      new Procedures().render(Config.offset, Config.currentPage, "");
+    });
+
+    document.getElementById('render-routineConfiguration')?.addEventListener('click', () => {
+      new Routines().render(Config.offset, Config.currentPage, "");
+    });
+
+    document.getElementById('render-routineDetails')?.addEventListener('click', () => {
+      new RoutineRegisters().render(Config.offset, Config.currentPage, "");
     });
   }
 }

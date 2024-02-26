@@ -2,86 +2,81 @@ export const exportVisitPdf = (ar, start, end) => {
     // @ts-ignore
     window.jsPDF = window.jspdf.jsPDF;
     // @ts-ignore
-    var doc = new jsPDF('l');
-    doc.addImage("./public/src/assets/pictures/report.png", "PNG", 10, 10, 50, 15);
+    var doc = new jsPDF();
+    doc.addImage("./public/src/assets/pictures/report.png", "PNG", 10, 10, 30, 10);
     doc.setDrawColor(0, 0, 128);
     doc.setFont(undefined, 'bold');
     doc.setTextColor(0, 0, 128);
     doc.setFontSize(25);
-    doc.text(10, 40, `Visitas`);
+    doc.text(10, 30, `Visitas`);
     doc.setFontSize(10);
     doc.setTextColor(0, 0, 0);
     doc.setFont(undefined, 'italic');
-    doc.text(220, 40, `Fecha: Desde ${start} Hasta ${end}`);
+    doc.text(135, 30, `Fecha: Desde ${start} Hasta ${end}`);
     //construimos cabecera del csv
     doc.setFont(undefined, 'bold');
-    doc.line(5, 45, 290, 45);
+    doc.line(5, 34.8, 205, 34.8);
     doc.setFillColor(210, 210, 210);
-    doc.rect(5, 45, 285, 10, 'F');
-    doc.text(10, 50, "Nombre");
-    doc.text(60, 50, "DNI");
-    doc.text(90, 50, "Fecha");
-    doc.text(110, 50, "Hora");
-    doc.text(130, 50, "Usuario");
-    doc.text(170, 50, "Tipo");
-    doc.text(190, 50, "Departamento");
-    doc.text(230, 50, "Estado");
-    doc.text(250, 50, "Inicio");
-    doc.text(270, 50, "Fin");
-    doc.line(5, 55, 290, 55);
-    let row = 60;
-    let lineas = 0;
+    doc.rect(5, 35, 200, 10, 'F');
+    doc.text(10, 40, "Nombre");
+    doc.text(60, 40, "DNI");
+    doc.text(90, 40, "Fecha");
+    doc.text(110, 40, "Hora");
+    doc.text(130, 40, "Usuario");
+    doc.text(180, 40, "Estado");;
+    doc.line(5, 45, 205, 45);
+    let row = 50;
     let pagina = 1;
     doc.setTextColor(0, 0, 128);
-    doc.text(10, 200, `Página ${pagina}`);
+    doc.text(10, 290, `Página ${pagina}`);
     //resto del contenido
     for (let i = 0; i < ar.length; i++) {
         let visit = ar[i];
+        let rowName1 = 0;
+        let rowName2 = 0;
         // @ts-ignore
         //if (visit.creationDate >= start && visit.creationDate <= end) {
             doc.setFontSize(9);
             doc.setFont(undefined, 'normal');
             doc.setTextColor(0, 0, 0);
-            doc.text(10, row, `${visit.firstName} ${visit.firstLastName} ${visit.secondLastName}`);
+            doc.text(10, row, splitText(doc, `${visit?.firstName ?? ''} ${visit?.firstLastName ?? ''} ${visit?.secondLastName ?? ''}`, 10, 5, 60));
             doc.text(60, row, `${visit.dni}`);
             doc.text(90, row, `${visit.creationDate}`);
             doc.text(110, row, `${visit.creationTime}`);
-            doc.text(130, row, `${visit.user?.firstName ?? ''} ${visit.user?.lastName ?? ''}`);
-            doc.text(170, row, `${verifyUserType(visit.user.userType)}`);
-            doc.text(190, row, `${visit.department?.name ?? ''}`);
-            doc.text(230, row, `${visit.visitState?.name ?? ''}`);
-            doc.text(250, row, `${visit?.ingressTime ?? ''}`);
-            doc.text(270, row, `${visit?.egressTime ?? ''}`);
-            row += 5;
-            let limitLineas = 33;
-            if (pagina == 1)
-                limitLineas = 26;
-            if (lineas >= limitLineas) {
+            doc.text(130, row, splitText(doc, `${visit.user?.firstName ?? ''} ${visit.user?.lastName ?? ''}`, 130, 5, 180));
+            doc.text(180, row, `${visit.visitState?.name ?? ''}`);
+
+            rowName1 = calculateRow(`${visit?.firstName ?? ''} ${visit?.firstLastName ?? ''} ${visit?.secondLastName ?? ''}`.length,"nombre");
+            rowName2 = calculateRow(`${visit.user?.firstName ?? ''} ${visit.user?.lastName ?? ''}`.length,"nombre");
+            rowName1 > rowName2 ? row += rowName1 : row += rowName2
+            
+            doc.setDrawColor(210, 210, 210);
+            doc.line(5, row, 205, row);
+            if ((row+newDataBlock(ar,i)) > 280) {
                 doc.addPage();
-                lineas = 0;
                 row = 30;
                 pagina += 1;
-                doc.setFont(undefined, 'bold');
                 doc.setFontSize(10);
+                doc.setFont(undefined, 'italic');
+                doc.text(135, 10, `Fecha: Desde ${start} Hasta ${end}`);
+                doc.setFont(undefined, 'bold');
                 //construimos cabecera del csv
-                doc.line(5, 15, 290, 15);
+                doc.setDrawColor(0, 0, 128);
+                doc.line(5, 15, 205, 15);
                 doc.setFillColor(210, 210, 210);
-                doc.rect(5, 15, 285, 10, 'F');
+                doc.rect(5, 15, 200, 10, 'F');
                 doc.text(10, 20, "Nombre");
                 doc.text(60, 20, "DNI");
                 doc.text(90, 20, "Fecha");
                 doc.text(110, 20, "Hora");
                 doc.text(130, 20, "Usuario");
-                doc.text(170, 20, "Tipo");
-                doc.text(190, 20, "Departamento");
-                doc.text(230, 20, "Estado");
-                doc.text(250, 20, "Inicio");
-                doc.text(270, 20, "Fin");
-                doc.line(5, 25, 290, 25);
+                doc.text(180, 20, "Estado");
+                doc.line(5, 25, 205, 25);
                 doc.setTextColor(0, 0, 128);
-                doc.text(10, 200, `Página ${pagina}`);
+                doc.text(10, 290, `Página ${pagina}`);
+            }else{
+                row += 5;
             }
-            lineas++;
         //}
     }
     // Save the PDF
@@ -224,3 +219,35 @@ const verifyUserType = (userType) => {
         return userType;
     }
 };
+
+const calculateRow = (length, mode) => {
+    let row = 0;
+    let limit = 0; // limite de lineas
+    if(mode=="parrafo"){
+        limit = 47;
+    }else if(mode=="nombre"){
+        limit = 30;
+    }
+    let lineCount = Math.ceil(length / limit);
+    for(let i = 1; i <= lineCount; i++){
+        if(length <= (limit * i)){  //124 caracteres cada linea aprox en total margen A4
+            row += (4*i);
+        }
+    }
+    return row;
+}
+
+const newDataBlock = (array, index) => {
+    let row = 0;
+    if(array[index+1] != undefined){
+        row+=5;
+        let rowName1 = calculateRow(`${array[index+1]?.firstName ?? ''} ${array[index+1]?.firstLastName ?? ''} ${array[index+1]?.secondLastName ?? ''}`.length,"nombre");
+        let rowName2 = calculateRow(`${array[index+1]?.user?.firstName ?? ''} ${array[index+1]?.user?.lastName ?? ''}`.length,"nombre");
+        rowName1 > rowName2 ? row += rowName1 : row += rowName2;
+    }
+    return row;
+}
+
+const splitText = (doc, field, lMargin, rMargin, pdfInMM) => {
+    return doc.splitTextToSize(field, (pdfInMM - lMargin - rMargin));
+}

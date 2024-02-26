@@ -5,14 +5,14 @@
 //
 import { Config } from "../../../Configs.js";
 import { getEntityData, getFile, getFilterEntityData, getFilterEntityCount } from "../../../endpoints.js";
-import { CloseDialog, renderRightSidebar, filterDataByHeaderType, inputObserver, pageNumbers, fillBtnPagination } from "../../../tools.js";
+import { CloseDialog, renderRightSidebar, filterDataByHeaderType, inputObserver, pageNumbers, fillBtnPagination, calculateLine } from "../../../tools.js";
 import { UIContentLayout, UIRightSidebar } from "./Layout.js";
 import { UITableSkeletonTemplate } from "./Template.js";
-import { exportReportCsv, exportReportPdf, exportReportXls } from "../../../exportFiles/reports.js";
+import { exportRoutineDetailCsv, exportRoutineDetailPdf, exportRoutineDetailXls } from "../../../exportFiles/routines_details.js";
 // Local configs
 const tableRows = Config.tableRows;
 let currentPage = Config.currentPage;
-const pageName = 'Reportes';
+const pageName = 'Registros de Rutinas';
 const customerId = localStorage.getItem('customer_id');
 let infoPage = {
     count: 0,
@@ -21,8 +21,8 @@ let infoPage = {
     search: ""
 };
 let dataPage;
-const GetNotes = async () => {
-    //const notesRaw = await getEntitiesData('Note');
+const GetRoutinesDetails = async () => {
+    //const notesRaw = await getEntitiesData('RoutineRegister');
     //const notes = notesRaw.filter((data) => data.customer?.id === `${customerId}`);
     let raw = JSON.stringify({
         "filter": {
@@ -47,15 +47,21 @@ const GetNotes = async () => {
                         "group": "OR",
                         "conditions": [
                             {
-                                "property": "title",
+                                "property": "user.username",
                                 "operator": "contains",
                                 "value": `${infoPage.search.toLowerCase()}`
                             },
                             {
-                                "property": "content",
+                                "property": "routine.name",
                                 "operator": "contains",
                                 "value": `${infoPage.search.toLowerCase()}`
-                            }
+                            },
+                            ,
+                            {
+                                "property": "routineSchedule.name",
+                                "operator": "contains",
+                                "value": `${infoPage.search.toLowerCase()}`
+                            },
                         ]
                     },
                     {
@@ -71,11 +77,11 @@ const GetNotes = async () => {
             fetchPlan: 'full',
         });
     }
-    infoPage.count = await getFilterEntityCount("Note", raw);
-    dataPage = await getFilterEntityData("Note", raw);
+    infoPage.count = await getFilterEntityCount("RoutineRegister", raw);
+    dataPage = await getFilterEntityData("RoutineRegister", raw);
     return dataPage;
 };
-export class Notes {
+export class RoutineRegisters {
     constructor() {
         this.dialogContainer = document.getElementById('app-dialogs');
         this.siebarDialogContainer = document.getElementById('entity-editor-container');
@@ -92,7 +98,7 @@ export class Notes {
             // Changing interface element content
             viewTitle.innerText = pageName;
             tableBody.innerHTML = '.Cargando...';
-            let notesArray = await GetNotes();
+            let notesArray = await GetRoutinesDetails();
             tableBody.innerHTML = UITableSkeletonTemplate.repeat(tableRows);
             // Exec functions
             this.load(tableBody, currentPage, notesArray);
@@ -123,17 +129,15 @@ export class Notes {
             }
             else {
                 for (let i = 0; i < paginatedItems.length; i++) {
-                    let note = paginatedItems[i]; // getting note items
+                    let register = paginatedItems[i]; // getting note items
                     let row = document.createElement('TR');
-                    const noteCreationDateAndTime = note.creationDate.split('T');
-                    const noteCreationDate = noteCreationDateAndTime[0];
-                    const noteCreationTime = noteCreationDateAndTime[1];
                     row.innerHTML += `
-                    <td>${note.title}</td>
-                    <td>${note.content}</td>
-                    <td id="table-date">${noteCreationDate}</td>
+                    <td>${calculateLine(register?.routine?.name, 40)}</td>
+                    <td>${calculateLine(register?.routineSchedule?.name, 40)}</td>
+                    <td>${calculateLine(register?.user?.username, 40)}</td>
+                    <td id="table-date">${register?.creationDate ?? ''} ${register?.creationTime ?? ''}</td>
                     <td>
-                        <button class="button" id="entity-details" data-entityId="${note.id}">
+                        <button class="button" id="entity-details" data-entityId="${register.id}">
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </button>
                     </td>
@@ -166,7 +170,7 @@ export class Notes {
                 // Rendering icons*/
             });
             btnSearch.addEventListener('click', async () => {
-                new Notes().render(Config.offset, Config.currentPage, search.value.toLowerCase().trim());
+                new RoutineRegisters().render(Config.offset, Config.currentPage, search.value.toLowerCase().trim());
             });
         };
         this.previewNote = async () => {
@@ -178,39 +182,41 @@ export class Notes {
                 });
             });
             const previewBox = async (noteId) => {
-                const note = await getEntityData('Note', noteId);
+                const register = await getEntityData('RoutineRegister', noteId);
+                console.log(register)
                 renderRightSidebar(UIRightSidebar);
                 const sidebarContainer = document.getElementById('entity-editor-container');
                 const closeSidebar = document.getElementById('close');
                 closeSidebar.addEventListener('click', () => {
                     new CloseDialog().x(sidebarContainer);
                 });
-                // Note details
+                // RoutineRegister details
                 const _details = {
-                    picture: document.getElementById('note-picture-placeholder'),
-                    title: document.getElementById('note-title'),
-                    content: document.getElementById('note-content'),
-                    author: document.getElementById('note-author'),
-                    authorId: document.getElementById('note-author-id'),
+                    picture: document.getElementById('register-picture-placeholder'),
+                    content: document.getElementById('register-content'),
+                    routine: document.getElementById('register-routine'),
+                    schedule: document.getElementById('register-schedule'),
+                    locationLat: document.getElementById('register-location-lat'),
+                    locationLong: document.getElementById('register-location-long'),
+                    author: document.getElementById('register-author'),
                     date: document.getElementById('creation-date'),
                     time: document.getElementById('creation-time')
                 };
                 //const image = await getFile(note.attachment);
-                const noteCreationDateAndTime = note.creationDate.split('T');
-                const noteCreationTime = noteCreationDateAndTime[1];
-                const noteCreationDate = noteCreationDateAndTime[0];
-                _details.title.innerText = note.title;
-                _details.content.innerText = note.content;
-                _details.author.value = `${note.user.firstName} ${note.user.lastName}`;
-                _details.authorId.value = note.createdBy;
-                _details.date.value = noteCreationDate;
-                _details.time.value = noteCreationTime;
-                if (note.attachment !== undefined) {
-                    const image = await getFile(note.attachment);
+                _details.content.innerText = register?.observation ?? '';
+                _details.routine.value = register?.routine?.name ?? '';
+                _details.schedule.value = register?.routineSchedule?.name ?? '';
+                _details.locationLat.value = `Lat: ${register?.latitude ?? ''}`;
+                _details.locationLong.value = `Lng: ${register?.longitude ?? ''}`;
+                _details.author.value = register?.user?.username ?? ''
+                _details.date.value = register?.creationDate ?? '';
+                _details.time.value = register?.creationTime ?? '';
+                if (register.attachment !== undefined) {
+                    const image = await getFile(register.attachment);
                     _details.picture.innerHTML = `
-                    <img id="note-picture" width="100%" class="note_picture margin_b_8" src="${image}">
+                    <img id="register-picture" width="100%" class="note_picture margin_b_8" src="${image}">
                 `;
-                this.zoom(note);
+                this.zoom(register);
                 }
             };
         };
@@ -221,8 +227,8 @@ export class Notes {
                 new CloseDialog().x(editor);
             });
         };
-        this.zoom = (note) => {
-            const picture = document.getElementById('note-picture');
+        this.zoom = (register) => {
+            const picture = document.getElementById('register-picture');
             const close = document.getElementById("close-modalZoom");
             const modalZoom = document.getElementById('modalZoom');
             picture.addEventListener('click', () => {
@@ -234,7 +240,7 @@ export class Notes {
                 const caption = document.getElementById('caption');
                 modalZoom.style.display = 'block';
                 img01.src = picture.src;
-                caption.innerHTML = `${note?.title ?? ''}`;
+                caption.innerHTML = `Imagen`;
             });
             close.addEventListener('click', () => {
                 modalZoom.style.display = 'none';
@@ -323,57 +329,56 @@ export class Notes {
                                     {
                                         "property": "creationDate",
                                         "operator": ">=",
-                                        "value": `${_values.start.value}T00:00:00`
+                                        "value": `${_values.start.value}`
                                     },
                                     {
                                         "property": "creationDate",
                                         "operator": "<=",
-                                        "value": `${_values.end.value}T23:59:59`
+                                        "value": `${_values.end.value}`
                                     }
                                 ],
                             },
                             sort: "-createdDate",
                             fetchPlan: 'full',
                         });
-                        const notes = await getFilterEntityData("Note", rawExport); //await GetNotes();
+                        const registers = await getFilterEntityData("RoutineRegister", rawExport); //await GetNotes();
                         for (let i = 0; i < _values.exportOption.length; i++) {
                             let ele = _values.exportOption[i];
                             if (ele.type = "radio") {
                                 if (ele.checked) {
                                     if (ele.value == "xls") {
                                         // @ts-ignore
-                                        exportReportXls(notes, _values.start.value, _values.end.value);
+                                        exportRoutineDetailXls(registers, _values.start.value, _values.end.value);
                                     }
                                     else if (ele.value == "csv") {
                                         // @ts-ignore
-                                        exportReportCsv(notes, _values.start.value, _values.end.value);
+                                        exportRoutineDetailCsv(registers, _values.start.value, _values.end.value);
                                     }
                                     else if (ele.value == "pdf") {
                                         let rows = [];
-                                        for (let i = 0; i < notes.length; i++) {
-                                            let note = notes[i];
-                                            let noteCreationDateAndTime = note.creationDate.split('T');
-                                            let noteCreationDate = noteCreationDateAndTime[0];
-                                            let noteCreationTime = noteCreationDateAndTime[1];
+                                        for (let i = 0; i < registers.length; i++) {
+                                            let register = registers[i];
                                             // @ts-ignore
                                             //if (noteCreationDate >= _values.start.value && noteCreationDate <= _values.end.value) {
                                                 let image = '';
-                                                if (note.attachment !== undefined) {
-                                                    image = await getFile(note.attachment);
+                                                if (register.attachment !== undefined) {
+                                                    image = await getFile(register.attachment);
                                                 }
                                                 let obj = {
-                                                    "titulo": `${note.title.split("\n").join(". ").replace(/[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2580-\u27BF]|\uD83E[\uDD10-\uDDFF]/g, '').trim()}`,
-                                                    "fecha": `${noteCreationDate}`,
-                                                    "hora": `${noteCreationTime}`,
-                                                    "usuario": `${note.user?.firstName ?? ''} ${note.user?.lastName ?? ''}`,
-                                                    "contenido": `${note.content.split("\n").join(". ").replace(/[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2580-\u27BF]|\uD83E[\uDD10-\uDDFF]/g, '').trim()}`,
+                                                    "rutina": `${register?.routine?.name.split("\n").join(". ").replace(/[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2580-\u27BF]|\uD83E[\uDD10-\uDDFF]/g, '').trim()}`,
+                                                    "ubicacion": `${register?.routineSchedule?.name.split("\n").join(". ").replace(/[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2580-\u27BF]|\uD83E[\uDD10-\uDDFF]/g, '').trim()}`,
+                                                    "fecha": `${register.creationDate}`,
+                                                    "hora": `${register.creationTime}`,
+                                                    "cords": `${register?.cords ?? ''}`,
+                                                    "usuario": `${register.user?.firstName ?? ''} ${register.user?.lastName ?? ''}`,
+                                                    "observacion": `${register?.observation?.split("\n").join(". ").replace(/[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2580-\u27BF]|\uD83E[\uDD10-\uDDFF]/g, '').trim() ?? ''}`,
                                                     "imagen": `${image}`
                                                 };
                                                 rows.push(obj);
                                             //}
                                         }
                                         // @ts-ignore
-                                        exportReportPdf(rows, _values.start.value, _values.end.value);
+                                        exportRoutineDetailPdf(rows, _values.start.value, _values.end.value);
                                     }
                                 }
                             }
@@ -383,7 +388,7 @@ export class Notes {
                         new CloseDialog().x(_dialog);
                     };
                     /*const getFilteredNote = async(_values) =>{
-                        const notes = await getEntitiesData('Note');
+                        const notes = await getEntitiesData('RoutineRegister');
                         const FCustomer = notes.filter(async (data) => {
                             let userCustomer = await getEntityData('User', `${data.user.id}`);
                             userCustomer.customer.id === `${currentUserInfo.customer.id}`
@@ -442,7 +447,7 @@ export class Notes {
             button.addEventListener('click', () => {
                 infoPage.offset = Config.tableRows * (page - 1);
                 currentPage = page;
-                new Notes().render(infoPage.offset, currentPage, infoPage.search); //new Notes().load(tableBody, page, items)
+                new RoutineRegisters().render(infoPage.offset, currentPage, infoPage.search); //new RoutineRegisters().load(tableBody, page, items)
             });
             return button;
         }
@@ -468,11 +473,11 @@ export class Notes {
         }
         function setupButtonsEvents(prevButton, nextButton) {
             prevButton.addEventListener('click', () => {
-                new Notes().render(Config.offset, Config.currentPage, infoPage.search);
+                new RoutineRegisters().render(Config.offset, Config.currentPage, infoPage.search);
             });
             nextButton.addEventListener('click', () => {
                 infoPage.offset = Config.tableRows * (pageCount - 1);
-                new Notes().render(infoPage.offset, pageCount, infoPage.search);
+                new RoutineRegisters().render(infoPage.offset, pageCount, infoPage.search);
             });
         }
     };

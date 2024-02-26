@@ -3,6 +3,7 @@
 import { SignIn } from "./login.js";
 // GENERAL URL
 // ===================================================
+const NetliinkBase = 'http://localhost:8080/'; //'https://backend.netliinks.com:443/';
 const NetliinksUrl = 'http://localhost:8080/rest/entities/'; //'https://backend.netliinks.com:443/rest/entities/';
 // ===================================================
 // TOOLS
@@ -26,7 +27,7 @@ headers.append('Cookie', "JSESSIONID=CDD208A868EAABD1F523BB6F3C8946AF");
  * @returns token
  */
 export const getToken = async (mail, password) => {
-    const URL = 'http://localhost:8080/oauth/token';
+    const URL = `${NetliinkBase}oauth/token`;
     const ReqOptions = {
         method: 'POST',
         body: `grant_type=password&username=${mail}&password=${password}`,
@@ -51,7 +52,7 @@ export const getToken = async (mail, password) => {
  */
 export const getUserInfo = async () => {
     const userInfo = {
-        url: 'http://localhost:8080/rest/userInfo?fetchPlan=full',
+        url: `${NetliinkBase}rest/userInfo?fetchPlan=full`,
         method: 'GET'
     };
     const options = {
@@ -167,7 +168,7 @@ export const deleteEntity = async (entities, entity) => {
 };
 export const registerEntity = async (raw, type) => {
     const req = {
-        url: 'http://localhost:8080/rest/entities/',
+        url: `${NetliinkBase}rest/entities/`,
         method: 'POST'
     };
     const requestOptions = {
@@ -177,12 +178,13 @@ export const registerEntity = async (raw, type) => {
         redirect: 'follow'
     };
     fetch(req.url + type, requestOptions)
-        .then(res => res.json());
+        .then(res => res.json())
+        .catch(err => console.error('Error:' + err));
 };
 export const filterEntities = async (user) => { };
 export const setPassword = async (raw) => {
     const req = {
-        url: 'http://localhost:8080/rest/services/UserServiceBean/updatePassword',
+        url: `${NetliinkBase}rest/services/UserServiceBean/updatePassword`,
         method: 'POST'
     };
     const requestOptions = {
@@ -198,7 +200,7 @@ export const setPassword = async (raw) => {
 };
 export const setUserRole = async (raw) => {
     const req = {
-        url: 'http://localhost:8080/rest/services/UserServiceBean/assignRol',
+        url: `${NetliinkBase}rest/services/UserServiceBean/assignRol`,
         method: 'POST'
     };
     const requestOptions = {
@@ -214,7 +216,7 @@ export const setUserRole = async (raw) => {
 };
 export const sendMail = async (raw) => {
     const req = {
-        url: 'http://localhost:8080/rest/services/UserServiceBean/sendByEmailInfo',
+        url: `${NetliinkBase}rest/services/UserServiceBean/sendByEmailInfo`,
         method: 'POST'
     }
 
@@ -231,7 +233,7 @@ export const sendMail = async (raw) => {
         .catch(error => console.log('error', error));
 }
 export const getFile = async (fileUrl) => {
-    const url = 'http://localhost:8080/rest/files?fileRef=';
+    const url = `${NetliinkBase}rest/files?fileRef=`;
     const requestOptions = {
         method: 'GET',
         headers: headers,
@@ -246,7 +248,8 @@ export const getFile = async (fileUrl) => {
     return file;
 };
 export const setFile = async (file) => {
-    const url = `http://localhost:8080/rest/files?name=${file.name}`;
+
+    const url = `${NetliinkBase}rest/files?name=${file.name}`;
     const requestOptions = {
         method: 'POST',
         headers: {
@@ -262,3 +265,39 @@ export const setFile = async (file) => {
         .catch(err => alert(`Error subiendo archivo ${err}`));
     return res;
 };
+
+export const postNotificationPush = async(data)=>{
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", "key=AAAAQ1NOq3s:APA91bEXEqZ2ozsXg7JmQrOKqWPTPTQOSYqLmExWQsWB0LvA825JDiYisngPUOLXrJKgZpxN-v0i4fQw1G_ZbUgH41FVENrLV4bompTF_q8LxlN4jBdYPxut38fOa0nSCCOS6kGXHOUb");
+    myHeaders.append("Content-Type", "application/json");
+
+    let bodyNoti = data['body'];
+    let contBody = bodyNoti.length;
+    console.log(contBody)
+    if(contBody>30){
+        bodyNoti = bodyNoti.substring(0,20);
+        bodyNoti = `${bodyNoti}...`;
+    }
+    var raw = JSON.stringify({
+    "to": data['token'],
+    "notification": {
+        "title": `Notificación ${data['title']}`,
+        "body":bodyNoti
+    },
+    "data":{
+        "type": "tasks"
+    }
+    });
+
+    var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+    };
+
+    fetch("https://fcm.googleapis.com/fcm/send", requestOptions)
+    .then(response => response.text())
+    .then(result => console.log(result))
+    .catch(error => console.log('error', error));
+}

@@ -120,7 +120,7 @@ export class Customers {
         if (data.length === 0) {
             let row = document.createElement('tr');
             row.innerHTML = `
-        <td>los datos no coinciden con su búsqueda</td>
+        <td>No existen datos</td>
         <td></td>
         <td></td>
       `;
@@ -261,6 +261,10 @@ export class Customers {
                 <label><input type="checkbox" class="checkbox" id="entity-vehicular"> Permitir Vehicular</label>
             </div>
 
+            <div class="input_checkbox">
+                <label><input type="checkbox" class="checkbox" id="entity-routine"> Permitir Rutina</label>
+            </div>
+
           </div>
           <!-- END EDITOR BODY -->
 
@@ -281,7 +285,8 @@ export class Customers {
                     ruc: document.getElementById('entity-ruc'),
                     state: document.getElementById('entity-state'),
                     marcation: document.getElementById('entity-marcation'),
-                    vehicular: document.getElementById('entity-vehicular')
+                    vehicular: document.getElementById('entity-vehicular'),
+                    routine: document.getElementById('entity-routine')
                 };
                 const raw = JSON.stringify({
                     "name": `${inputsCollection.name.value}`,
@@ -294,6 +299,7 @@ export class Customers {
                     "associate":`${businessData.business.name}`,
                     "permitMarcation": `${inputsCollection.marcation.checked ? true : false}`,
                     "permitVehicular": `${inputsCollection.vehicular.checked ? true : false}`,
+                    "permitRoutine": `${inputsCollection.routine.checked ? true : false}`,
                 });
                 registerEntity(raw, 'Customer');
                 setTimeout(() => {
@@ -356,6 +362,10 @@ export class Customers {
                 <label><input type="checkbox" class="checkbox" id="entity-vehicular"> Permitir Vehicular</label>
             </div>
 
+            <div class="input_checkbox">
+                <label><input type="checkbox" class="checkbox" id="entity-routine"> Permitir Rutina</label>
+            </div>
+
           </div>
           <!-- END EDITOR BODY -->
 
@@ -373,6 +383,11 @@ export class Customers {
             if (data.permitVehicular === true) {
               checkboxVehicular?.setAttribute('checked', 'true');
             }
+
+            const checkboxRoutine = document.getElementById('entity-routine');
+            if (data.permitRoutine === true) {
+              checkboxRoutine?.setAttribute('checked', 'true');
+            }
             inputObserver();
             inputSelect('State', 'entity-state', data.state.name);
             this.close();
@@ -388,7 +403,9 @@ export class Customers {
               // @ts-ignore
               marcation: document.getElementById('entity-marcation'),
               // @ts-ignore
-              vehicular: document.getElementById('entity-vehicular')
+              vehicular: document.getElementById('entity-vehicular'),
+              // @ts-ignore
+              routine: document.getElementById('entity-routine')
           };
             updateButton.addEventListener('click', () => {
               let raw = JSON.stringify({
@@ -399,6 +416,7 @@ export class Customers {
                   },
                   "permitMarcation": `${$value.marcation.checked ? true : false}`,
                   "permitVehicular": `${$value.vehicular.checked ? true : false}`,
+                  "permitRoutine": `${$value.routine.checked ? true : false}`,
               });
               update(raw);
             });

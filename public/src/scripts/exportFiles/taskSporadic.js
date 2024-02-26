@@ -1,51 +1,52 @@
-export const exportMarcationsPdf = (ar, start, end) => {
+export const exportSporadicPdf = (ar, start, end) => {
     // @ts-ignore
     window.jsPDF = window.jspdf.jsPDF;
     // @ts-ignore
-    var doc = new jsPDF();
+    var doc = new jsPDF('l');
     doc.addImage("./public/src/assets/pictures/report.png", "PNG", 10, 10, 50, 15);
     doc.setDrawColor(0, 0, 128);
     doc.setFont(undefined, 'bold');
     doc.setTextColor(0, 0, 128);
     doc.setFontSize(25);
-    doc.text(10, 40, `Gestión Marcaciones`);
+    doc.text(10, 40, `Específicas`);
     doc.setFontSize(10);
     doc.setTextColor(0, 0, 0);
     doc.setFont(undefined, 'italic');
-    doc.text(130, 40, `Fecha: Desde ${start} Hasta ${end}`);
+    doc.text(220, 40, `Fecha: Desde ${start} Hasta ${end}`);
     //construimos cabecera del csv
     doc.setFont(undefined, 'bold');
-    doc.line(5, 45, 200, 45);
+    doc.line(5, 45, 290, 45);
     doc.setFillColor(210, 210, 210);
-    doc.rect(5, 45, 195, 10, 'F');
+    doc.rect(5, 45, 285, 10, 'F');
     doc.text(10, 50, "Nombre");
-    doc.text(50, 50, "DNI");
     doc.text(90, 50, "Fecha");
-    doc.text(120, 50, "Primera Marcación");
-    doc.text(160, 50, "última Marcación");
-    doc.line(5, 55, 200, 55);
+    doc.text(110, 50, "Hora");
+    doc.text(130, 50, "Usuario");
+    doc.text(170, 50, "Tipo");
+    doc.line(5, 55, 290, 55);
     let row = 60;
     let lineas = 0;
     let pagina = 1;
     doc.setTextColor(0, 0, 128);
-    doc.text(10, 290, `Página ${pagina}`);
+    doc.text(10, 200, `Página ${pagina}`);
     //resto del contenido
     for (let i = 0; i < ar.length; i++) {
-        let marcation = ar[i];
+        let sporadic = ar[i];
         // @ts-ignore
-        //if (marcation.ingressDate >= start && marcation.ingressDate <= end) {
+        //if (sporadic.creationDate >= start && sporadic.creationDate <= end) {
             doc.setFontSize(9);
             doc.setFont(undefined, 'normal');
             doc.setTextColor(0, 0, 0);
-            doc.text(10, row, `${marcation?.firstName ?? ''} ${marcation?.lastName ?? ''}`);
-            doc.text(50, row, `${marcation?.dni ?? ''}`);
-            doc.text(90, row, `${marcation.ingressDate}`);
-            doc.text(120, row, `${marcation.ingressTime}`);
-            doc.text(160, row, `${marcation?.egressTime ?? ''}`);
+            doc.text(10, row, `${sporadic.name}`);
+            doc.text(90, row, `${sporadic.execDate}`);
+            doc.text(110, row, `${sporadic.execTime}`);
+            doc.text(130, row, `${sporadic.user?.firstName ?? ''} ${sporadic.user?.lastName ?? ''}`);
+            doc.text(170, row, `${verifyUserType(sporadic.user.userType)}`);
+            
             row += 5;
-            let limitLineas = 51;
+            let limitLineas = 33;
             if (pagina == 1)
-                limitLineas = 44;
+                limitLineas = 26;
             if (lineas >= limitLineas) {
                 doc.addPage();
                 lineas = 0;
@@ -54,61 +55,63 @@ export const exportMarcationsPdf = (ar, start, end) => {
                 doc.setFont(undefined, 'bold');
                 doc.setFontSize(10);
                 //construimos cabecera del csv
-                doc.line(5, 15, 200, 15);
+                doc.line(5, 15, 290, 15);
                 doc.setFillColor(210, 210, 210);
-                doc.rect(5, 15, 195, 10, 'F');
-                doc.text(10, 20, "Nombre");
-                doc.text(50, 20, "DNI");
+                doc.rect(5, 15, 285, 10, 'F');
+                doc.text(10, 20, "Nombre");   
                 doc.text(90, 20, "Fecha");
-                doc.text(120, 20, "Primera Marcación");
-                doc.text(160, 20, "última Marcación");
-                doc.line(5, 25, 200, 25);
+                doc.text(110, 20, "Hora");
+                doc.text(130, 20, "Usuario");
+                doc.text(170, 20, "Tipo");
+                doc.line(5, 25, 290, 25);
                 doc.setTextColor(0, 0, 128);
-                doc.text(10, 290, `Página ${pagina}`);
+                doc.text(10, 200, `Página ${pagina}`);
             }
             lineas++;
         //}
     }
     // Save the PDF
     var d = new Date();
-    var title = "log_GestMarc_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear() + `.pdf`;
+    var title = "log_Específicas_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear() + `.pdf`;
     doc.save(title);
 };
-export const exportMarcationsCsv = (ar, start, end) => {
+export const exportSporadicCsv = (ar, start, end) => {
     let rows = [];
     for (let i = 0; i < ar.length; i++) {
-        let marcation = ar[i];
+        let sporadic = ar[i];
         // @ts-ignore
-        //if (marcation.ingressDate >= start && marcation.ingressDate <= end) {
+        //if (sporadic.creationDate >= start && sporadic.creationDate <= end) {
             let obj = {
-                "DNI": `${marcation?.dni ?? ''}`,
-                "Usuario": `${marcation?.firstName ?? ''} ${marcation?.lastName ?? ''}`,
-                "Fecha": `${marcation.ingressDate}`,
-                "Primera Marcación": `${marcation.ingressTime}`,
-                "última Marcación": `${marcation?.egressTime ?? ''}`,
+                "Nombre": `${sporadic.name}`,
+                "Fecha Ejecución": `${sporadic.execDate}`,
+                "Hora Ejecución": `${sporadic.execTime}`,
+                "Usuario": `${sporadic.user?.firstName ?? ''} ${sporadic.user?.lastName ?? ''}`,
+                "Tipo": `${verifyUserType(sporadic.user.userType)}`,
+
             };
             rows.push(obj);
         //}
     }
-    generateFile(rows, "GestMarc", "csv");
+    generateFile(rows, "Específicas", "csv");
 };
-export const exportMarcationsXls = (ar, start, end) => {
+export const exportSporadicXls = (ar, start, end) => {
     let rows = [];
     for (let i = 0; i < ar.length; i++) {
-        let marcation = ar[i];
+        let sporadic = ar[i];
         // @ts-ignore
-        //if (marcation.ingressDate >= start && marcation.ingressDate <= end) {
+        //if (sporadic.creationDate >= start && sporadic.creationDate <= end) {
             let obj = {
-                "DNI": `${marcation?.dni ?? ''}`,
-                "Usuario": `${marcation?.firstName ?? ''} ${marcation?.lastName ?? ''}`,
-                "Fecha": `${marcation.ingressDate}`,
-                "Primera Marcación": `${marcation.ingressTime}`,
-                "última Marcación": `${marcation?.egressTime ?? ''}`,
+                "Nombre": `${sporadic.name} `,
+                "Fecha Ejecución": `${sporadic.execDate}`,
+                "Hora Ejecución": `${sporadic.execTime}`,
+                "Usuario": `${sporadic.user?.firstName ?? ''} ${sporadic.user?.lastName ?? ''}`,
+                "Tipo": `${verifyUserType(sporadic.user.userType)}`,
+                
             };
             rows.push(obj);
         //}
     }
-    generateFile(rows, "GestMarc", "xls");
+    generateFile(rows, "Específicas", "xls");
 };
 const generateFile = (ar, title, extension) => {
     //comprobamos compatibilidad
@@ -162,5 +165,22 @@ const generateFile = (ar, title, extension) => {
     else {
         //el navegador no admite esta opción
         alert("Su navegador no permite esta acción");
+    }
+};
+const verifyUserType = (userType) => {
+    if (userType == 'CUSTOMER') {
+        return 'Cliente';
+    }
+    else if (userType == 'GUARD') {
+        return 'Guardia';
+    }
+    else if (userType == 'EMPLOYEE') {
+        return 'Empleado';
+    }
+    else if (userType == 'CONTRACTOR') {
+        return 'Contratista';
+    }
+    else {
+        return userType;
     }
 };

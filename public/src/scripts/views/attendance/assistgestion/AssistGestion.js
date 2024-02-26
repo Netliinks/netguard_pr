@@ -5,8 +5,8 @@
 //
 import { Config } from "../../../Configs.js";
 import { getEntityData, getFilterEntityData, getFile } from "../../../endpoints.js";
-import { CloseDialog, drawTagsIntoTables, renderRightSidebar, filterDataByHeaderType, inputObserver, verifyUserType, pageNumbers, fillBtnPagination } from "../../../tools.js";
-import { UIContentLayout, UIRightSidebar } from "./Layout.js";
+import { CloseDialog, drawTagsIntoTables, renderRightSidebar, filterDataByHeaderType, inputObserver, verifyUserType, pageNumbers, fillBtnPagination, calculateGestionMarcation } from "../../../tools.js";
+import { UIContentLayout } from "./Layout.js";
 import { UITableSkeletonTemplate } from "./Template.js";
 import { exportMarcationsCsv, exportMarcationsPdf, exportMarcationsXls } from "../../../exportFiles/marcations2.js";
 // Local configs
@@ -14,6 +14,13 @@ const tableRows = Config.tableRows;
 let currentPage = Config.currentPage;
 const pageName = 'Gestión de asistencias';
 const customerId = localStorage.getItem('customer_id');
+let infoPage = {
+    count: 0,
+    offset: Config.offset,
+    currentPage: currentPage,
+    search: "",
+    date: null
+};
 let dataPage;
 const GetAssistControl = async () => {
     //const assistControlRaw = await getEntitiesData('Marcation');
@@ -25,77 +32,68 @@ const GetAssistControl = async () => {
                     "property": "customer.id",
                     "operator": "=",
                     "value": `${customerId}`
+                },
+                {
+                    "property": "ingressDate",
+                    "operator": "=",
+                    "value": `${infoPage.date}`
                 }
             ],
         },
         sort: "-createdDate",
+        //limit: Config.tableRows,
+        //offset: infoPage.offset,
         fetchPlan: 'full',
     });
+    if (infoPage.search != "") {
+        raw = JSON.stringify({
+            "filter": {
+                "conditions": [
+                    {
+                        "group": "OR",
+                        "conditions": [
+                            {
+                                "property": "user.dni",
+                                "operator": "contains",
+                                "value": `${infoPage.search.toLowerCase()}`
+                            },
+                            {
+                                "property": "user.firstName",
+                                "operator": "contains",
+                                "value": `${infoPage.search.toLowerCase()}`
+                            },
+                            {
+                                "property": "user.secondLastName",
+                                "operator": "contains",
+                                "value": `${infoPage.search.toLowerCase()}`
+                            },
+                            {
+                                "property": "marcationState.name",
+                                "operator": "contains",
+                                "value": `${infoPage.search.toLowerCase()}`
+                            }
+                        ]
+                    },
+                    {
+                        "property": "customer.id",
+                        "operator": "=",
+                        "value": `${customerId}`
+                    },
+                    {
+                        "property": "ingressDate",
+                        "operator": "=",
+                        "value": `${infoPage.date}`
+                    }
+                ]
+            },
+            sort: "-createdDate",
+            //limit: Config.tableRows,
+            //offset: infoPage.offset,
+            fetchPlan: 'full',
+        });
+    }
     const assistControl = await getFilterEntityData("Marcation", raw);
-        let objDate = {}
-        let arrayAssist= []
-        assistControl.forEach((marcation) => {
-            let date = marcation.ingressDate+" "+marcation.user?.username ?? ''
-            if (objDate[date]) {
-                objDate[date].push(marcation);
-            } else {
-                objDate[date] = [marcation];
-            }
-        })
-        //console.log(objDate)
-
-        let key = Object.keys(objDate)
-        for(let i = 0; i < key.length; i++){
-            let objects = objDate[key[i]]
-            //console.log(objects)
-            //console.log(objects.length)
-            let valueMax = []
-            objects.map(element => {
-                if(element.marcationState.name == 'Finalizado' && (element.egressTime != '' || element.egressTime != null || element.egressTime != undefined)){
-                    valueMax.push(element)
-                }
-                
-              })
-            let maxDate = new Date(
-                Math.max(
-                  ...valueMax.map(element => {
-                        return new Date(element.egressDate+" "+element.egressTime);
-                  }),
-                ),
-              );
-              let minDate = new Date(
-                Math.min(
-                  ...objects.map(element => {
-                    return new Date(element.ingressDate+" "+element.ingressTime);
-                  }),
-                ),
-              );
-              //console.log("max "+maxDate)
-              //console.log("min "+minDate)
-              const format = (date) => {
-                var year = date.getFullYear();
-                var month = ("0" + (date.getMonth() + 1)).slice(-2);
-                var day = ("0" + date.getDate()).slice(-2);
-
-                var hours = ("0" + date.getHours()).slice(-2);
-                var minutes = ("0" + date.getMinutes()).slice(-2);
-                var seconds = ("0" + date.getSeconds()).slice(-2);
-                return `${hours}:${minutes}:${seconds}`
-              }
-              let fechaSalida = ""
-              if(!isNaN(maxDate)) fechaSalida = format(maxDate)
-              let obj = {
-                "firstName": `${objects[0]?.user?.firstName ?? ''}`,
-                "lastName": `${objects[0]?.user?.lastName ?? ''}`,
-                "dni": `${objects[0]?.user?.dni ?? ''}`,
-                "ingressDate": `${objects[0].ingressDate}`,
-                "egressDate": `${objects[0].egressDate}`,
-                "ingressTime": `${format(minDate)}`,
-                "egressTime": `${fechaSalida}`,
-            };
-            arrayAssist.push(obj);
-        }
-    dataPage = arrayAssist;
+    dataPage = await calculateGestionMarcation(assistControl);
     return dataPage;
 };
 
@@ -104,12 +102,18 @@ export class AssistGestion {
         this.dialogContainer = document.getElementById('app-dialogs');
         this.siebarDialogContainer = document.getElementById('entity-editor-container');
         this.appContainer = document.getElementById('datatable-container');
-        this.render = async () => {
+        this.render = async (search, date) => {
+            //infoPage.offset = offset;
+            //infoPage.currentPage = actualPage;
+            infoPage.search = search;
+            infoPage.date = date
             this.appContainer.innerHTML = '';
             this.appContainer.innerHTML = UIContentLayout;
             // Getting interface elements
             const viewTitle = document.getElementById('view-title');
             const tableBody = document.getElementById('datatable-body');
+            const dateField = document.getElementById('dateField');
+            dateField.value = date
             // Changing interface element content
             viewTitle.innerText = pageName;
             tableBody.innerHTML = '.Cargando... Esto puede tomar un momento';
@@ -117,9 +121,10 @@ export class AssistGestion {
             tableBody.innerHTML = UITableSkeletonTemplate.repeat(tableRows);
             // Exec functions
             this.load(tableBody, currentPage, assistControlArray);
-            this.searchVisit(tableBody, assistControlArray);
+            this.searchVisit(tableBody, assistControlArray, dateField);
             new filterDataByHeaderType().filter();
             this.pagination(assistControlArray, tableRows, currentPage);
+            //this.pagination(assistControlArray, tableRows, infoPage.currentPage);
             this.export();
             // Rendering icons
         };
@@ -156,41 +161,7 @@ export class AssistGestion {
                     tableBody.appendChild(row);
                     drawTagsIntoTables();
                 }
-                this.previewAssist();
-                this.fixCreatedDate();
             }
-        };
-        this.previewZoom = async (arrayImages) => {
-            const openButtons = document.querySelectorAll('#entity-details-zoom');
-            openButtons.forEach((openButton) => {
-                const entityId = openButton.dataset.entityid;
-                openButton.addEventListener('click', () => {
-                    renderInterfaceZoom(entityId, arrayImages);
-                });
-            });
-            const renderInterfaceZoom = async (entity, arrayImages) => {
-                let description = '';
-                for (let i = 0; i < arrayImages.length; i++) {
-                    if (arrayImages[i].id == entity) {
-                        description = arrayImages[i].description;
-                    }
-                }
-                const picture = document.getElementsByName(`${entity}`);
-                const close = document.getElementById("close-modalZoom");
-                const modalZoom = document.getElementById('modalZoom');
-                const editor = document.getElementById('entity-editor-container');
-                editor.style.display = 'none';
-                const img01 = document.getElementById('img01');
-                const caption = document.getElementById('caption');
-                modalZoom.style.display = 'block';
-                img01.src = picture[0].currentSrc;
-                caption.innerHTML = `${description}`;
-                close.addEventListener('click', () => {
-                    modalZoom.style.display = 'none';
-                    const editor = document.getElementById('entity-editor-container');
-                    editor.style.display = 'flex';
-                });
-            };
         };
         this.pagination = async (items, limitRows, currentPage) => {
             const tableBody = document.getElementById('datatable-body');
@@ -198,6 +169,7 @@ export class AssistGestion {
             paginationWrapper.innerHTML = '';
             let pageCount;
             pageCount = Math.ceil(items.length / limitRows);
+            //pageCount = Math.ceil(infoPage.count / limitRows);
             let button;
             if (pageCount <= Config.maxLimitPage) {
                 for (let i = 1; i < pageCount + 1; i++) {
@@ -223,6 +195,9 @@ export class AssistGestion {
                     currentPage = page;
                     fillBtnPagination(page, Config.colorPagination);
                     new AssistGestion().load(tableBody, page, items);
+                    //infoPage.offset = Config.tableRows * (page - 1);
+                    //currentPage = page;
+                    //new AssistGestion().render(infoPage.offset, currentPage, infoPage.search); //new AssistControl().load(tableBody, page, items)
                 });
                 return button;
             }
@@ -262,15 +237,20 @@ export class AssistGestion {
                 prevButton.addEventListener('click', () => {
                     pagesOptions(items, 1);
                     new AssistGestion().load(tableBody, 1, items);
+                    //new AssistGestion().render(Config.offset, Config.currentPage, infoPage.search);
                 });
                 nextButton.addEventListener('click', () => {
                     pagesOptions(items, pageCount);
                     new AssistGestion().load(tableBody, pageCount, items);
+                    //infoPage.offset = Config.tableRows * (pageCount - 1);
+                    //new AssistGestion().render(infoPage.offset, pageCount, infoPage.search);
                 });
             }
         }
-        this.searchVisit = async (tableBody, visits) => {
+        this.searchVisit = async (tableBody, visits, dateField) => {
             const search = document.getElementById('search');
+            const btnSearch = document.getElementById('btnSearch');
+            search.value = infoPage.search;
             await search.addEventListener('keyup', () => {
                 const arrayVisits = visits.filter((visit) => `${visit.dni}${visit.firstName}${visit.lastName}${visit.ingressDate}${visit.ingressTime}${visit.egressDate}${visit.egressTime}`
                     .toLowerCase()
@@ -282,124 +262,15 @@ export class AssistGestion {
                 this.load(tableBody, currentPage, result);
                 this.pagination(result, tableRows, currentPage);
             });
-        };
-        this.previewAssist = async () => {
-            const openButtons = document.querySelectorAll('#entity-details');
-            openButtons.forEach((openButton) => {
-                const entityId = openButton.dataset.entityid;
-                openButton.addEventListener('click', () => {
-                    renderInterface(entityId);
-                });
+            btnSearch.addEventListener('click', async () => {
+                new AssistGestion().render(search.value.toLowerCase(), dateField.value);
             });
-            const renderInterface = async (entity) => {
-                let markingData = await getEntityData('Marcation', entity);
-                console.log(markingData);
-                renderRightSidebar(UIRightSidebar);
-                const _values = {
-                    gallery: document.getElementById('galeria'),
-                    status: document.getElementById('marking-status'),
-                    name: document.getElementById('marking-name'),
-                    dni: document.getElementById('marking-dni'),
-                    type: document.getElementById('marking-type'),
-                    //department: document.getElementById('marking-department'),
-                    //contractor: document.getElementById('marking-contractor'),
-                    // Start marking
-                    startDate: document.getElementById('marking-start-date'),
-                    startTime: document.getElementById('marking-start-time'),
-                    startGuardID: document.getElementById('marking-start-guard-id'),
-                    startGuardName: document.getElementById('marking-start-guard-name'),
-                    // End marking
-                    endDate: document.getElementById('marking-end-date'),
-                    endTime: document.getElementById('marking-end-time'),
-                    endGuardID: document.getElementById('marking-end-guard-id'),
-                    endGuardName: document.getElementById('marking-end-guard-name')
-                };
-                _values.status.innerText = markingData.marcationState.name;
-                _values.name.value = markingData.user.firstName + ' ' + markingData.user.lastName;
-                _values.dni.value = markingData?.user.dni ?? '';
-                _values.type.value = verifyUserType(markingData.user.userType);
-                //_values.department.value = markingData.user?.department ?? '';
-                //_values.contractor.value = markingData.user?.contractor ?? '';
-                // Start marking
-                _values.startDate.value = markingData.ingressDate;
-                _values.startTime.value = markingData.ingressTime;
-                _values.startGuardID.value = markingData.ingressIssued?.username ?? '';
-                _values.startGuardName.value = `${markingData.ingressIssued?.firstName ?? ''} ${markingData.ingressIssued?.lastName ?? ''}`;
-                // End marking
-                _values.endDate.value = markingData?.egressDate ?? '';
-                _values.endTime.value = markingData?.egressTime ?? '';
-                _values.endGuardID.value = markingData.egressIssued?.username ?? '';
-                _values.endGuardName.value = `${markingData.egressIssued?.firstName ?? ''} ${markingData.egressIssued?.lastName ?? ''}`;
-                if (markingData?.camera1 !== undefined || markingData?.camera2 !== undefined || markingData?.camera3 !== undefined || markingData?.camera4 !== undefined) {
-                    let images = [];
-                    if (markingData?.camera1 !== undefined) {
-                        let details = {
-                            "image": `${await getFile(markingData.camera1)}`,
-                            "description": `Cámara 1 - ${markingData.user?.dni ?? ''}`,
-                            "icon": "camera",
-                            "id": "camera"
-                        };
-                        images.push(details);
-                    }
-                    if (markingData?.camera2 !== undefined) {
-                        let details = {
-                            "image": `${await getFile(markingData.camera2)}`,
-                            "description": `Cámara 2 - ${markingData.user?.dni ?? ''}`,
-                            "icon": "camera",
-                            "id": "camera2"
-                        };
-                        images.push(details);
-                    }
-                    if (markingData?.camera3 !== undefined) {
-                        let details = {
-                            "image": `${await getFile(markingData.camera3)}`,
-                            "description": `Cámara 3 - ${markingData.user?.dni ?? ''}`,
-                            "icon": "camera",
-                            "id": "camera3"
-                        };
-                        images.push(details);
-                    }
-                    if (markingData?.camera4 !== undefined) {
-                        let details = {
-                            "image": `${await getFile(markingData.camera4)}`,
-                            "description": `Cámara 4 - ${markingData.user?.dni ?? ''}`,
-                            "icon": "camera",
-                            "id": "camera4"
-                        };
-                        images.push(details);
-                    }
-                    for (let i = 0; i < images.length; i++) {
-                        _values.gallery.innerHTML += `
-                        <label><i class="fa-solid fa-${images[i].icon}"></i> ${images[i].description}</label>
-                        <img width="100%" class="note_picture margin_b_8" src="${images[i].image}" id="entity-details-zoom" data-entityId="${images[i].id}" name="${images[i].id}">
-                    `;
-                    }
-                    this.previewZoom(images);
-                }
-                else {
-                    _values.gallery.innerHTML += `
-                <div class="input_detail">
-                    <label><i class="fa-solid fa-info-circle"></i> No hay imágenes</label>
-                </div>
-                `;
-                }
-                drawTagsIntoTables();
-                this.closeRightSidebar();
-                drawTagsIntoTables();
-            };
         };
         this.closeRightSidebar = () => {
             const closeButton = document.getElementById('close');
             const editor = document.getElementById('entity-editor-container');
             closeButton.addEventListener('click', () => {
                 new CloseDialog().x(editor);
-            });
-        };
-        this.fixCreatedDate = () => {
-            const tableDate = document.querySelectorAll('#table-date');
-            tableDate.forEach((date) => {
-                const separateDateAndTime = date.innerText.split('T');
-                date.innerText = separateDateAndTime[0];
             });
         };
         this.export = () => {
@@ -469,7 +340,31 @@ export class AssistGestion {
                         end: document.getElementById('end-date'),
                         exportOption: document.getElementsByName('exportOption')
                     }
-                    const marcations = dataPage; //await GetAssistControl();
+                    let rawExport = JSON.stringify({
+                        "filter": {
+                            "conditions": [
+                                {
+                                    "property": "customer.id",
+                                    "operator": "=",
+                                    "value": `${customerId}`
+                                },
+                                {
+                                    "property": "ingressDate",
+                                    "operator": ">=",
+                                    "value": `${_values.start.value}`
+                                },
+                                {
+                                    "property": "ingressDate",
+                                    "operator": "<=",
+                                    "value": `${_values.end.value}`
+                                }
+                            ],
+                        },
+                        sort: "-createdDate",
+                        fetchPlan: 'full',
+                    });
+                    const dataRaw = await getFilterEntityData("Marcation", rawExport); //await GetAssistControl();
+                    const marcations = await calculateGestionMarcation(dataRaw);
                     for (let i = 0; i < _values.exportOption.length; i++) {
                         let ele = _values.exportOption[i];
                         if (ele.type = "radio") {
@@ -497,5 +392,6 @@ export class AssistGestion {
                 };
             });
         };
+
     }
 }

@@ -190,7 +190,7 @@ export class SuperUsers {
     }
     load(table, currentPage, data) {
         setUserPassword(SUser);
-        setRole(SUser);
+        //setRole(SUser);
         table.innerHTML = '';
         currentPage--;
         let start = tableRows * currentPage;
@@ -1121,7 +1121,7 @@ export const setUserPassword = async (SUser) => {
             {
                 "property": "isSuper",
                 "operator": "=",
-                "value": `${SUser}`
+                "value": `${true}`
             },
             {
                 "property": "customer.id",
@@ -1132,6 +1132,11 @@ export const setUserPassword = async (SUser) => {
                 "property": "newUser",
                 "operator": "=",
                 "value": `${true}`
+            },
+            {
+                "property": "temp",
+                "operator": "<>",
+                "value": ``
             }
         ]
     }
@@ -1145,13 +1150,14 @@ export const setUserPassword = async (SUser) => {
       if (newUser.newUser === true && (newUser.temp !== undefined || newUser.temp !== ''))
           setPassword(raw);
   });
+  setRole(data);
 };
-export async function setRole(SUser) {
+export async function setRole(data) {
   /*const users = await getEntitiesData('User');
   const filterByNewUsers = users.filter((data) => data.newUser === SUser);
   const FCustomer = filterByNewUsers.filter((data) => `${data.customer.id}` === `${customerId}`);
   const data = FCustomer;*/
-  let raw = JSON.stringify({
+  /*let raw = JSON.stringify({
     "filter": {
         "conditions": [
             {
@@ -1168,11 +1174,16 @@ export async function setRole(SUser) {
                 "property": "customer.id",
                 "operator": "=",
                 "value": `${customerId}`
+            },
+            {
+                "property": "temp",
+                "operator": "<>",
+                "value": ``
             }
         ]
     }
   });
-  let data = await getFilterEntityData("User", raw);
+  let data = await getFilterEntityData("User", raw);*/
   data.forEach((newUser) => {
       let roleCode;
       if(newUser.userType === 'GUARD'){

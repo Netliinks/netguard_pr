@@ -209,7 +209,7 @@ export class Employees {
     }
     load(table, currentPage, data) {
         setUserPassword();
-        setRole();
+        //setRole();
         table.innerHTML = '';
         currentPage--;
         let start = tableRows * currentPage;
@@ -1177,6 +1177,11 @@ export async function setUserPassword() {
                     "property": "newUser",
                     "operator": "=",
                     "value": `${true}`
+                },
+                {
+                    "property": "temp",
+                    "operator": "<>",
+                    "value": ``
                 }
             ]
         }
@@ -1190,13 +1195,14 @@ export async function setUserPassword() {
         if (newUser.newUser === true && (newUser.temp !== undefined || newUser.temp !== ''))
             setPassword(raw);
     });
+    setRole(data);
 }
-export async function setRole() {
+export async function setRole(data) {
     /*const users = await getEntitiesData('User');
     const filterByNewUsers = users.filter((data) => data.newUser == true);
     const filterByUserType = filterByNewUsers.filter((data) => `${data.userType}`.includes('EMPLOYEE'));
     const data = filterByUserType;*/
-    let raw = JSON.stringify({
+    /*let raw = JSON.stringify({
         "filter": {
             "conditions": [
                 {
@@ -1218,11 +1224,16 @@ export async function setRole() {
                     "property": "userType",
                     "operator": "=",
                     "value": `EMPLOYEE`
+                },
+                {
+                    "property": "temp",
+                    "operator": "<>",
+                    "value": ``
                 }
             ]
         }
     });
-    let data = await getFilterEntityData("User", raw);
+    let data = await getFilterEntityData("User", raw);*/
     data.forEach((newUser) => {
         let raw = JSON.stringify({
             "id": `${newUser.id}`,

@@ -324,7 +324,7 @@ export const getVerifyUsername = async (username) => {
     return value;
 };
 export const registryPlataform = async (id) => {
-    let platUser = await getEntityData('User', id);
+    /*let platUser = await getEntityData('User', id);
     const _date = new Date();
     // TIME
     const _hours = _date.getHours();
@@ -359,7 +359,7 @@ export const registryPlataform = async (id) => {
     await registerEntity(plataformRaw, 'WebAccess')
         .then(res => {
         console.log("Registrado");
-    }).catch(err => console.log(err));
+    }).catch(err => console.log(err));*/
 };
 export const pageNumbers = (totalPages, max, currentPage) => {
     let limitMin;
@@ -394,3 +394,234 @@ export const fillBtnPagination = (currentPage, color) => {
     if(btnActive) btnActive.style.backgroundColor = color;
     //btnActive.focus();
 };
+
+export const currentDateTime = () => {
+    const _date = new Date();
+    // TIME
+    const _hours = _date.getHours();
+    const _minutes = _date.getMinutes();
+    const _seconds = _date.getSeconds();
+    const _fixedHours = ('0' + _hours).slice(-2);
+    const _fixedMinutes = ('0' + _minutes).slice(-2);
+    const _fixedSeconds = ('0' + _seconds).slice(-2);
+    const currentTimeHHMMSS = `${_fixedHours}:${_fixedMinutes}:${_fixedSeconds}`;
+    const currentTimeHHMM = `${_fixedHours}:${_fixedMinutes}`;
+    // DATE
+    const _day = _date.getDate();
+    const _month = _date.getMonth() + 1;
+    const _year = _date.getFullYear();
+    const date = `${_year}-${('0' + _month).slice(-2)}-${('0' + _day).slice(-2)}`;
+    return {
+        date: date,
+        timeHHMMSS: currentTimeHHMMSS,
+        timeHHMM: currentTimeHHMM
+    }
+}
+
+export const getDetails = async (param, value, table) => {
+    const customerId = localStorage.getItem('customer_id');
+    let raw = JSON.stringify({
+        "filter": {
+            "conditions": [
+                {
+                "property": `${param}`,
+                "operator": "=",
+                "value": `${value}`
+                },
+                {
+                "property": `customer.id`,
+                "operator": "=",
+                "value": `${customerId}`
+                }
+            ]
+        },
+        sort: "createdDate", 
+        fetchPlan: 'full',
+    });
+    let data = await getFilterEntityData(`${table}`, raw);
+    return data
+}
+
+export const getDetails2 = async (param, value, param2, value2, table) => {
+    const customerId = localStorage.getItem('customer_id');
+    let raw = JSON.stringify({
+        "filter": {
+            "conditions": [
+                {
+                "property": `${param}`,
+                "operator": "=",
+                "value": `${value}`
+                },
+                {
+                "property": `${param2}`,
+                "operator": "=",
+                "value": `${value2}`
+                },
+                {
+                "property": `customer.id`,
+                "operator": "=",
+                "value": `${customerId}`
+                }
+            ]
+        },
+        sort: "createdDate", 
+        fetchPlan: 'full',
+    });
+    let data = await getFilterEntityData(`${table}`, raw);
+    return data
+}
+
+export const calculateGestionMarcation = (assistControl) => {
+    let objDate = {}
+    let arrayAssist= []
+    assistControl.forEach((marcation) => {
+        let date = marcation.ingressDate+" "+marcation.user?.username ?? ''
+        if (objDate[date]) {
+            objDate[date].push(marcation);
+        } else {
+            objDate[date] = [marcation];
+        }
+    })
+    //console.log(objDate)
+
+    let key = Object.keys(objDate)
+    for(let i = 0; i < key.length; i++){
+        let objects = objDate[key[i]]
+        //console.log(objects)
+        //console.log(objects.length)
+        let valueMax = []
+        objects.map(element => {
+            if(element.marcationState.name == 'Finalizado' && (element.egressTime != '' || element.egressTime != null || element.egressTime != undefined)){
+                valueMax.push(element)
+            }
+            
+            })
+        let maxDate = new Date(
+            Math.max(
+                ...valueMax.map(element => {
+                    return new Date(element.egressDate+" "+element.egressTime);
+                }),
+            ),
+            );
+            let minDate = new Date(
+            Math.min(
+                ...objects.map(element => {
+                return new Date(element.ingressDate+" "+element.ingressTime);
+                }),
+            ),
+            );
+            //console.log("max "+maxDate)
+            //console.log("min "+minDate)
+            const format = (date) => {
+            var year = date.getFullYear();
+            var month = ("0" + (date.getMonth() + 1)).slice(-2);
+            var day = ("0" + date.getDate()).slice(-2);
+
+            var hours = ("0" + date.getHours()).slice(-2);
+            var minutes = ("0" + date.getMinutes()).slice(-2);
+            var seconds = ("0" + date.getSeconds()).slice(-2);
+            return `${hours}:${minutes}:${seconds}`
+            }
+            let fechaSalida = ""
+            if(!isNaN(maxDate)) fechaSalida = format(maxDate)
+            let obj = {
+            "firstName": `${objects[0]?.user?.firstName ?? ''}`,
+            "lastName": `${objects[0]?.user?.lastName ?? ''}`,
+            "dni": `${objects[0]?.user?.dni ?? ''}`,
+            "ingressDate": `${objects[0].ingressDate}`,
+            "egressDate": `${objects[0].egressDate}`,
+            "ingressTime": `${format(minDate)}`,
+            "egressTime": `${fechaSalida}`,
+        };
+        arrayAssist.push(obj);
+    }
+    return arrayAssist;
+}
+
+export const calculateLine = (text, limit) => {
+    if(text != undefined){
+        if(text.length <= limit){
+            return text;
+        }else{
+            return text.slice(0, limit)+"...";
+        }
+    }else{
+        return '';
+    }
+    
+}
+
+export const equivalentTime = (time) => {
+    if(time == '13'){
+        return 1;
+    }else if(time == '14'){
+        return 2;
+    }else if(time == '15'){
+        return 3;
+    }else if(time == '16'){
+        return 4;
+    }else if(time == '17'){
+        return 5;
+    }else if(time == '18'){
+        return 6;
+    }else if(time == '19'){
+        return 7;
+    }else if(time == '20'){
+        return 8;
+    }else if(time == '21'){
+        return 9;
+    }else if(time == '22'){
+        return 10;
+    }else if(time == '23'){
+        return 11;
+    }else if(time == '24'){
+        return 0;
+    }else if(time == '00'){
+        return 12;
+    }else if(time == '01'){
+        return 13;
+    }else if(time == '02'){
+        return 14;
+    }else if(time == '03'){
+        return 15;
+    }else if(time == '04'){
+        return 16;
+    }else if(time == '05'){
+        return 17;
+    }else if(time == '06'){
+        return 18;
+    }else if(time == '07'){
+        return 19;
+    }else if(time == '08'){
+        return 20;
+    }else if(time == '09'){
+        return 21;
+    }else if(time == '10'){
+        return 22;
+    }else if(time == '11'){
+        return 23;
+    }else if(time == '12'){
+        return 0;
+    }
+}
+    
+export const searchUniversalSingle = async (param, operator, value, table) => {
+    const raw = JSON.stringify({
+        "filter": {
+          "conditions": [
+            {
+              "property": `${param}`,
+              "operator": `${operator}`,
+              "value": `${value}`
+            },
+          ]
+        },
+        sort: "-createdDate",
+    });
+    const data = await getFilterEntityData(`${table}`, raw);
+    if(data == undefined || data.length == 0){
+        console.log(`${param} ${value} no obtenido(a)`);
+    }else{
+        return data;
+    }
+}
