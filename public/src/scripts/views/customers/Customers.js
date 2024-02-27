@@ -264,6 +264,34 @@ export class Customers {
             <div class="input_checkbox">
                 <label><input type="checkbox" class="checkbox" id="entity-routine"> Permitir Rutina</label>
             </div>
+            <br>
+            <div class="material_input">
+              <input type="email"
+                  id="entity-email1"
+                  autocomplete="none">
+              <label for="entity-email1">Email</label>
+            </div>
+
+            <div class="material_input">
+              <input type="email"
+                  id="entity-email2"
+                  autocomplete="none">
+              <label for="entity-email2">Email</label>
+            </div>
+
+            <div class="material_input">
+              <input type="email"
+                  id="entity-email3"
+                  autocomplete="none">
+              <label for="entity-email3">Email</label>
+            </div>
+
+            <div class="material_input">
+              <input type="email"
+                  id="entity-email4"
+                  autocomplete="none">
+              <label for="entity-email4">Email</label>
+            </div>
 
           </div>
           <!-- END EDITOR BODY -->
@@ -286,7 +314,11 @@ export class Customers {
                     state: document.getElementById('entity-state'),
                     marcation: document.getElementById('entity-marcation'),
                     vehicular: document.getElementById('entity-vehicular'),
-                    routine: document.getElementById('entity-routine')
+                    routine: document.getElementById('entity-routine'),
+                    email1: document.getElementById('entity-email1'),
+                    email2: document.getElementById('entity-email2'),
+                    email3: document.getElementById('entity-email3'),
+                    email4: document.getElementById('entity-email4'),
                 };
                 const raw = JSON.stringify({
                     "name": `${inputsCollection.name.value}`,
@@ -300,6 +332,10 @@ export class Customers {
                     "permitMarcation": `${inputsCollection.marcation.checked ? true : false}`,
                     "permitVehicular": `${inputsCollection.vehicular.checked ? true : false}`,
                     "permitRoutine": `${inputsCollection.routine.checked ? true : false}`,
+                    "email1": `${inputsCollection.email1.value}`,
+                    "email2": `${inputsCollection.email2.value}`,
+                    "email3": `${inputsCollection.email3.value}`,
+                    "email4": `${inputsCollection.email4.value}`,
                 });
                 registerEntity(raw, 'Customer');
                 setTimeout(() => {
@@ -365,6 +401,34 @@ export class Customers {
             <div class="input_checkbox">
                 <label><input type="checkbox" class="checkbox" id="entity-routine"> Permitir Rutina</label>
             </div>
+            <br>
+            <div class="material_input">
+              <input type="email"
+                  id="entity-email1"
+                  autocomplete="none" class="input_filled" value="${data?.email1 ?? ''}">
+              <label for="entity-email1">Email</label>
+            </div>
+
+            <div class="material_input">
+              <input type="email"
+                  id="entity-email2"
+                  autocomplete="none" class="input_filled" value="${data?.email2 ?? ''}">
+              <label for="entity-email2">Email</label>
+            </div>
+
+            <div class="material_input">
+              <input type="email"
+                  id="entity-email3"
+                  autocomplete="none" class="input_filled" value="${data?.email3 ?? ''}">
+              <label for="entity-email3">Email</label>
+            </div>
+
+            <div class="material_input">
+              <input type="email"
+                  id="entity-email4"
+                  autocomplete="none" class="input_filled" value="${data?.email4 ?? ''}">
+              <label for="entity-email4">Email</label>
+            </div>
 
           </div>
           <!-- END EDITOR BODY -->
@@ -405,7 +469,11 @@ export class Customers {
               // @ts-ignore
               vehicular: document.getElementById('entity-vehicular'),
               // @ts-ignore
-              routine: document.getElementById('entity-routine')
+              routine: document.getElementById('entity-routine'),
+              email1: document.getElementById('entity-email1'),
+              email2: document.getElementById('entity-email2'),
+              email3: document.getElementById('entity-email3'),
+              email4: document.getElementById('entity-email4'),
           };
             updateButton.addEventListener('click', () => {
               let raw = JSON.stringify({
@@ -417,6 +485,10 @@ export class Customers {
                   "permitMarcation": `${$value.marcation.checked ? true : false}`,
                   "permitVehicular": `${$value.vehicular.checked ? true : false}`,
                   "permitRoutine": `${$value.routine.checked ? true : false}`,
+                  "email1": `${$value.email1.value}`,
+                  "email2": `${$value.email2.value}`,
+                  "email3": `${$value.email3.value}`,
+                  "email4": `${$value.email4.value}`,
               });
               update(raw);
             });

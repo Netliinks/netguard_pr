@@ -138,7 +138,7 @@ export class AssistControl {
                 _values.endGuardName.value = markingData.egressIssued.firstName + ' ' + markingData.egressIssued.lastName;
                 drawTagsIntoTables();
                 this.closeRightSidebar();
-                drawTagsIntoTables();
+                //drawTagsIntoTables();
             };
         };
         this.closeRightSidebar = () => {
