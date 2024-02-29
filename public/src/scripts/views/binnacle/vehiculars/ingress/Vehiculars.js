@@ -8,7 +8,7 @@ import { getEntityData, getFilterEntityData, getFilterEntityCount, getFile } fro
 import { CloseDialog, drawTagsIntoTables, renderRightSidebar, filterDataByHeaderType, inputObserver, pageNumbers, fillBtnPagination } from "../../../../tools.js";
 import { UIContentLayout, UIRightSidebar } from "./Layout.js";
 import { UITableSkeletonTemplate } from "./Template.js";
-import { exportVehicularCsv, exportVehicularPdf, exportVehicularXls } from "../../../../exportFiles/vehiculars.js";
+import { exportVehiIngressPdf } from "../../../../exportFiles/vehicular-ingress.js";
 // Local configs
 const tableRows = Config.tableRows;
 let currentPage = Config.currentPage;
@@ -119,7 +119,7 @@ export class VehicularsIng {
             this.searchVisit(tableBody /*, eventsArray*/);
             new filterDataByHeaderType().filter();
             this.pagination(assistControlArray, tableRows, infoPage.currentPage);
-            this.export();
+            //this.export();
             // Rendering icons
         };
         this.load = (tableBody, currentPage, assistControl) => {
@@ -153,6 +153,10 @@ export class VehicularsIng {
                     <td id="table-date">${vehicular.ingressTime}</td>
 
                     <td>
+                        <button class="button" id="print-entity" data-entityId="${vehicular.id}">
+                            <i class="fa-solid fa-file-pdf"></i>
+                        </button>
+
                         <button class="button" id="entity-details" data-entityId="${vehicular.id}">
                             <i class="table_icon fa-regular fa-magnifying-glass"></i>
                         </button>
@@ -162,6 +166,7 @@ export class VehicularsIng {
                     drawTagsIntoTables();
                 }
                 this.previewAssist();
+                this.print();
                 this.fixCreatedDate();
             }
         };
@@ -308,6 +313,7 @@ export class VehicularsIng {
                     startTime: document.getElementById('marking-start-time'),
                     startGuardID: document.getElementById('marking-start-guard-id'),
                     startGuardName: document.getElementById('marking-start-guard-name'),
+                    startManagerName: document.getElementById('marking-start-manager-name'),
                     // End marking
                     //endDate: document.getElementById('marking-end-date'),
                     //endTime: document.getElementById('marking-end-time'),
@@ -332,12 +338,13 @@ export class VehicularsIng {
                 _values.startTime.value = markingData?.ingressTime ?? '';
                 _values.startGuardID.value = markingData.ingressIssued?.username ?? '';
                 _values.startGuardName.value = markingData.ingressIssued?.firstName ?? '' + ' ' + markingData.ingressIssued?.lastName ?? '';
+                _values.startManagerName.value = markingData.manager?.name ?? '';
                 // End marking
                 //_values.endDate.value = markingData?.egressDate ?? '';
                 //_values.endTime.value = markingData?.egressTime ?? '';
                 //_values.endGuardID.value = markingData.egressIssued?.username ?? '';
                 //_values.endGuardName.value = markingData.egressIssued?.firstName ?? '' + ' ' + markingData.egressIssued?.lastName ?? '';
-                if (markingData?.image1 !== undefined || markingData?.image2 !== undefined || markingData?.image3 !== undefined || markingData?.image4 !== undefined || markingData?.image5 !== undefined || markingData?.image6 !== undefined || markingData?.image7 !== undefined || markingData?.image8 !== undefined) {
+                if (markingData?.image1 !== undefined || markingData?.image2 !== undefined || markingData?.image3 !== undefined || markingData?.image4 !== undefined || markingData?.image5 !== undefined || markingData?.image6 !== undefined || markingData?.image7 !== undefined || markingData?.image8 !== undefined || markingData?.image9 !== undefined || markingData?.image10 !== undefined || markingData?.image11 !== undefined || markingData?.image12 !== undefined) {
                     let images = [];
                     if (markingData?.image1 !== undefined) {
                         let details = {
@@ -411,6 +418,42 @@ export class VehicularsIng {
                         };
                         images.push(details);
                     }
+                    if (markingData?.image9 !== undefined) {
+                        let details = {
+                            "image": `${await getFile(markingData.image9)}`,
+                            "description": `Imagen 9 - ${markingData?.dni ?? ''}`,
+                            "icon": "mobile",
+                            "id": "image9"
+                        };
+                        images.push(details);
+                    }
+                    if (markingData?.image10 !== undefined) {
+                        let details = {
+                            "image": `${await getFile(markingData.image10)}`,
+                            "description": `Imagen 10 - ${markingData?.dni ?? ''}`,
+                            "icon": "mobile",
+                            "id": "image10"
+                        };
+                        images.push(details);
+                    }
+                    if (markingData?.image11 !== undefined) {
+                        let details = {
+                            "image": `${await getFile(markingData.image11)}`,
+                            "description": `Imagen 11 - ${markingData?.dni ?? ''}`,
+                            "icon": "mobile",
+                            "id": "image11"
+                        };
+                        images.push(details);
+                    }
+                    if (markingData?.image12 !== undefined) {
+                        let details = {
+                            "image": `${await getFile(markingData.image12)}`,
+                            "description": `Imagen 12 - ${markingData?.dni ?? ''}`,
+                            "icon": "mobile",
+                            "id": "image12"
+                        };
+                        images.push(details);
+                    }
                     for (let i = 0; i < images.length; i++) {
                         _values.controlImages.innerHTML += `
                             <label><i class="fa-solid fa-${images[i].icon}"></i> ${images[i].description}</label>
@@ -445,7 +488,17 @@ export class VehicularsIng {
                 date.innerText = separateDateAndTime[0];
             });
         };
-        this.export = () => {
+        this.print = () => {
+            const print = document.querySelectorAll('#print-entity');
+            print.forEach((print) => {
+                const entityId = print.dataset.entityid;
+                print.addEventListener('click', async () => {
+                    const data = await getEntityData('Vehicular', entityId);
+                    exportVehiIngressPdf(data);
+                });
+            });
+        };
+        /*this.export = () => {
             const exportNotes = document.getElementById('export-entities');
             exportNotes.addEventListener('click', async() => {
                 this.dialogContainer.style.display = 'block';
@@ -567,6 +620,6 @@ export class VehicularsIng {
                     new CloseDialog().x(_dialog);
                 };
             });
-        };
+        };*/
     }
 }
