@@ -138,7 +138,7 @@ export const exportVehiIngressPdf = async (ar) => {
     var lMargin = params.iniText; //left margin in mm
     var rMargin = 1; //right margin in mm
     var pdfInMM = params.finMargen; //210;  // width of A4 in mm
-    var paragraph = doc.splitTextToSize(ar?.observation.split("\n").join(". ").trim() ?? '', (pdfInMM - lMargin - rMargin));
+    var paragraph = doc.splitTextToSize(ar?.observation?.split("\n").join(". ").trim() ?? '', (pdfInMM - lMargin - rMargin));
     doc.text(lMargin, row += 5, paragraph);
     let arrImg = [];
     for (let i = 1; i <= 12; i++) {

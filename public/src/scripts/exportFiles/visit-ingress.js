@@ -1,7 +1,7 @@
 //import {generateFile } from "../tools";
 import { getFile } from "../endpoints.js";
-export const exportVehiEgressPdf = async (ar) => {
-    // @ts-ignore
+export const exportVisitIndPdf = async (ar) => {
+/*    // @ts-ignore
     window.jsPDF = window.jspdf.jsPDF;
     // @ts-ignore
     var doc = new jsPDF();
@@ -24,7 +24,8 @@ export const exportVehiEgressPdf = async (ar) => {
     doc.line(params.iniMargen, 9.5, params.iniMargen, 30); //vertical 1
     doc.line(params.finMargen, 9.5, params.finMargen, 30); //vertical 2
     doc.line(params.iniMargen, 30, params.finMargen, 30); //horizontal 2
-    doc.text(80, 22, `SALIDA DE CONTENEDOR`);
+    doc.text(80, 22, `INGRESO Y SALIDA`);
+    doc.text(80, 28, `EMPLEADOS`);
     //Fin Cabecera
     let row = 35;
     //Cuerpo
@@ -45,7 +46,7 @@ export const exportVehiEgressPdf = async (ar) => {
     doc.text(params.iniText, row += params.espIniText, "Fecha / Hora");
     doc.setFont(undefined, 'normal');
     doc.setTextColor(87, 80, 73);
-    doc.text(42, row, `${ar.egressDate} ${ar.egressTime}`);
+    doc.text(42, row, `${ar.ingressDate} ${ar.ingressTime}`);
     doc.setFont(undefined, 'bold');
     doc.setTextColor(0, 0, 0);
     doc.setDrawColor(244, 244, 244);
@@ -209,131 +210,6 @@ export const exportVehiEgressPdf = async (ar) => {
     }
     // Save the PDF
     var d = new Date();
-    var title = "log_SalVehicular_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear() + `.pdf`;
-    doc.save(title);
-};
-export const exportVehiEgressCsv = (ar, start, end) => {
-    let rows = [];
-    for (let i = 0; i < ar.length; i++) {
-        let note = ar[i];
-        let noteCreationDateAndTime = note.creationDate.split('T');
-        let noteCreationDate = noteCreationDateAndTime[0];
-        let noteCreationTime = noteCreationDateAndTime[1];
-        // @ts-ignore
-        //if(noteCreationDate >= start && noteCreationDate <= end){
-        let obj = {
-            "Título": `${note.title.split("\n").join("(salto)")}`,
-            "Fecha": `${noteCreationDate}`,
-            "Hora": `${noteCreationTime}`,
-            "Usuario": `${note.user?.firstName ?? ''} ${note.user?.lastName ?? ''}`,
-            "Contenido": `${note.content.split("\n").join("(salto)")}`,
-        };
-        rows.push(obj);
-        //}
-    }
-    generateFile(rows, "Reportes", "csv");
-};
-export const exportVehiEgressXls = (ar, start, end) => {
-    let rows = [];
-    for (let i = 0; i < ar.length; i++) {
-        let note = ar[i];
-        let noteCreationDateAndTime = note.creationDate.split('T');
-        let noteCreationDate = noteCreationDateAndTime[0];
-        let noteCreationTime = noteCreationDateAndTime[1];
-        // @ts-ignore
-        //if(noteCreationDate >= start && noteCreationDate <= end){
-        let obj = {
-            "Título": `${note.title.split("\n").join("(salto)")}`,
-            "Fecha": `${noteCreationDate}`,
-            "Hora": `${noteCreationTime}`,
-            "Usuario": `${note.user?.firstName ?? ''} ${note.user?.lastName ?? ''}`,
-            "Contenido": `${note.content.split("\n").join("(salto)")}`,
-        };
-        rows.push(obj);
-        //}
-    }
-    generateFile(rows, "Reportes", "xls");
-};
-const generateFile = (ar, title, extension) => {
-    //comprobamos compatibilidad
-    if (window.Blob && (window.URL || window.webkitURL)) {
-        var contenido = "", d = new Date(), blob, reader, save, clicEvent;
-        //creamos contenido del archivo
-        for (var i = 0; i < ar.length; i++) {
-            //construimos cabecera del csv
-            if (i == 0)
-                contenido += Object.keys(ar[i]).join(";") + "\n";
-            //resto del contenido
-            contenido += Object.keys(ar[i]).map(function (key) {
-                return ar[i][key];
-            }).join(";") + "\n";
-        }
-        //creamos el blob
-        blob = new Blob(["\ufeff", contenido], { type: `text/${extension}` });
-        //creamos el reader
-        // @ts-ignore
-        var reader = new FileReader();
-        reader.onload = function (event) {
-            //escuchamos su evento load y creamos un enlace en dom
-            save = document.createElement('a');
-            // @ts-ignore
-            save.href = event.target.result;
-            save.target = '_blank';
-            //aquí le damos nombre al archivo
-            save.download = "log_" + title + "_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear() + `.${extension}`;
-            try {
-                //creamos un evento click
-                clicEvent = new MouseEvent('click', {
-                    'view': window,
-                    'bubbles': true,
-                    'cancelable': true
-                });
-            }
-            catch (e) {
-                //si llega aquí es que probablemente implemente la forma antigua de crear un enlace
-                clicEvent = document.createEvent("MouseEvent");
-                // @ts-ignore
-                clicEvent.click();
-            }
-            //disparamos el evento
-            save.dispatchEvent(clicEvent);
-            //liberamos el objeto window.URL
-            (window.URL || window.webkitURL).revokeObjectURL(save.href);
-        };
-        //leemos como url
-        reader.readAsDataURL(blob);
-    }
-    else {
-        //el navegador no admite esta opción
-        alert("Su navegador no permite esta acción");
-    }
-};
-const calculateRow = (length, mode) => {
-    let row = 0;
-    let limit = 0; // limite de lineas
-    if (mode == "parrafo") {
-        limit = 47;
-    }
-    else if (mode == "titulo") {
-        limit = 30;
-    }
-    let lineCount = Math.ceil(length / limit);
-    for (let i = 1; i <= lineCount; i++) {
-        if (length <= (limit * i)) { //124 caracteres cada linea aprox en total margen A4
-            row += (4 * i);
-        }
-    }
-    return row;
-};
-const newDataBlock = (array, index) => {
-    let row = 0;
-    if (array[index + 1] != undefined) {
-        row += 5;
-        let rowTitle = calculateRow(array[index + 1]?.titulo.length, "titulo");
-        let rowDescription = calculateRow(array[index + 1]?.contenido.length, "parrafo");
-        rowTitle > rowDescription ? row += rowTitle : row += rowDescription;
-        if (array[index + 1]?.imagen != '')
-            row += 35;
-    }
-    return row;
+    var title = "log_VisitInd_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear() + `.pdf`;
+    doc.save(title);*/
 };
