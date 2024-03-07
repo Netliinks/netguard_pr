@@ -305,6 +305,7 @@ export class VehicularsIng {
                     type: document.getElementById('marking-type'),
                     unregisteredDriver: document.getElementById('marking-unregisteredDriver'),
                     containerNro: document.getElementById('marking-containerNro'),
+                    department: document.getElementById('marking-department'),
                     observation: document.getElementById('marking-observation'),
                     //dayManager: document.getElementById('marking-dayManager'),
                     //nightManager: document.getElementById('marking-nightManager'),
@@ -330,6 +331,7 @@ export class VehicularsIng {
                 _values.type.value = markingData?.type ?? '';
                 _values.unregisteredDriver.value = markingData?.unregisteredDriver ?? '';
                 _values.containerNro.value = markingData?.containerNro ?? '';
+                _values.department.value = markingData?.department?.name ?? '';
                 _values.observation.value = markingData?.observation ?? '';
                 //_values.dayManager.value = markingData?.dayManager ?? '';
                 //_values.nightManager.value = markingData?.nightManager ?? '';

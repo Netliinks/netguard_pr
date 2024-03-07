@@ -109,6 +109,11 @@ export const UIRightSidebar = `
     </div>
     <br>
     <div class="input_detail">
+        <label for="marking-department"><i class="fa-solid fa-building"></i> Departamento:</label>
+        <input type="text" id="marking-department" class="input_filled" readonly>
+    </div>
+    <br>
+    <div class="input_detail">
         <label for="marking-observation"><i class="fa-solid fa-address-card"></i> Observación:</label>
         <input type="text" id="marking-observation" class="input_filled" readonly>
     </div>
