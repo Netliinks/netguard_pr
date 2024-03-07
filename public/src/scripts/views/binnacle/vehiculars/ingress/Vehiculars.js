@@ -8,7 +8,7 @@ import { getEntityData, getFilterEntityData, getFilterEntityCount, getFile } fro
 import { CloseDialog, drawTagsIntoTables, renderRightSidebar, filterDataByHeaderType, inputObserver, pageNumbers, fillBtnPagination } from "../../../../tools.js";
 import { UIContentLayout, UIRightSidebar } from "./Layout.js";
 import { UITableSkeletonTemplate } from "./Template.js";
-import { exportVehiIngressPdf } from "../../../../exportFiles/vehicular-ingress.js";
+import { exportVehiIngressPdf, exportVehiIngressCsv, exportVehiIngressXls, exportVehiIngressIndPdf } from "../../../../exportFiles/vehicular-ingress.js";
 // Local configs
 const tableRows = Config.tableRows;
 let currentPage = Config.currentPage;
@@ -119,7 +119,7 @@ export class VehicularsIng {
             this.searchVisit(tableBody /*, eventsArray*/);
             new filterDataByHeaderType().filter();
             this.pagination(assistControlArray, tableRows, infoPage.currentPage);
-            //this.export();
+            this.export();
             // Rendering icons
         };
         this.load = (tableBody, currentPage, assistControl) => {
@@ -494,11 +494,11 @@ export class VehicularsIng {
                 const entityId = print.dataset.entityid;
                 print.addEventListener('click', async () => {
                     const data = await getEntityData('Vehicular', entityId);
-                    exportVehiIngressPdf(data);
+                    exportVehiIngressIndPdf(data);
                 });
             });
         };
-        /*this.export = () => {
+        this.export = () => {
             const exportNotes = document.getElementById('export-entities');
             exportNotes.addEventListener('click', async() => {
                 this.dialogContainer.style.display = 'block';
@@ -600,15 +600,15 @@ export class VehicularsIng {
                             if (ele.checked) {
                                 if (ele.value == "xls") {
                                     // @ts-ignore
-                                    exportVehicularXls(vehiculars, _values.start.value, _values.end.value);
+                                    exportVehiIngressXls(vehiculars, _values.start.value, _values.end.value);
                                 }
                                 else if (ele.value == "csv") {
                                     // @ts-ignore
-                                    exportVehicularCsv(vehiculars, _values.start.value, _values.end.value);
+                                    exportVehiIngressCsv(vehiculars, _values.start.value, _values.end.value);
                                 }
                                 else if (ele.value == "pdf") {
                                     // @ts-ignore
-                                    exportVehicularPdf(vehiculars, _values.start.value, _values.end.value);
+                                    exportVehiIngressPdf(vehiculars);
                                 }
                             }
                         }
@@ -620,6 +620,6 @@ export class VehicularsIng {
                     new CloseDialog().x(_dialog);
                 };
             });
-        };*/
+        };
     }
 }
