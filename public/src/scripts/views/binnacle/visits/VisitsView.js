@@ -295,7 +295,7 @@ export class Visits {
                 const visitReason = document.getElementById('visit-reason');
                 visitReason.value = entityData.reason;
                 const visitAutorizedBy = document.getElementById('visit-authorizedby');
-                visitAutorizedBy.value = entityData.authorizer;
+                visitAutorizedBy.value = entityData.type == "Guardia" ? entityData?.manager?.name ?? '' : entityData?.authorizer ?? '';
                 const visitStatus = document.getElementById('visit-status');
                 visitStatus.innerText = entityData.visitState.name;
                 const visitCitadel = document.getElementById('visit-citadel');
@@ -371,6 +371,69 @@ export class Visits {
                             "description": `Cámara 4 - ${entityData?.dni ?? ''}`,
                             "icon": "camera",
                             "id": "camera4"
+                        };
+                        images.push(details);
+                    }
+                    if (entityData?.image2 !== undefined) {
+                        let details = {
+                            "image": `${await getFile(entityData.image2)}`,
+                            "description": `Imagen 2 - ${entityData?.dni ?? ''}`,
+                            "icon": "mobile",
+                            "id": "image2"
+                        };
+                        images.push(details);
+                    }
+                    if (entityData?.image3 !== undefined) {
+                        let details = {
+                            "image": `${await getFile(entityData.image3)}`,
+                            "description": `Imagen 3 - ${entityData?.dni ?? ''}`,
+                            "icon": "mobile",
+                            "id": "image3"
+                        };
+                        images.push(details);
+                    }
+                    if (entityData?.image4 !== undefined) {
+                        let details = {
+                            "image": `${await getFile(entityData.image4)}`,
+                            "description": `Imagen 4 - ${entityData?.dni ?? ''}`,
+                            "icon": "mobile",
+                            "id": "image4"
+                        };
+                        images.push(details);
+                    }
+                    if (entityData?.image5 !== undefined) {
+                        let details = {
+                            "image": `${await getFile(entityData.image5)}`,
+                            "description": `Imagen 5 - ${entityData?.dni ?? ''}`,
+                            "icon": "mobile",
+                            "id": "image5"
+                        };
+                        images.push(details);
+                    }
+                    if (entityData?.image6 !== undefined) {
+                        let details = {
+                            "image": `${await getFile(entityData.image6)}`,
+                            "description": `Imagen 6 - ${entityData?.dni ?? ''}`,
+                            "icon": "mobile",
+                            "id": "image6"
+                        };
+                        images.push(details);
+                    }
+                    if (entityData?.image7 !== undefined) {
+                        let details = {
+                            "image": `${await getFile(entityData.image7)}`,
+                            "description": `Imagen 7 - ${entityData?.dni ?? ''}`,
+                            "icon": "mobile",
+                            "id": "image7"
+                        };
+                        images.push(details);
+                    }
+                    if (entityData?.image8 !== undefined) {
+                        let details = {
+                            "image": `${await getFile(entityData.image8)}`,
+                            "description": `Imagen 8 - ${entityData?.dni ?? ''}`,
+                            "icon": "mobile",
+                            "id": "image8"
                         };
                         images.push(details);
                     }
