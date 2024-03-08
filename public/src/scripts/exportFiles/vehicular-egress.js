@@ -12,11 +12,12 @@ export const exportVehiSalIndPdf = async (ar) => {
         finSomb: 188,
         iniText: 18,
         finPag: 290,
-        espEntBloq: 7,
-        espIniText: 6
+        espEntBloq: 5,
+        espIniText: 4
     };
     //Cabecera
     doc.addImage("./public/src/assets/pictures/report.png", "PNG", 20, 15, 30, 10);
+    doc.addImage("./public/src/assets/pictures/pcr.png", "PNG", 172, 15, 30, 10);
     doc.setDrawColor(209, 209, 209);
     doc.setFont(undefined, 'bold');
     doc.setFontSize(15);
@@ -26,22 +27,23 @@ export const exportVehiSalIndPdf = async (ar) => {
     doc.line(params.iniMargen, 30, params.finMargen, 30); //horizontal 2
     doc.text(80, 22, `SALIDA DE CONTENEDOR`);
     //Fin Cabecera
-    let row = 35;
+    let row = 32;
     //Cuerpo
     doc.line(params.iniMargen, row, params.finMargen, row); //horizontal 1
-    doc.line(params.iniMargen, row, params.iniMargen, params.finPag - 8); //vertical 1
-    doc.line(params.finMargen, row, params.finMargen, params.finPag - 8); //vertical 2
-    doc.line(params.iniMargen, params.finPag - 8, params.finMargen, params.finPag - 8); //horizontal 2
+    doc.line(params.iniMargen, row, params.iniMargen, params.finPag - 6); //vertical 1
+    doc.line(params.finMargen, row, params.finMargen, params.finPag - 6); //vertical 2
+    doc.line(params.iniMargen, params.finPag - 6, params.finMargen, params.finPag - 6); //horizontal 2
     doc.setFontSize(10);
     let pagina = 1;
     doc.setFont(undefined, 'bold');
     doc.setTextColor(0, 0, 128);
     doc.text(10, params.finPag, `Página ${pagina}`);
+    //doc.setFontSize(10);
     doc.setTextColor(0, 0, 0);
     doc.setFont(undefined, 'bold');
     doc.setDrawColor(244, 244, 244);
     doc.setFillColor(244, 244, 244);
-    doc.rect(params.iniSomb, row += 1, params.finSomb, 10, 'F');
+    doc.rect(params.iniSomb, row += 1, params.finSomb, 7, 'F');
     doc.text(params.iniText, row += params.espIniText, "Fecha / Hora");
     doc.setFont(undefined, 'normal');
     doc.setTextColor(87, 80, 73);
@@ -50,7 +52,7 @@ export const exportVehiSalIndPdf = async (ar) => {
     doc.setTextColor(0, 0, 0);
     doc.setDrawColor(244, 244, 244);
     doc.setFillColor(244, 244, 244);
-    doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 10, 'F'); //49
+    doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 7, 'F'); //49
     doc.text(params.iniText, row += params.espIniText, "Vigilante de turno");
     doc.setFont(undefined, 'normal');
     doc.setTextColor(87, 80, 73);
@@ -59,7 +61,7 @@ export const exportVehiSalIndPdf = async (ar) => {
     doc.setTextColor(0, 0, 0);
     doc.setDrawColor(244, 244, 244);
     doc.setFillColor(244, 244, 244);
-    doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 10, 'F');
+    doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 7, 'F');
     doc.text(params.iniText, row += params.espIniText, "Número del contenedor");
     doc.setFont(undefined, 'normal');
     doc.setTextColor(87, 80, 73);
@@ -68,7 +70,7 @@ export const exportVehiSalIndPdf = async (ar) => {
     doc.setTextColor(0, 0, 0);
     doc.setDrawColor(244, 244, 244);
     doc.setFillColor(244, 244, 244);
-    doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 10, 'F');
+    doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 7, 'F');
     doc.text(params.iniText, row += params.espIniText, "Conductor registrado");
     doc.setFont(undefined, 'normal');
     doc.setTextColor(87, 80, 73);
@@ -77,7 +79,7 @@ export const exportVehiSalIndPdf = async (ar) => {
     doc.setTextColor(0, 0, 0);
     doc.setDrawColor(244, 244, 244);
     doc.setFillColor(244, 244, 244);
-    doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 10, 'F');
+    doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 7, 'F');
     doc.text(params.iniText, row += params.espIniText, "Cédula conductor");
     doc.setFont(undefined, 'normal');
     doc.setTextColor(87, 80, 73);
@@ -86,7 +88,7 @@ export const exportVehiSalIndPdf = async (ar) => {
     doc.setTextColor(0, 0, 0);
     doc.setDrawColor(244, 244, 244);
     doc.setFillColor(244, 244, 244);
-    doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 10, 'F');
+    doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 7, 'F');
     doc.text(params.iniText, row += params.espIniText, "Conductor no registrado");
     doc.setFont(undefined, 'normal');
     doc.setTextColor(87, 80, 73);
@@ -95,7 +97,7 @@ export const exportVehiSalIndPdf = async (ar) => {
     doc.setTextColor(0, 0, 0);
     doc.setDrawColor(244, 244, 244);
     doc.setFillColor(244, 244, 244);
-    doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 10, 'F');
+    doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 7, 'F');
     doc.text(params.iniText, row += params.espIniText, "Placa vehículo");
     doc.setFont(undefined, 'normal');
     doc.setTextColor(87, 80, 73);
@@ -104,7 +106,7 @@ export const exportVehiSalIndPdf = async (ar) => {
     doc.setTextColor(0, 0, 0);
     doc.setDrawColor(244, 244, 244);
     doc.setFillColor(244, 244, 244);
-    doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 10, 'F');
+    doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 7, 'F');
     doc.text(params.iniText, row += params.espIniText, "Nro. guía");
     doc.setFont(undefined, 'normal');
     doc.setTextColor(87, 80, 73);
@@ -113,7 +115,7 @@ export const exportVehiSalIndPdf = async (ar) => {
     doc.setTextColor(0, 0, 0);
     doc.setDrawColor(244, 244, 244);
     doc.setFillColor(244, 244, 244);
-    doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 10, 'F');
+    doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 7, 'F');
     doc.text(params.iniText, row += params.espIniText, "Departamento");
     doc.setFont(undefined, 'normal');
     doc.setTextColor(87, 80, 73);
@@ -122,7 +124,7 @@ export const exportVehiSalIndPdf = async (ar) => {
     doc.setTextColor(0, 0, 0);
     doc.setDrawColor(244, 244, 244);
     doc.setFillColor(244, 244, 244);
-    doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 10, 'F');
+    doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 7, 'F');
     doc.text(params.iniText, row += params.espIniText, "Tipo");
     doc.setFont(undefined, 'normal');
     doc.setTextColor(87, 80, 73);
@@ -182,10 +184,10 @@ export const exportVehiSalIndPdf = async (ar) => {
     row += 12;
     let column = params.iniText;
     for (let i = 0; i < arrImg.length; i++) {
-        doc.addImage(await getFile(arrImg[i]), "JPEG", column, row, 44, 44);
+        doc.addImage(await getFile(arrImg[i]), "JPEG", column, row, 40, 44);
         column += 47;
         if (column > 192) {
-            if ((row + (46)) > (params.finPag - 10)) {
+            /*if ((row + (46)) > (params.finPag - 10)) {
                 doc.addPage();
                 column = params.iniText;
                 row = 9.5;
@@ -197,19 +199,19 @@ export const exportVehiSalIndPdf = async (ar) => {
                 row += 2;
                 pagina += 1;
                 doc.setFont(undefined, 'bold');
-                //doc.setFontSize(10)
+                doc.setFontSize(10)
                 doc.setTextColor(0, 0, 128);
                 doc.text(10, params.finPag, `Página ${pagina}`);
             }
-            else {
-                column = params.iniText;
-                row += 46;
-            }
+            else {*/
+            column = params.iniText;
+            row += 46;
+            //}
         }
     }
     // Save the PDF
     var d = new Date();
-    var title = "log_SalVehicularInd_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear() + `.pdf`;
+    var title = "SALIDA_" + `${ar?.licensePlate?.trim() ?? ''}` + "_" + d.getDate() + "" + (d.getMonth() + 1) + "" + d.getFullYear() + "_" + d.getHours() + "" + d.getMinutes() + "" + d.getSeconds() + `.pdf`;
     doc.save(title);
 };
 export const exportVehiSalPdf = async (ar) => {
@@ -227,11 +229,12 @@ export const exportVehiSalPdf = async (ar) => {
             finSomb: 188,
             iniText: 18,
             finPag: 290,
-            espEntBloq: 7,
-            espIniText: 6
+            espEntBloq: 5,
+            espIniText: 4
         };
         //Cabecera
         doc.addImage("./public/src/assets/pictures/report.png", "PNG", 20, 15, 30, 10);
+        doc.addImage("./public/src/assets/pictures/pcr.png", "PNG", 172, 15, 30, 10);
         doc.setDrawColor(209, 209, 209);
         doc.setFont(undefined, 'bold');
         doc.setFontSize(15);
@@ -241,14 +244,13 @@ export const exportVehiSalPdf = async (ar) => {
         doc.line(params.iniMargen, 30, params.finMargen, 30); //horizontal 2
         doc.text(80, 22, `SALIDA DE CONTENEDOR`);
         //Fin Cabecera
-        let row = 35;
+        let row = 32;
         //Cuerpo
         doc.line(params.iniMargen, row, params.finMargen, row); //horizontal 1
-        doc.line(params.iniMargen, row, params.iniMargen, params.finPag - 8); //vertical 1
-        doc.line(params.finMargen, row, params.finMargen, params.finPag - 8); //vertical 2
-        doc.line(params.iniMargen, params.finPag - 8, params.finMargen, params.finPag - 8); //horizontal 2
+        doc.line(params.iniMargen, row, params.iniMargen, params.finPag - 6); //vertical 1
+        doc.line(params.finMargen, row, params.finMargen, params.finPag - 6); //vertical 2
+        doc.line(params.iniMargen, params.finPag - 6, params.finMargen, params.finPag - 6); //horizontal 2
         doc.setFontSize(10);
-        
         doc.setFont(undefined, 'bold');
         doc.setTextColor(0, 0, 128);
         doc.text(10, params.finPag, `Página ${pagina}`);
@@ -256,7 +258,7 @@ export const exportVehiSalPdf = async (ar) => {
         doc.setFont(undefined, 'bold');
         doc.setDrawColor(244, 244, 244);
         doc.setFillColor(244, 244, 244);
-        doc.rect(params.iniSomb, row += 1, params.finSomb, 10, 'F');
+        doc.rect(params.iniSomb, row += 1, params.finSomb, 7, 'F');
         doc.text(params.iniText, row += params.espIniText, "Fecha / Hora");
         doc.setFont(undefined, 'normal');
         doc.setTextColor(87, 80, 73);
@@ -265,7 +267,7 @@ export const exportVehiSalPdf = async (ar) => {
         doc.setTextColor(0, 0, 0);
         doc.setDrawColor(244, 244, 244);
         doc.setFillColor(244, 244, 244);
-        doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 10, 'F'); //49
+        doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 7, 'F'); //49
         doc.text(params.iniText, row += params.espIniText, "Vigilante de turno");
         doc.setFont(undefined, 'normal');
         doc.setTextColor(87, 80, 73);
@@ -274,7 +276,7 @@ export const exportVehiSalPdf = async (ar) => {
         doc.setTextColor(0, 0, 0);
         doc.setDrawColor(244, 244, 244);
         doc.setFillColor(244, 244, 244);
-        doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 10, 'F');
+        doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 7, 'F');
         doc.text(params.iniText, row += params.espIniText, "Número del contenedor");
         doc.setFont(undefined, 'normal');
         doc.setTextColor(87, 80, 73);
@@ -283,7 +285,7 @@ export const exportVehiSalPdf = async (ar) => {
         doc.setTextColor(0, 0, 0);
         doc.setDrawColor(244, 244, 244);
         doc.setFillColor(244, 244, 244);
-        doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 10, 'F');
+        doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 7, 'F');
         doc.text(params.iniText, row += params.espIniText, "Conductor registrado");
         doc.setFont(undefined, 'normal');
         doc.setTextColor(87, 80, 73);
@@ -292,7 +294,7 @@ export const exportVehiSalPdf = async (ar) => {
         doc.setTextColor(0, 0, 0);
         doc.setDrawColor(244, 244, 244);
         doc.setFillColor(244, 244, 244);
-        doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 10, 'F');
+        doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 7, 'F');
         doc.text(params.iniText, row += params.espIniText, "Cédula conductor");
         doc.setFont(undefined, 'normal');
         doc.setTextColor(87, 80, 73);
@@ -301,7 +303,7 @@ export const exportVehiSalPdf = async (ar) => {
         doc.setTextColor(0, 0, 0);
         doc.setDrawColor(244, 244, 244);
         doc.setFillColor(244, 244, 244);
-        doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 10, 'F');
+        doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 7, 'F');
         doc.text(params.iniText, row += params.espIniText, "Conductor no registrado");
         doc.setFont(undefined, 'normal');
         doc.setTextColor(87, 80, 73);
@@ -310,7 +312,7 @@ export const exportVehiSalPdf = async (ar) => {
         doc.setTextColor(0, 0, 0);
         doc.setDrawColor(244, 244, 244);
         doc.setFillColor(244, 244, 244);
-        doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 10, 'F');
+        doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 7, 'F');
         doc.text(params.iniText, row += params.espIniText, "Placa vehículo");
         doc.setFont(undefined, 'normal');
         doc.setTextColor(87, 80, 73);
@@ -319,7 +321,7 @@ export const exportVehiSalPdf = async (ar) => {
         doc.setTextColor(0, 0, 0);
         doc.setDrawColor(244, 244, 244);
         doc.setFillColor(244, 244, 244);
-        doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 10, 'F');
+        doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 7, 'F');
         doc.text(params.iniText, row += params.espIniText, "Nro. guía");
         doc.setFont(undefined, 'normal');
         doc.setTextColor(87, 80, 73);
@@ -328,7 +330,7 @@ export const exportVehiSalPdf = async (ar) => {
         doc.setTextColor(0, 0, 0);
         doc.setDrawColor(244, 244, 244);
         doc.setFillColor(244, 244, 244);
-        doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 10, 'F');
+        doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 7, 'F');
         doc.text(params.iniText, row += params.espIniText, "Departamento");
         doc.setFont(undefined, 'normal');
         doc.setTextColor(87, 80, 73);
@@ -337,7 +339,7 @@ export const exportVehiSalPdf = async (ar) => {
         doc.setTextColor(0, 0, 0);
         doc.setDrawColor(244, 244, 244);
         doc.setFillColor(244, 244, 244);
-        doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 10, 'F');
+        doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 7, 'F');
         doc.text(params.iniText, row += params.espIniText, "Tipo");
         doc.setFont(undefined, 'normal');
         doc.setTextColor(87, 80, 73);
@@ -397,10 +399,10 @@ export const exportVehiSalPdf = async (ar) => {
         row += 12;
         let column = params.iniText;
         for (let i = 0; i < arrImg.length; i++) {
-            doc.addImage(await getFile(arrImg[i]), "JPEG", column, row, 44, 44);
+            doc.addImage(await getFile(arrImg[i]), "JPEG", column, row, 40, 44);
             column += 47;
             if (column > 192) {
-                if ((row + (46)) > (params.finPag - 10)) {
+                /*if ((row + (46)) > (params.finPag - 10)) {
                     doc.addPage();
                     column = params.iniText;
                     row = 9.5;
@@ -416,21 +418,20 @@ export const exportVehiSalPdf = async (ar) => {
                     doc.setTextColor(0, 0, 128);
                     doc.text(10, params.finPag, `Página ${pagina}`);
                 }
-                else {
-                    column = params.iniText;
-                    row += 46;
-                }
+                else {*/
+                column = params.iniText;
+                row += 46;
+                //}
             }
         }
-        if(ar[i+1] != undefined){
+        if (ar[i + 1] != undefined) {
             doc.addPage();
-            pagina+=1;
+            pagina += 1;
         }
-        
     }
     // Save the PDF
     var d = new Date();
-    var title = "log_SalVehicular_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear() + `.pdf`;
+    var title = "SALIDA_VEHICULAR_" + d.getDate() + "" + (d.getMonth() + 1) + "" + d.getFullYear() + "_" + d.getHours() + "" + d.getMinutes() + "" + d.getSeconds() + `.pdf`;
     doc.save(title);
 };
 export const exportVehiSalCsv = (ar, start, end) => {
@@ -457,7 +458,7 @@ export const exportVehiSalCsv = (ar, start, end) => {
         rows.push(obj);
         //}
     }
-    generateFile(rows, "SalVehicular", "csv");
+    generateFile(rows, "SALIDA_VEHICULAR", "csv");
 };
 export const exportVehiSalXls = (ar, start, end) => {
     let rows = [];
@@ -483,7 +484,7 @@ export const exportVehiSalXls = (ar, start, end) => {
         rows.push(obj);
         //}
     }
-    generateFile(rows, "SalVehicular", "xls");
+    generateFile(rows, "SALIDA_VEHICULAR", "xls");
 };
 const generateFile = (ar, title, extension) => {
     //comprobamos compatibilidad
@@ -511,7 +512,7 @@ const generateFile = (ar, title, extension) => {
             save.href = event.target.result;
             save.target = '_blank';
             //aquí le damos nombre al archivo
-            save.download = "log_" + title + "_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear() + `.${extension}`;
+            save.download = title + "_" + d.getDate() + "" + (d.getMonth() + 1) + "" + d.getFullYear() + "_" + d.getHours() + "" + d.getMinutes() + "" + d.getSeconds() + `.${extension}`;
             try {
                 //creamos un evento click
                 clicEvent = new MouseEvent('click', {

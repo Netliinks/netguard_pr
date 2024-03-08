@@ -21,6 +21,10 @@ export const UIContentLayout = `
 
         <table class="datatable_content">
         <thead><tr>
+            <th><span data-type="nroContainer">
+            # CONTENEDOR <i class="fa-regular fa-filter"></i>
+            </span></th>
+            
             <th><span data-type="licensePlate">
             PLACA <i class="fa-regular fa-filter"></i>
             </span></th>

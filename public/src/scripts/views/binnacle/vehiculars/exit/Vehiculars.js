@@ -146,6 +146,7 @@ export class VehicularsExit {
                     let vehicular = paginatedItems[i]; // getting visit items
                     let row = document.createElement('TR');
                     row.innerHTML += `
+                    <td>${vehicular?.containerNro ?? ''}</td>
                     <td style="white-space: nowrap">${vehicular.licensePlate}</td>
                     <td>${vehicular.dni}</td>
                     <td>${vehicular.driver}</td>
