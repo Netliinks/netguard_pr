@@ -237,6 +237,7 @@ export const exportVehiIngressPdf = async (ar) => {
         doc.addImage("./public/src/assets/pictures/pcr.png", "PNG", 172, 15, 30, 10);
         doc.setDrawColor(209, 209, 209);
         doc.setFont(undefined, 'bold');
+        doc.setTextColor(0, 0, 0);
         doc.setFontSize(15);
         doc.line(params.iniMargen, 9.5, params.finMargen, 9.5); //horizontal 1
         doc.line(params.iniMargen, 9.5, params.iniMargen, 30); //vertical 1

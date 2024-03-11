@@ -17,6 +17,7 @@ export const exportVisitIndPdf = async (ar) => {
     };
     //Cabecera
     doc.addImage("./public/src/assets/pictures/report.png", "PNG", 20, 15, 30, 10);
+    doc.addImage("./public/src/assets/pictures/pcr.png", "PNG", 172, 15, 30, 10);
     doc.setDrawColor(209, 209, 209);
     doc.setFont(undefined, 'bold');
     doc.setFontSize(15);
@@ -46,16 +47,25 @@ export const exportVisitIndPdf = async (ar) => {
     doc.text(params.iniText, row += params.espIniText, "Fecha / Hora");
     doc.setFont(undefined, 'normal');
     doc.setTextColor(87, 80, 73);
-    doc.text(42, row, `${ar.creationDate} ${ar.creationTime}`);
+    doc.text(42, row, `${ar?.type == 'Guardia' ? ar?.visitState?.name == 'Emergente' ? `${ar?.ingressDate} ${ar?.ingressTime}` : `${ar?.egressDate} ${ar?.egressTime}` : ar?.visitState?.name == 'Pendiente' ? `${ar?.creationDate} ${ar?.creationTime}` : ar?.visitState?.name == 'En Curso' ? `${ar?.ingressDate} ${ar?.ingressTime}` : `${ar?.egressDate} ${ar?.egressTime}`}`);
     doc.setFont(undefined, 'bold');
     doc.setTextColor(0, 0, 0);
     doc.setDrawColor(244, 244, 244);
     doc.setFillColor(244, 244, 244);
     doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 10, 'F'); //49
-    doc.text(params.iniText, row += params.espIniText, "Vigilante de turno");
+    doc.text(params.iniText, row += params.espIniText, "Vigilante / Encargado");
     doc.setFont(undefined, 'normal');
     doc.setTextColor(87, 80, 73);
-    doc.text(50, row, `${ar.user?.username ?? ''}`);
+    doc.text(56, row, `${ar.type == "Guardia" ? ar?.manager?.name ?? '' : ar?.authorizer ?? ''}`);
+    doc.setFont(undefined, 'bold');
+    doc.setTextColor(0, 0, 0);
+    doc.setDrawColor(244, 244, 244);
+    doc.setFillColor(244, 244, 244);
+    doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 10, 'F'); //49
+    doc.text(params.iniText, row += params.espIniText, "Usuario");
+    doc.setFont(undefined, 'normal');
+    doc.setTextColor(87, 80, 73);
+    doc.text(34, row, `${ar.user?.username ?? ''}`);
     doc.setFont(undefined, 'bold');
     doc.setTextColor(0, 0, 0);
     doc.setDrawColor(244, 244, 244);
@@ -106,18 +116,39 @@ export const exportVisitIndPdf = async (ar) => {
     var paragraph = doc.splitTextToSize(ar?.reason?.split("\n").join(". ").trim() ?? '', (pdfInMM - lMargin - rMargin));
     doc.text(lMargin, row += 5, paragraph);
     let arrImg = [];
-    for (let i = 1; i <= 1; i++) {
+    for (let i = 1; i <= 8; i++) {
         if (i == 1 && ar.image != undefined) {
             arrImg.push(ar.image);
         }
+        else if (i == 2 && ar.image2 != undefined) {
+            arrImg.push(ar.image2);
+        }
+        else if (i == 3 && ar.image3 != undefined) {
+            arrImg.push(ar.image3);
+        }
+        else if (i == 4 && ar.image4 != undefined) {
+            arrImg.push(ar.image4);
+        }
+        else if (i == 5 && ar.image5 != undefined) {
+            arrImg.push(ar.image5);
+        }
+        else if (i == 6 && ar.image6 != undefined) {
+            arrImg.push(ar.image6);
+        }
+        else if (i == 7 && ar.image7 != undefined) {
+            arrImg.push(ar.image7);
+        }
+        else if (i == 8 && ar.image8 != undefined) {
+            arrImg.push(ar.image8);
+        }
     }
     row += 12;
-    let column = 90;//params.iniText;
+    let column = params.iniText;
     for (let i = 0; i < arrImg.length; i++) {
-        doc.addImage(await getFile(arrImg[i]), "JPEG", column, row, 44, 44);
+        doc.addImage(await getFile(arrImg[i]), "JPEG", column, row, 40, 44);
         column += 47;
         if (column > 192) {
-            if ((row + (46)) > (params.finPag - 10)) {
+            /*if ((row + (46)) > (params.finPag - 10)) {
                 doc.addPage();
                 column = params.iniText;
                 row = 9.5;
@@ -133,14 +164,14 @@ export const exportVisitIndPdf = async (ar) => {
                 doc.setTextColor(0, 0, 128);
                 doc.text(10, params.finPag, `Página ${pagina}`);
             }
-            else {
-                column = params.iniText;
-                row += 46;
-            }
+            else {*/
+            column = params.iniText;
+            row += 46;
+            //}
         }
     }
     // Save the PDF
     var d = new Date();
-    var title = "log_VisitInd_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear() + `.pdf`;
+    var title = "VISITA_" + `${ar?.dni?.trim() ?? ''}` + "_" + d.getDate() + "" + (d.getMonth() + 1) + "" + d.getFullYear() + "_" + d.getHours() + "" + d.getMinutes() + "" + d.getSeconds() + `.pdf`;
     doc.save(title);
 };
