@@ -266,7 +266,7 @@ export const exportVisitPdf = async (ar, start, end) => {
     }
     // Save the PDF
     var d = new Date();
-    var title = "VISITA_" + `${ar?.dni?.trim() ?? ''}` + "_" + d.getDate() + "" + (d.getMonth() + 1) + "" + d.getFullYear() + "_" + d.getHours() + "" + d.getMinutes() + "" + d.getSeconds() + `.pdf`;
+    var title = "VISITAS_" + `${ar?.dni?.trim() ?? ''}` + "_" + d.getDate() + "" + (d.getMonth() + 1) + "" + d.getFullYear() + "_" + d.getHours() + "" + d.getMinutes() + "" + d.getSeconds() + `.pdf`;
     doc.save(title);
 };
 export const exportVisitCsv = (ar, start, end) => {
