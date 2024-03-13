@@ -6,17 +6,17 @@ export const exportVehiSalIndPdf = async (ar) => {
     // @ts-ignore
     var doc = new jsPDF();
     let params = {
-        iniMargen: 15,
+        iniMargen: 5,
         finMargen: 205,
-        iniSomb: 16,
-        finSomb: 188,
-        iniText: 18,
+        iniSomb: 6,
+        finSomb: 198,
+        iniText: 8,
         finPag: 290,
         espEntBloq: 5,
         espIniText: 4
     };
     //Cabecera
-    doc.addImage("./public/src/assets/pictures/report.png", "PNG", 20, 15, 30, 10);
+    doc.addImage("./public/src/assets/pictures/report.png", "PNG", 8, 15, 30, 10);
     doc.addImage("./public/src/assets/pictures/pcr.png", "PNG", 172, 15, 30, 10);
     doc.setDrawColor(209, 209, 209);
     doc.setFont(undefined, 'bold');
@@ -25,7 +25,7 @@ export const exportVehiSalIndPdf = async (ar) => {
     doc.line(params.iniMargen, 9.5, params.iniMargen, 30); //vertical 1
     doc.line(params.finMargen, 9.5, params.finMargen, 30); //vertical 2
     doc.line(params.iniMargen, 30, params.finMargen, 30); //horizontal 2
-    doc.text(80, 22, `SALIDA DE CONTENEDOR`);
+    doc.text(72, 22, `SALIDA DE CONTENEDOR`);
     //Fin Cabecera
     let row = 32;
     //Cuerpo
@@ -47,7 +47,7 @@ export const exportVehiSalIndPdf = async (ar) => {
     doc.text(params.iniText, row += params.espIniText, "Fecha / Hora");
     doc.setFont(undefined, 'normal');
     doc.setTextColor(87, 80, 73);
-    doc.text(42, row, `${ar.egressDate} ${ar.egressTime}`);
+    doc.text(32, row, `${ar.egressDate} ${ar.egressTime}`);
     doc.setFont(undefined, 'bold');
     doc.setTextColor(0, 0, 0);
     doc.setDrawColor(244, 244, 244);
@@ -56,7 +56,7 @@ export const exportVehiSalIndPdf = async (ar) => {
     doc.text(params.iniText, row += params.espIniText, "Vigilante de turno");
     doc.setFont(undefined, 'normal');
     doc.setTextColor(87, 80, 73);
-    doc.text(50, row, `${ar.manager?.name ?? ''}`);
+    doc.text(40, row, `${ar.manager?.name ?? ''}`);
     doc.setFont(undefined, 'bold');
     doc.setTextColor(0, 0, 0);
     doc.setDrawColor(244, 244, 244);
@@ -65,7 +65,7 @@ export const exportVehiSalIndPdf = async (ar) => {
     doc.text(params.iniText, row += params.espIniText, "Número del contenedor");
     doc.setFont(undefined, 'normal');
     doc.setTextColor(87, 80, 73);
-    doc.text(60, row, `${ar?.containerNro ?? ''}`);
+    doc.text(50, row, `${ar?.containerNro ?? ''}`);
     doc.setFont(undefined, 'bold');
     doc.setTextColor(0, 0, 0);
     doc.setDrawColor(244, 244, 244);
@@ -74,7 +74,7 @@ export const exportVehiSalIndPdf = async (ar) => {
     doc.text(params.iniText, row += params.espIniText, "Conductor registrado");
     doc.setFont(undefined, 'normal');
     doc.setTextColor(87, 80, 73);
-    doc.text(57, row, `${ar?.driver ?? ''}`);
+    doc.text(47, row, `${ar?.driver ?? ''}`);
     doc.setFont(undefined, 'bold');
     doc.setTextColor(0, 0, 0);
     doc.setDrawColor(244, 244, 244);
@@ -83,7 +83,7 @@ export const exportVehiSalIndPdf = async (ar) => {
     doc.text(params.iniText, row += params.espIniText, "Cédula conductor");
     doc.setFont(undefined, 'normal');
     doc.setTextColor(87, 80, 73);
-    doc.text(50, row, `${ar?.dni ?? ''}`);
+    doc.text(40, row, `${ar?.dni ?? ''}`);
     doc.setFont(undefined, 'bold');
     doc.setTextColor(0, 0, 0);
     doc.setDrawColor(244, 244, 244);
@@ -92,7 +92,7 @@ export const exportVehiSalIndPdf = async (ar) => {
     doc.text(params.iniText, row += params.espIniText, "Conductor no registrado");
     doc.setFont(undefined, 'normal');
     doc.setTextColor(87, 80, 73);
-    doc.text(62, row, `${ar?.unregisteredDriver ?? ''}`);
+    doc.text(52, row, `${ar?.unregisteredDriver ?? ''}`);
     doc.setFont(undefined, 'bold');
     doc.setTextColor(0, 0, 0);
     doc.setDrawColor(244, 244, 244);
@@ -101,7 +101,7 @@ export const exportVehiSalIndPdf = async (ar) => {
     doc.text(params.iniText, row += params.espIniText, "Placa vehículo");
     doc.setFont(undefined, 'normal');
     doc.setTextColor(87, 80, 73);
-    doc.text(45, row, `${ar?.licensePlate ?? ''}`);
+    doc.text(35, row, `${ar?.licensePlate ?? ''}`);
     doc.setFont(undefined, 'bold');
     doc.setTextColor(0, 0, 0);
     doc.setDrawColor(244, 244, 244);
@@ -110,7 +110,7 @@ export const exportVehiSalIndPdf = async (ar) => {
     doc.text(params.iniText, row += params.espIniText, "Nro. guía");
     doc.setFont(undefined, 'normal');
     doc.setTextColor(87, 80, 73);
-    doc.text(35, row, `${ar?.noGuide ?? ''}`);
+    doc.text(25, row, `${ar?.noGuide ?? ''}`);
     doc.setFont(undefined, 'bold');
     doc.setTextColor(0, 0, 0);
     doc.setDrawColor(244, 244, 244);
@@ -119,7 +119,7 @@ export const exportVehiSalIndPdf = async (ar) => {
     doc.text(params.iniText, row += params.espIniText, "Departamento");
     doc.setFont(undefined, 'normal');
     doc.setTextColor(87, 80, 73);
-    doc.text(45, row, `${ar?.department?.name ?? ''}`);
+    doc.text(35, row, `${ar?.department?.name ?? ''}`);
     doc.setFont(undefined, 'bold');
     doc.setTextColor(0, 0, 0);
     doc.setDrawColor(244, 244, 244);
@@ -128,7 +128,7 @@ export const exportVehiSalIndPdf = async (ar) => {
     doc.text(params.iniText, row += params.espIniText, "Tipo");
     doc.setFont(undefined, 'normal');
     doc.setTextColor(87, 80, 73);
-    doc.text(28, row, `${ar?.type ?? ''}`);
+    doc.text(18, row, `${ar?.type ?? ''}`);
     doc.setFont(undefined, 'bold');
     doc.setTextColor(0, 0, 0);
     doc.setDrawColor(244, 244, 244);
@@ -182,7 +182,7 @@ export const exportVehiSalIndPdf = async (ar) => {
         }
     }
     row += 12;
-    let column = params.iniText;
+    let column = params.iniText + 6;
     for (let i = 0; i < arrImg.length; i++) {
         doc.addImage(await getFile(arrImg[i]), "JPEG", column, row, 40, 44);
         column += 47;
@@ -204,7 +204,7 @@ export const exportVehiSalIndPdf = async (ar) => {
                 doc.text(10, params.finPag, `Página ${pagina}`);
             }
             else {*/
-            column = params.iniText;
+            column = params.iniText + 6;
             row += 46;
             //}
         }
@@ -223,17 +223,17 @@ export const exportVehiSalPdf = async (ar) => {
     for (let i = 0; i < ar.length; i++) {
         let vehicular = ar[i];
         let params = {
-            iniMargen: 15,
+            iniMargen: 5,
             finMargen: 205,
-            iniSomb: 16,
-            finSomb: 188,
-            iniText: 18,
+            iniSomb: 6,
+            finSomb: 198,
+            iniText: 8,
             finPag: 290,
             espEntBloq: 5,
             espIniText: 4
         };
         //Cabecera
-        doc.addImage("./public/src/assets/pictures/report.png", "PNG", 20, 15, 30, 10);
+        doc.addImage("./public/src/assets/pictures/report.png", "PNG", 8, 15, 30, 10);
         doc.addImage("./public/src/assets/pictures/pcr.png", "PNG", 172, 15, 30, 10);
         doc.setDrawColor(209, 209, 209);
         doc.setFont(undefined, 'bold');
@@ -243,7 +243,7 @@ export const exportVehiSalPdf = async (ar) => {
         doc.line(params.iniMargen, 9.5, params.iniMargen, 30); //vertical 1
         doc.line(params.finMargen, 9.5, params.finMargen, 30); //vertical 2
         doc.line(params.iniMargen, 30, params.finMargen, 30); //horizontal 2
-        doc.text(80, 22, `SALIDA DE CONTENEDOR`);
+        doc.text(72, 22, `SALIDA DE CONTENEDOR`);
         //Fin Cabecera
         let row = 32;
         //Cuerpo
@@ -255,6 +255,7 @@ export const exportVehiSalPdf = async (ar) => {
         doc.setFont(undefined, 'bold');
         doc.setTextColor(0, 0, 128);
         doc.text(10, params.finPag, `Página ${pagina}`);
+        //doc.setFontSize(10);
         doc.setTextColor(0, 0, 0);
         doc.setFont(undefined, 'bold');
         doc.setDrawColor(244, 244, 244);
@@ -263,7 +264,7 @@ export const exportVehiSalPdf = async (ar) => {
         doc.text(params.iniText, row += params.espIniText, "Fecha / Hora");
         doc.setFont(undefined, 'normal');
         doc.setTextColor(87, 80, 73);
-        doc.text(42, row, `${vehicular.egressDate} ${vehicular.egressTime}`);
+        doc.text(32, row, `${vehicular.egressDate} ${vehicular.egressTime}`);
         doc.setFont(undefined, 'bold');
         doc.setTextColor(0, 0, 0);
         doc.setDrawColor(244, 244, 244);
@@ -272,7 +273,7 @@ export const exportVehiSalPdf = async (ar) => {
         doc.text(params.iniText, row += params.espIniText, "Vigilante de turno");
         doc.setFont(undefined, 'normal');
         doc.setTextColor(87, 80, 73);
-        doc.text(50, row, `${vehicular.manager?.name ?? ''}`);
+        doc.text(40, row, `${vehicular.manager?.name ?? ''}`);
         doc.setFont(undefined, 'bold');
         doc.setTextColor(0, 0, 0);
         doc.setDrawColor(244, 244, 244);
@@ -281,7 +282,7 @@ export const exportVehiSalPdf = async (ar) => {
         doc.text(params.iniText, row += params.espIniText, "Número del contenedor");
         doc.setFont(undefined, 'normal');
         doc.setTextColor(87, 80, 73);
-        doc.text(60, row, `${vehicular?.containerNro ?? ''}`);
+        doc.text(50, row, `${vehicular?.containerNro ?? ''}`);
         doc.setFont(undefined, 'bold');
         doc.setTextColor(0, 0, 0);
         doc.setDrawColor(244, 244, 244);
@@ -290,7 +291,7 @@ export const exportVehiSalPdf = async (ar) => {
         doc.text(params.iniText, row += params.espIniText, "Conductor registrado");
         doc.setFont(undefined, 'normal');
         doc.setTextColor(87, 80, 73);
-        doc.text(57, row, `${vehicular?.driver ?? ''}`);
+        doc.text(47, row, `${vehicular?.driver ?? ''}`);
         doc.setFont(undefined, 'bold');
         doc.setTextColor(0, 0, 0);
         doc.setDrawColor(244, 244, 244);
@@ -299,7 +300,7 @@ export const exportVehiSalPdf = async (ar) => {
         doc.text(params.iniText, row += params.espIniText, "Cédula conductor");
         doc.setFont(undefined, 'normal');
         doc.setTextColor(87, 80, 73);
-        doc.text(50, row, `${vehicular?.dni ?? ''}`);
+        doc.text(40, row, `${vehicular?.dni ?? ''}`);
         doc.setFont(undefined, 'bold');
         doc.setTextColor(0, 0, 0);
         doc.setDrawColor(244, 244, 244);
@@ -308,7 +309,7 @@ export const exportVehiSalPdf = async (ar) => {
         doc.text(params.iniText, row += params.espIniText, "Conductor no registrado");
         doc.setFont(undefined, 'normal');
         doc.setTextColor(87, 80, 73);
-        doc.text(62, row, `${vehicular?.unregisteredDriver ?? ''}`);
+        doc.text(52, row, `${vehicular?.unregisteredDriver ?? ''}`);
         doc.setFont(undefined, 'bold');
         doc.setTextColor(0, 0, 0);
         doc.setDrawColor(244, 244, 244);
@@ -317,7 +318,7 @@ export const exportVehiSalPdf = async (ar) => {
         doc.text(params.iniText, row += params.espIniText, "Placa vehículo");
         doc.setFont(undefined, 'normal');
         doc.setTextColor(87, 80, 73);
-        doc.text(45, row, `${vehicular?.licensePlate ?? ''}`);
+        doc.text(35, row, `${vehicular?.licensePlate ?? ''}`);
         doc.setFont(undefined, 'bold');
         doc.setTextColor(0, 0, 0);
         doc.setDrawColor(244, 244, 244);
@@ -326,7 +327,7 @@ export const exportVehiSalPdf = async (ar) => {
         doc.text(params.iniText, row += params.espIniText, "Nro. guía");
         doc.setFont(undefined, 'normal');
         doc.setTextColor(87, 80, 73);
-        doc.text(35, row, `${vehicular?.noGuide ?? ''}`);
+        doc.text(25, row, `${vehicular?.noGuide ?? ''}`);
         doc.setFont(undefined, 'bold');
         doc.setTextColor(0, 0, 0);
         doc.setDrawColor(244, 244, 244);
@@ -335,7 +336,7 @@ export const exportVehiSalPdf = async (ar) => {
         doc.text(params.iniText, row += params.espIniText, "Departamento");
         doc.setFont(undefined, 'normal');
         doc.setTextColor(87, 80, 73);
-        doc.text(45, row, `${vehicular?.department?.name ?? ''}`);
+        doc.text(35, row, `${vehicular?.department?.name ?? ''}`);
         doc.setFont(undefined, 'bold');
         doc.setTextColor(0, 0, 0);
         doc.setDrawColor(244, 244, 244);
@@ -344,7 +345,7 @@ export const exportVehiSalPdf = async (ar) => {
         doc.text(params.iniText, row += params.espIniText, "Tipo");
         doc.setFont(undefined, 'normal');
         doc.setTextColor(87, 80, 73);
-        doc.text(28, row, `${vehicular?.type ?? ''}`);
+        doc.text(18, row, `${vehicular?.type ?? ''}`);
         doc.setFont(undefined, 'bold');
         doc.setTextColor(0, 0, 0);
         doc.setDrawColor(244, 244, 244);
@@ -398,7 +399,7 @@ export const exportVehiSalPdf = async (ar) => {
             }
         }
         row += 12;
-        let column = params.iniText;
+        let column = params.iniText + 6;
         for (let i = 0; i < arrImg.length; i++) {
             doc.addImage(await getFile(arrImg[i]), "JPEG", column, row, 40, 44);
             column += 47;
@@ -420,7 +421,7 @@ export const exportVehiSalPdf = async (ar) => {
                     doc.text(10, params.finPag, `Página ${pagina}`);
                 }
                 else {*/
-                column = params.iniText;
+                column = params.iniText + 6;
                 row += 46;
                 //}
             }

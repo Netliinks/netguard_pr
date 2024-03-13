@@ -94,17 +94,17 @@ export const exportVisitPdf = async (ar, start, end) => {
     for (let i = 0; i < ar.length; i++) {
         let visit = ar[i];
         let params = {
-            iniMargen: 15,
+            iniMargen: 5,
             finMargen: 205,
-            iniSomb: 16,
-            finSomb: 188,
-            iniText: 18,
+            iniSomb: 6,
+            finSomb: 198,
+            iniText: 8,
             finPag: 290,
             espEntBloq: 7,
-            espIniText: 6
+            espIniText: 4
         };
         //Cabecera
-        doc.addImage("./public/src/assets/pictures/report.png", "PNG", 20, 15, 30, 10);
+        doc.addImage("./public/src/assets/pictures/report.png", "PNG", 8, 15, 30, 10);
         doc.addImage("./public/src/assets/pictures/pcr.png", "PNG", 172, 15, 30, 10);
         doc.setDrawColor(209, 209, 209);
         doc.setFont(undefined, 'bold');
@@ -114,8 +114,8 @@ export const exportVisitPdf = async (ar, start, end) => {
         doc.line(params.iniMargen, 9.5, params.iniMargen, 30); //vertical 1
         doc.line(params.finMargen, 9.5, params.finMargen, 30); //vertical 2
         doc.line(params.iniMargen, 30, params.finMargen, 30); //horizontal 2
-        doc.text(87, 19, `INGRESO Y SALIDA`);
-        doc.text(95, 24, `EMPLEADOS`);
+        doc.text(81, 19, `INGRESO Y SALIDA`);
+        doc.text(89, 24, `EMPLEADOS`);
         //Fin Cabecera
         let row = 35;
         //Cuerpo
@@ -136,7 +136,7 @@ export const exportVisitPdf = async (ar, start, end) => {
         doc.text(params.iniText, row += params.espIniText, "Fecha / Hora");
         doc.setFont(undefined, 'normal');
         doc.setTextColor(87, 80, 73);
-        doc.text(42, row, `${visit?.type == 'Guardia' ? visit?.visitState?.name == 'Emergente' ? `${visit?.ingressDate} ${visit?.ingressTime}` : `${visit?.egressDate} ${visit?.egressTime}` : visit?.visitState?.name == 'Pendiente' ? `${visit?.creationDate} ${visit?.creationTime}` : visit?.visitState?.name == 'En Curso' ? `${visit?.ingressDate} ${visit?.ingressTime}` : `${visit?.egressDate} ${visit?.egressTime}`}`);
+        doc.text(32, row, `${visit?.type == 'Guardia' ? visit?.visitState?.name == 'Emergente' ? `${visit?.ingressDate} ${visit?.ingressTime}` : `${visit?.egressDate} ${visit?.egressTime}` : visit?.visitState?.name == 'Pendiente' ? `${visit?.creationDate} ${visit?.creationTime}` : visit?.visitState?.name == 'En Curso' ? `${visit?.ingressDate} ${visit?.ingressTime}` : `${visit?.egressDate} ${visit?.egressTime}`}`);
         doc.setFont(undefined, 'bold');
         doc.setTextColor(0, 0, 0);
         doc.setDrawColor(244, 244, 244);
@@ -145,7 +145,7 @@ export const exportVisitPdf = async (ar, start, end) => {
         doc.text(params.iniText, row += params.espIniText, "Vigilante / Encargado");
         doc.setFont(undefined, 'normal');
         doc.setTextColor(87, 80, 73);
-        doc.text(56, row, `${visit.type == "Guardia" ? visit?.manager?.name ?? '' : visit?.authorizer ?? ''}`);
+        doc.text(46, row, `${visit.type == "Guardia" ? visit?.manager?.name ?? '' : visit?.authorizer ?? ''}`);
         doc.setFont(undefined, 'bold');
         doc.setTextColor(0, 0, 0);
         doc.setDrawColor(244, 244, 244);
@@ -154,7 +154,7 @@ export const exportVisitPdf = async (ar, start, end) => {
         doc.text(params.iniText, row += params.espIniText, "Usuario");
         doc.setFont(undefined, 'normal');
         doc.setTextColor(87, 80, 73);
-        doc.text(34, row, `${visit.user?.username ?? ''}`);
+        doc.text(24, row, `${visit.user?.username ?? ''}`);
         doc.setFont(undefined, 'bold');
         doc.setTextColor(0, 0, 0);
         doc.setDrawColor(244, 244, 244);
@@ -163,7 +163,7 @@ export const exportVisitPdf = async (ar, start, end) => {
         doc.text(params.iniText, row += params.espIniText, "Estado");
         doc.setFont(undefined, 'normal');
         doc.setTextColor(87, 80, 73);
-        doc.text(33, row, `${visit?.type == 'Guardia' ? visit?.visitState?.name == 'Emergente' ? 'Ingreso' : 'Salida' : visit?.visitState?.name ?? ''}`);
+        doc.text(23, row, `${visit?.type == 'Guardia' ? visit?.visitState?.name == 'Emergente' ? 'Ingreso' : 'Salida' : visit?.visitState?.name ?? ''}`);
         doc.setFont(undefined, 'bold');
         doc.setTextColor(0, 0, 0);
         doc.setDrawColor(244, 244, 244);
@@ -172,7 +172,7 @@ export const exportVisitPdf = async (ar, start, end) => {
         doc.text(params.iniText, row += params.espIniText, "Empleado");
         doc.setFont(undefined, 'normal');
         doc.setTextColor(87, 80, 73);
-        doc.text(38, row, `${visit?.firstName ?? ''} ${visit?.firstLastName ?? ''} ${visit?.secondLastName ?? ''}`);
+        doc.text(28, row, `${visit?.firstName ?? ''} ${visit?.firstLastName ?? ''} ${visit?.secondLastName ?? ''}`);
         doc.setFont(undefined, 'bold');
         doc.setTextColor(0, 0, 0);
         doc.setDrawColor(244, 244, 244);
@@ -181,7 +181,7 @@ export const exportVisitPdf = async (ar, start, end) => {
         doc.text(params.iniText, row += params.espIniText, "Cédula");
         doc.setFont(undefined, 'normal');
         doc.setTextColor(87, 80, 73);
-        doc.text(33, row, `${visit?.dni ?? ''}`);
+        doc.text(23, row, `${visit?.dni ?? ''}`);
         doc.setFont(undefined, 'bold');
         doc.setTextColor(0, 0, 0);
         doc.setDrawColor(244, 244, 244);
@@ -190,7 +190,7 @@ export const exportVisitPdf = async (ar, start, end) => {
         doc.text(params.iniText, row += params.espIniText, "Tipo");
         doc.setFont(undefined, 'normal');
         doc.setTextColor(87, 80, 73);
-        doc.text(28, row, `${visit?.type ?? ''}`);
+        doc.text(18, row, `${visit?.type ?? ''}`);
         doc.setFont(undefined, 'bold');
         doc.setTextColor(0, 0, 0);
         doc.setDrawColor(244, 244, 244);
@@ -232,7 +232,7 @@ export const exportVisitPdf = async (ar, start, end) => {
             }
         }
         row += 12;
-        let column = params.iniText;
+        let column = params.iniText + 6;
         for (let i = 0; i < arrImg.length; i++) {
             doc.addImage(await getFile(arrImg[i]), "JPEG", column, row, 40, 44);
             column += 47;
@@ -254,7 +254,7 @@ export const exportVisitPdf = async (ar, start, end) => {
                     doc.text(10, params.finPag, `Página ${pagina}`);
                 }
                 else {*/
-                column = params.iniText;
+                column = params.iniText + 6;
                 row += 46;
                 //}
             }
