@@ -266,31 +266,31 @@ export class Customers {
             </div>
             <br>
             <div class="material_input">
-              <input type="email"
+              <input type="email" class="input_filled"
                   id="entity-email1"
-                  autocomplete="none">
-              <label for="entity-email1">Email 1</label>
+                  autocomplete="none" placeholder="email1, email2, ...">
+              <label for="entity-email1">Emails Contenedores</label>
             </div>
 
             <div class="material_input">
-              <input type="email"
+              <input type="email" class="input_filled"
                   id="entity-email2"
-                  autocomplete="none">
-              <label for="entity-email2">Email 2</label>
+                  autocomplete="none" placeholder="email1, email2, ...">
+              <label for="entity-email2">Emails Vehículares</label>
             </div>
 
             <div class="material_input">
-              <input type="email"
+              <input type="email" class="input_filled"
                   id="entity-email3"
-                  autocomplete="none">
-              <label for="entity-email3">Email 3</label>
+                  autocomplete="none" placeholder="email1, email2, ...">
+              <label for="entity-email3">Emails Visitas</label>
             </div>
 
             <div class="material_input">
-              <input type="email"
+              <input type="email" class="input_filled"
                   id="entity-email4"
-                  autocomplete="none">
-              <label for="entity-email4">Email 4</label>
+                  autocomplete="none" placeholder="email1, email2, ...">
+              <label for="entity-email4">Emails 4</label>
             </div>
 
           </div>
@@ -405,29 +405,29 @@ export class Customers {
             <div class="material_input">
               <input type="email"
                   id="entity-email1"
-                  autocomplete="none" class="input_filled" value="${data?.email1 ?? ''}">
-              <label for="entity-email1">Email 1</label>
+                  autocomplete="none" class="input_filled" value="${data?.email1 ?? ''}" placeholder="email1, email2, ...">
+              <label for="entity-email1">Emails Contenedores</label>
             </div>
 
             <div class="material_input">
               <input type="email"
                   id="entity-email2"
-                  autocomplete="none" class="input_filled" value="${data?.email2 ?? ''}">
-              <label for="entity-email2">Email 2</label>
+                  autocomplete="none" class="input_filled" value="${data?.email2 ?? ''}" placeholder="email1, email2, ...">
+              <label for="entity-email2">Emails Vehiculares</label>
             </div>
 
             <div class="material_input">
               <input type="email"
                   id="entity-email3"
-                  autocomplete="none" class="input_filled" value="${data?.email3 ?? ''}">
-              <label for="entity-email3">Email 3</label>
+                  autocomplete="none" class="input_filled" value="${data?.email3 ?? ''}" placeholder="email1, email2, ...">
+              <label for="entity-email3">Emails Visitas</label>
             </div>
 
             <div class="material_input">
               <input type="email"
                   id="entity-email4"
-                  autocomplete="none" class="input_filled" value="${data?.email4 ?? ''}">
-              <label for="entity-email4">Email 4</label>
+                  autocomplete="none" class="input_filled" value="${data?.email4 ?? ''}" placeholder="email1, email2, ...">
+              <label for="entity-email4">Emails 4</label>
             </div>
 
           </div>
