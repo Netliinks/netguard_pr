@@ -8,7 +8,7 @@ import { getEntityData, getFile, getFilterEntityData, getFilterEntityCount } fro
 import { CloseDialog, renderRightSidebar, filterDataByHeaderType, inputObserver, pageNumbers, fillBtnPagination } from "../../../tools.js";
 import { UIContentLayout, UIRightSidebar } from "./Layout.js";
 import { UITableSkeletonTemplate } from "./Template.js";
-import { exportReportCsv, exportReportPdf, exportReportXls } from "../../../exportFiles/reports.js";
+import { exportReportCsv, exportReportPdf, exportReportXls, exportReportIndPdf } from "../../../exportFiles/reports.js";
 // Local configs
 const tableRows = Config.tableRows;
 let currentPage = Config.currentPage;
@@ -133,6 +133,10 @@ export class Notes {
                     <td>${note.content}</td>
                     <td id="table-date">${noteCreationDate}</td>
                     <td>
+                        <button class="button" id="print-entity" data-entityId="${note.id}">
+                            <i class="fa-solid fa-file-pdf"></i>
+                        </button>
+
                         <button class="button" id="entity-details" data-entityId="${note.id}">
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </button>
@@ -146,6 +150,17 @@ export class Notes {
                 }
             }
             this.previewNote();
+            this.print();
+        };
+        this.print = () => {
+            const print = document.querySelectorAll('#print-entity');
+            print.forEach((print) => {
+                const entityId = print.dataset.entityid;
+                print.addEventListener('click', async () => {
+                    const data = await getEntityData('Note', entityId);
+                    exportReportIndPdf(data);
+                });
+            });
         };
         this.searchNotes = async (tableBody /*, notes: any*/) => {
             const search = document.getElementById('search');

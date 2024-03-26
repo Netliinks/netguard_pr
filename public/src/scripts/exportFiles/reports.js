@@ -1,4 +1,128 @@
-//import {generateFile } from "../tools";
+import { getFile } from "../endpoints.js";
+export const exportReportIndPdf = async (ar) => {
+    // @ts-ignore
+    window.jsPDF = window.jspdf.jsPDF;
+    // @ts-ignore
+    var doc = new jsPDF();
+    let params = {
+        iniMargen: 5,
+        finMargen: 205,
+        iniSomb: 6,
+        finSomb: 198,
+        iniText: 8,
+        finPag: 290,
+        espEntBloq: 5,
+        espIniText: 4
+    };
+    let noteCreationDateAndTime = ar.creationDate.split('T');
+    let noteCreationDate = noteCreationDateAndTime[0];
+    let noteCreationTime = noteCreationDateAndTime[1];
+    //Cabecera
+    doc.addImage("./public/src/assets/pictures/report.png", "PNG", 8, 15, 30, 10);
+    doc.addImage("./public/src/assets/pictures/pcr.png", "PNG", 172, 15, 30, 10);
+    doc.setDrawColor(209, 209, 209);
+    doc.setFont(undefined, 'bold');
+    doc.setFontSize(15);
+    doc.line(params.iniMargen, 9.5, params.finMargen, 9.5); //horizontal 1
+    doc.line(params.iniMargen, 9.5, params.iniMargen, 30); //vertical 1
+    doc.line(params.finMargen, 9.5, params.finMargen, 30); //vertical 2
+    doc.line(params.iniMargen, 30, params.finMargen, 30); //horizontal 2
+    doc.text(95, 22, `REPORTE`);
+    //Fin Cabecera
+    let row = 32;
+    //Cuerpo
+    doc.line(params.iniMargen, row, params.finMargen, row); //horizontal 1
+    doc.line(params.iniMargen, row, params.iniMargen, params.finPag - 6); //vertical 1
+    doc.line(params.finMargen, row, params.finMargen, params.finPag - 6); //vertical 2
+    doc.line(params.iniMargen, params.finPag - 6, params.finMargen, params.finPag - 6); //horizontal 2
+    doc.setFontSize(10);
+    let pagina = 1;
+    doc.setFont(undefined, 'bold');
+    doc.setTextColor(0, 0, 128);
+    doc.text(10, params.finPag, `Página ${pagina}`);
+    //doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont(undefined, 'bold');
+    doc.setDrawColor(244, 244, 244);
+    doc.setFillColor(244, 244, 244);
+    doc.rect(params.iniSomb, row += 1, params.finSomb, 7, 'F');
+    doc.text(params.iniText, row += params.espIniText, "Fecha / Hora");
+    doc.setFont(undefined, 'normal');
+    doc.setTextColor(87, 80, 73);
+    doc.text(32, row, `${noteCreationDate} ${noteCreationTime}`);
+    doc.setFont(undefined, 'bold');
+    doc.setTextColor(0, 0, 0);
+    doc.setDrawColor(244, 244, 244);
+    doc.setFillColor(244, 244, 244);
+    doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 7, 'F');
+    doc.text(params.iniText, row += params.espIniText, "Usuario");
+    doc.setFont(undefined, 'normal');
+    doc.setTextColor(87, 80, 73);
+    doc.text(25, row, `${ar?.user?.firstName ?? ''} ${ar?.user?.lastName ?? ''}`);
+    doc.setFont(undefined, 'bold');
+    doc.setTextColor(0, 0, 0);
+    doc.setDrawColor(244, 244, 244);
+    doc.setFillColor(244, 244, 244);
+    doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 20, 'F');
+    doc.text(params.iniText, row += params.espIniText, "Título");
+    doc.setFont(undefined, 'normal');
+    doc.setTextColor(87, 80, 73);
+    var lMargin = params.iniText; //left margin in mm
+    var rMargin = 1; //right margin in mm
+    var pdfInMM = params.finMargen; //210;  // width of A4 in mm
+    var paragraph = doc.splitTextToSize(ar?.title?.split("\n").join(". ").replace(/[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2580-\u27BF]|\uD83E[\uDD10-\uDDFF]/g, '').trim() ?? '', (pdfInMM - lMargin - rMargin));
+    doc.text(lMargin, row += 5, paragraph);
+    row += 8
+    doc.setFont(undefined, 'bold');
+    doc.setTextColor(0, 0, 0);
+    doc.setDrawColor(244, 244, 244);
+    doc.setFillColor(244, 244, 244);
+    doc.rect(params.iniSomb, row += params.espEntBloq, params.finSomb, 50, 'F');
+    doc.text(params.iniText, row += params.espIniText, "Contenido");
+    doc.setFont(undefined, 'normal');
+    doc.setTextColor(87, 80, 73);
+    paragraph = doc.splitTextToSize(ar?.content?.split("\n").join(". ").replace(/[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2580-\u27BF]|\uD83E[\uDD10-\uDDFF]/g, '').trim() ?? '', (pdfInMM - lMargin - rMargin));
+    doc.text(lMargin, row += 5, paragraph);
+    row += 32
+    let arrImg = [];
+    for (let i = 1; i <= 1; i++) {
+        if (i == 1 && ar.attachment != undefined) {
+            arrImg.push(ar.attachment);
+        }
+    }
+    row += 12;
+    let column = params.iniText + 6;
+    for (let i = 0; i < arrImg.length; i++) {
+        doc.addImage(await getFile(arrImg[i]), "JPEG", column, row, 40, 44);
+        column += 47;
+        if (column > 192) {
+            /*if ((row + (46)) > (params.finPag - 10)) {
+                doc.addPage();
+                column = params.iniText;
+                row = 9.5;
+                doc.setDrawColor(209, 209, 209);
+                doc.line(params.iniMargen, row, params.finMargen, row); //horizontal 1
+                doc.line(params.iniMargen, row, params.iniMargen, params.finPag - 8); //vertical 1
+                doc.line(params.finMargen, row, params.finMargen, params.finPag - 8); //vertical 2
+                doc.line(params.iniMargen, params.finPag - 8, params.finMargen, params.finPag - 8); //horizontal 2
+                row += 2;
+                pagina += 1;
+                doc.setFont(undefined, 'bold');
+                doc.setFontSize(10)
+                doc.setTextColor(0, 0, 128);
+                doc.text(10, params.finPag, `Página ${pagina}`);
+            }
+            else {*/
+            column = params.iniText + 6;
+            row += 46;
+            //}
+        }
+    }
+    // Save the PDF
+    var d = new Date();
+    var title = "REPORTE_" + d.getDate() + "" + (d.getMonth() + 1) + "" + d.getFullYear() + "_" + d.getHours() + "" + d.getMinutes() + "" + d.getSeconds() + `.pdf`;
+    doc.save(title);
+};
 export const exportReportPdf = (ar, start, end) => {
     // @ts-ignore
     window.jsPDF = window.jspdf.jsPDF;
