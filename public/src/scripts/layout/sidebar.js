@@ -300,10 +300,10 @@ renders() {
     });
     // render AssistControl
     document.getElementById('render-vehicularsIng')?.addEventListener('click', () => {
-      new VehicularsIng().render(Config.offset, Config.currentPage, "");
+      new VehicularsIng().render(Config.offset, Config.currentPage, "", null);
     });
     document.getElementById('render-vehicularsExit')?.addEventListener('click', () => {
-      new VehicularsExit().render(Config.offset, Config.currentPage, "");
+      new VehicularsExit().render(Config.offset, Config.currentPage, "", null);
     });
     // render Deparments
     document.getElementById('render-deparments')?.addEventListener('click', () => {

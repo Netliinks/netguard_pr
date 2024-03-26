@@ -10,6 +10,9 @@ export const UIContentLayout = `
 
             <div class="datatable_tools" id="datatable-tools">
                 <input type="search" class="search_input" placeholder="Buscar" id="search">
+                <select name="cmbDepartments" id="cmbDepartments">
+                    <option value="${null}">Todos</option>
+                </select>
                 <button
                     class="datatable_button add_user"
                     id="btnSearch">
@@ -35,6 +38,10 @@ export const UIContentLayout = `
 
             <th><span data-type="name">
             Conductor <i class="fa-regular fa-filter"></i>
+            </span></th>
+
+            <th><span data-type="department">
+            Departamento <i class="fa-regular fa-filter"></i>
             </span></th>
 
             <th class="thead_centered" width=100><span data-type="start">
