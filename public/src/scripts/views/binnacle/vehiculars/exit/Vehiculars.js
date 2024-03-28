@@ -15,6 +15,8 @@ let currentPage = Config.currentPage;
 const pageName = 'Salida Vehicular';
 const customerId = localStorage.getItem('customer_id');
 let infoPage = {
+    table: "Vehicular",
+    counter: 10,
     count: 0,
     offset: Config.offset,
     currentPage: currentPage,
@@ -24,10 +26,12 @@ let infoPage = {
     }
 };
 let dataPage;
+let raw;
 const GetVehiculars = async () => {
     //const vehicularRaw = await getEntitiesData('Vehicular');
     //const vehicular = vehicularRaw.filter((data) => data.customer?.id === `${customerId}`);
-    let raw;
+    infoPage.counter = 10;
+    clearTimeout(Config.timeOut);
     if(infoPage.moreSearch.department != null && infoPage.moreSearch.department != 'null'){
         raw = JSON.stringify({
             "filter": {
@@ -199,6 +203,30 @@ export class VehicularsExit {
             viewTitle.innerText = pageName;
             tableBody.innerHTML = '.Cargando...';
             let assistControlArray = await GetVehiculars();
+            if(infoPage.currentPage == 1){
+                const change = async () => {
+                    clearTimeout(Config.timeOut);
+                    if(infoPage.counter == Config.timeReolad){
+                        const newRegisters = await getFilterEntityCount(infoPage.table, raw);
+                        //console.log(infoPage.count);
+                        //console.log(newRegisters);
+                        if(newRegisters > infoPage.count){
+                            console.log("updates detected")
+                            new VehicularsExit().render(infoPage.offset, infoPage.currentPage, infoPage.search, infoPage.moreSearch.department);
+                        }else{
+                            console.log("no updates")
+                            Config.timeOut = setTimeout(change, infoPage.counter);
+                        }
+                        
+                    }else if(infoPage.counter == 10){
+                        infoPage.counter = Config.timeReolad;
+                        Config.timeOut = setTimeout(change, infoPage.counter);
+                    }
+                }
+                Config.timeOut = setTimeout(change, infoPage.counter);
+            }else{
+                clearTimeout(Config.timeOut);
+            }
             tableBody.innerHTML = UITableSkeletonTemplate.repeat(tableRows);
             // Exec functions
             this.load(tableBody, currentPage, assistControlArray);

@@ -211,8 +211,8 @@ export class VehicularsIng {
                     clearTimeout(Config.timeOut);
                     if(infoPage.counter == Config.timeReolad){
                         const newRegisters = await getFilterEntityCount(infoPage.table, raw);
-                        console.log(infoPage.count);
-                        console.log(newRegisters);
+                        //console.log(infoPage.count);
+                        //console.log(newRegisters);
                         if(newRegisters > infoPage.count){
                             console.log("updates detected")
                             new VehicularsIng().render(infoPage.offset, infoPage.currentPage, infoPage.search, infoPage.moreSearch.department);
@@ -225,14 +225,11 @@ export class VehicularsIng {
                         infoPage.counter = Config.timeReolad;
                         Config.timeOut = setTimeout(change, infoPage.counter);
                     }
-                    
-                    
                 }
                 Config.timeOut = setTimeout(change, infoPage.counter);
             }else{
                 clearTimeout(Config.timeOut);
             }
-            
             tableBody.innerHTML = UITableSkeletonTemplate.repeat(tableRows);
             // Exec functions
             this.load(tableBody, currentPage, assistControlArray);

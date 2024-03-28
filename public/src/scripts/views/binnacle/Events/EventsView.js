@@ -11,12 +11,15 @@ let currentPage = Config.currentPage;
 const pageName = 'Eventos';
 const customerId = localStorage.getItem('customer_id');
 let infoPage = {
+    table: "Notification",
+    counter: 10,
     count: 0,
     offset: Config.offset,
     currentPage: currentPage,
     search: ""
 };
 let dataPage;
+let raw;
 const getEvents = async () => {
     /*const eventsRaw = await getEntitiesData('Notification');
     const events = eventsRaw.filter((data) => data.customer?.id === `${customerId}`);
@@ -24,7 +27,9 @@ const getEvents = async () => {
     const removeVisitsFromList = events.filter((data) => data.notificationType.name !== "Visita");
     const removeVehicularFromList = removeVisitsFromList.filter((data) => data.notificationType.name !== 'Vehicular');
     const removeNoteFromList = removeVehicularFromList.filter((data) => data.notificationType.name !== 'Nota');*/
-    let raw = JSON.stringify({
+    infoPage.counter = 10;
+    clearTimeout(Config.timeOut);
+    raw = JSON.stringify({
         "filter": {
             "conditions": [
                 {
@@ -143,6 +148,30 @@ export class Events {
             viewTitle.innerText = pageName;
             tableBody.innerHTML = '.Cargando...';
             let eventsArray = await getEvents();
+            if(infoPage.currentPage == 1){
+                const change = async () => {
+                    clearTimeout(Config.timeOut);
+                    if(infoPage.counter == Config.timeReolad){
+                        const newRegisters = await getFilterEntityCount(infoPage.table, raw);
+                        //console.log(infoPage.count);
+                        //console.log(newRegisters);
+                        if(newRegisters > infoPage.count){
+                            console.log("updates detected")
+                            new Events().render(infoPage.offset, infoPage.currentPage, infoPage.search, infoPage.moreSearch.department);
+                        }else{
+                            console.log("no updates")
+                            Config.timeOut = setTimeout(change, infoPage.counter);
+                        }
+                        
+                    }else if(infoPage.counter == 10){
+                        infoPage.counter = Config.timeReolad;
+                        Config.timeOut = setTimeout(change, infoPage.counter);
+                    }
+                }
+                Config.timeOut = setTimeout(change, infoPage.counter);
+            }else{
+                clearTimeout(Config.timeOut);
+            }
             tableBody.innerHTML = UITableSkeletonTemplate.repeat(tableRows);
             // Exec functions
             this.load(tableBody, currentPage, eventsArray);
