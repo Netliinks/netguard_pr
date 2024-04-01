@@ -707,34 +707,71 @@ export class VehicularsExit {
                         end: document.getElementById('end-date'),
                         exportOption: document.getElementsByName('exportOption')
                     }
-                    let rawExport = JSON.stringify({
-                        "filter": {
-                            "conditions": [
-                                {
-                                    "property": "customer.id",
-                                    "operator": "=",
-                                    "value": `${customerId}`
-                                },
-                                {
-                                    "property": "vehiMarcType",
-                                    "operator": "=",
-                                    "value": `SALIDA`
-                                },
-                                {
-                                    "property": "egressDate",
-                                    "operator": ">=",
-                                    "value": `${_values.start.value}`
-                                },
-                                {
-                                    "property": "egressDate",
-                                    "operator": "<=",
-                                    "value": `${_values.end.value}`
-                                }
-                            ],
-                        },
-                        sort: "-createdDate",
-                        fetchPlan: 'full',
-                    });
+                    let rawExport;
+                    if(infoPage.moreSearch.department != null && infoPage.moreSearch.department != 'null'){
+                        rawExport = JSON.stringify({
+                            "filter": {
+                                "conditions": [
+                                    {
+                                        "property": "customer.id",
+                                        "operator": "=",
+                                        "value": `${customerId}`
+                                    },
+                                    {
+                                        "property": "vehiMarcType",
+                                        "operator": "=",
+                                        "value": `SALIDA`
+                                    },
+                                    {
+                                        "property": "department.id",
+                                        "operator": "=",
+                                        "value": `${infoPage.moreSearch.department}`
+                                    },
+                                    {
+                                        "property": "egressDate",
+                                        "operator": ">=",
+                                        "value": `${_values.start.value}`
+                                    },
+                                    {
+                                        "property": "egressDate",
+                                        "operator": "<=",
+                                        "value": `${_values.end.value}`
+                                    }
+                                ],
+                            },
+                            sort: "-createdDate",
+                            fetchPlan: 'full',
+                        });
+                    }else{
+                        rawExport = JSON.stringify({
+                            "filter": {
+                                "conditions": [
+                                    {
+                                        "property": "customer.id",
+                                        "operator": "=",
+                                        "value": `${customerId}`
+                                    },
+                                    {
+                                        "property": "vehiMarcType",
+                                        "operator": "=",
+                                        "value": `SALIDA`
+                                    },
+                                    {
+                                        "property": "egressDate",
+                                        "operator": ">=",
+                                        "value": `${_values.start.value}`
+                                    },
+                                    {
+                                        "property": "egressDate",
+                                        "operator": "<=",
+                                        "value": `${_values.end.value}`
+                                    }
+                                ],
+                            },
+                            sort: "-createdDate",
+                            fetchPlan: 'full',
+                        });
+                    }
                     const vehiculars = await getFilterEntityData("Vehicular", rawExport); //await GetVehiculars();
                     for (let i = 0; i < _values.exportOption.length; i++) {
                         let ele = _values.exportOption[i];
