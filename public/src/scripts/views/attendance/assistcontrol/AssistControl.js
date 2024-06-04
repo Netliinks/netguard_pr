@@ -119,7 +119,7 @@ export class AssistControl {
                         //console.log(newRegisters);
                         if(newRegisters > infoPage.count){
                             console.log("updates detected")
-                            new AssistControl().render(infoPage.offset, infoPage.currentPage, infoPage.search, infoPage.moreSearch.department);
+                            new AssistControl().render(infoPage.offset, infoPage.currentPage, infoPage.search);
                         }else{
                             console.log("no updates")
                             Config.timeOut = setTimeout(change, infoPage.counter);

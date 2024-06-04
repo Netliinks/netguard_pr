@@ -107,7 +107,7 @@ export class Notes {
                         //console.log(newRegisters);
                         if(newRegisters > infoPage.count){
                             console.log("updates detected")
-                            new Notes().render(infoPage.offset, infoPage.currentPage, infoPage.search, infoPage.moreSearch.department);
+                            new Notes().render(infoPage.offset, infoPage.currentPage, infoPage.search);
                         }else{
                             console.log("no updates")
                             Config.timeOut = setTimeout(change, infoPage.counter);

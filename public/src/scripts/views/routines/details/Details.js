@@ -113,7 +113,7 @@ export class RoutineRegisters {
                         //console.log(newRegisters);
                         if(newRegisters > infoPage.count){
                             console.log("updates detected")
-                            new RoutineRegisters().render(infoPage.offset, infoPage.currentPage, infoPage.search, infoPage.moreSearch.department);
+                            new RoutineRegisters().render(infoPage.offset, infoPage.currentPage, infoPage.search);
                         }else{
                             console.log("no updates")
                             Config.timeOut = setTimeout(change, infoPage.counter);

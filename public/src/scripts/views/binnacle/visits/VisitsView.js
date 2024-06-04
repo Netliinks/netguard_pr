@@ -123,7 +123,7 @@ export class Visits {
                         //console.log(newRegisters);
                         if(newRegisters > infoPage.count){
                             console.log("updates detected")
-                            new Visits().render(infoPage.offset, infoPage.currentPage, infoPage.search, infoPage.moreSearch.department);
+                            new Visits().render(infoPage.offset, infoPage.currentPage, infoPage.search);
                         }else{
                             console.log("no updates")
                             Config.timeOut = setTimeout(change, infoPage.counter);
@@ -167,14 +167,16 @@ export class Visits {
                 tableBody.appendChild(row);
             }
             else {
+                // <td id="table-time" style="white-space: nowrap">${visit.creationTime}</td>
                 for (let i = 0; i < paginatedItems.length; i++) {
                     let visit = paginatedItems[i]; // getting visit items
                     let row = document.createElement('TR');
                     row.innerHTML += `
                     <td style="white-space: nowrap">${visit.firstName} ${visit.firstLastName} ${visit.secondLastName}</td>
                     <td>${visit.dni}</td>
-                    <td id="table-date">${visit.creationDate}</td>
-                    <td id="table-time" style="white-space: nowrap">${visit.creationTime}</td>
+                    <td>${visit?.department?.name ?? ''}</td>
+                    <td id="table-date">${visit?.ingressDate ?? ''} ${visit?.ingressTime ?? ''}</td>
+                    <td id="table-date2">${visit?.egressDate ?? ''} ${visit?.egressTime ?? ''}</td>
                     <td>${verifyUserType(visit.user.userType)}</td>
                     <td class="tag"><span>${visit.visitState.name}</span></td>
 
@@ -325,6 +327,8 @@ export class Visits {
                 visitReason.value = entityData.reason;
                 const visitAutorizedBy = document.getElementById('visit-authorizedby');
                 visitAutorizedBy.value = entityData.type == "Guardia" ? entityData?.manager?.name ?? '' : entityData?.authorizer ?? '';
+                const visitPhone = document.getElementById('entity-phone');
+                visitPhone.value = entityData.type == entityData?.phoneNumber ?? '';
                 const visitStatus = document.getElementById('visit-status');
                 visitStatus.innerText = entityData.visitState.name;
                 const visitCitadel = document.getElementById('visit-citadel');
