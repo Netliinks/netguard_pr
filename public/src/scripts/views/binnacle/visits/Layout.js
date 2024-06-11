@@ -119,7 +119,7 @@ export const UIRightSidebar = `
   <div class="material_input">
     <input type="text"
       id="entity-phone"
-      maxlength="10" autocomplete="none" disabled>
+      maxlength="10" autocomplete="none" class="input_filled" disabled>
     <label for="entity-phone">Teléfono</label>
   </div>
 
