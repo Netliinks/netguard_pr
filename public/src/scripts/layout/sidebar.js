@@ -359,7 +359,7 @@ renders() {
 
     document.getElementById('render-routineDetails')?.addEventListener('click', () => {
       clearTimeout(Config.timeOut);
-      new RoutineRegisters().render(Config.offset, Config.currentPage, "");
+      new RoutineRegisters().render(Config.offset, Config.currentPage, "", false);
     });
   }
 }

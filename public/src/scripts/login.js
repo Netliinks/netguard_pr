@@ -255,9 +255,9 @@ export class SignIn {
         localStorage.removeItem('email');
         localStorage.removeItem('password');
         localStorage.removeItem('libreriasjs-notification-token');
+        clearTimeout(Config.timeOut);
         this.checkSignIn();
         window.location.reload();
-        clearTimeout(Config.timeOut);
     }
     showVerified(id, hash) {
         loginContainer.style.display = 'flex !important';
