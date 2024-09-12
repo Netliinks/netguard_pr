@@ -360,60 +360,62 @@ export class Locations {
                     distance: document.getElementById('entity-distance'),
 
                 };
-                const coords = inputsCollection.cords.value.split(',');
-                //console.log(coords)
-                const latitud = parseFloat(coords[0].trim());
-                //console.log(latitud)
-                const longitud = parseFloat(coords[1].trim());
-                //console.log(longitud)
-                const timeIni = inputsCollection.scheduleTime.value.split(':');
-                const hourIni = parseInt(timeIni[0].trim());
-                //console.log(hourIni)
-                const minIni = parseInt(timeIni[1].trim());
-                //console.log(minIni)
-                const timeEnd = inputsCollection.scheduleTimeEnd.value.split(':');
-                const hourEnd = parseInt(timeEnd[0].trim());
-                //console.log(hourEnd)
-                const minEnd = parseInt(timeEnd[1].trim());
-                //console.log(minEnd)
-                const raw = JSON.stringify({
-                    "name": `${inputsCollection.name.value}`,
-                    "cords": `${inputsCollection.cords.value}`,
-                    'latitude' : `${latitud}`,
-                    'longitude' : `${longitud}`,
-                    "frequency": `${inputsCollection.frequency.value}`,  
-                    "distance": `${inputsCollection.distance.value}`,  
-                    "business": {
-                        "id": `${businessData.business.id}`
-                    },                 
-                    "customer": {
-                        "id": `${customerId}`
-                    },
-                    "routine": {
-                      "id": `${routine.id}`
-                    },
-                    'scheduleTime': `${inputsCollection.scheduleTime.value}`,
-                    'scheduleTimeEnd': `${inputsCollection.scheduleTimeEnd.value}`,
-                    'creationDate': `${currentDateTime().date}`,
-                    'creationTime': `${currentDateTime().timeHHMMSS}`,
-                });
-                if(inputsCollection.name.value == "" || inputsCollection.name.value == undefined){
-                  alert("Nombre de Ubicación vacía");
-                }else if(inputsCollection.cords.value == "" || inputsCollection.cords.value == undefined){
+                if(inputsCollection.cords.value == "" || inputsCollection.cords.value == undefined){
                   alert("No se ha seleccionado una ubicación");
-                }else if(inputsCollection.distance.value == "" || inputsCollection.distance.value == undefined || inputsCollection.distance.value < 0){
-                  alert("Distancia inválida");
-                }else if(routine.id == '' || routine.id == null || routine.id == undefined){
-                  alert("No hay rutina");
-                }else if(hourIni == hourEnd && minIni > minEnd){
-                  alert("Minutos iniciales no pueden ser mayores a las del final en horas iguales.");
                 }else{
-                  registerEntity(raw, 'RoutineSchedule');
-                  setTimeout(() => {
-                      const container = document.getElementById('entity-editor-container');
-                      new CloseDialog().x(container);
-                      new Locations().render(Config.offset, Config.currentPage, infoPage.search, routine.id);
-                  }, 1000);
+                  const coords = inputsCollection.cords.value.split(',');
+                  //console.log(coords)
+                  const latitud = parseFloat(coords[0].trim());
+                  //console.log(latitud)
+                  const longitud = parseFloat(coords[1].trim());
+                  //console.log(longitud)
+                  const timeIni = inputsCollection.scheduleTime.value.split(':');
+                  const hourIni = parseInt(timeIni[0].trim());
+                  //console.log(hourIni)
+                  const minIni = parseInt(timeIni[1].trim());
+                  //console.log(minIni)
+                  const timeEnd = inputsCollection.scheduleTimeEnd.value.split(':');
+                  const hourEnd = parseInt(timeEnd[0].trim());
+                  //console.log(hourEnd)
+                  const minEnd = parseInt(timeEnd[1].trim());
+                  //console.log(minEnd)
+                  const raw = JSON.stringify({
+                      "name": `${inputsCollection.name.value}`,
+                      "cords": `${inputsCollection.cords.value}`,
+                      'latitude' : `${latitud}`,
+                      'longitude' : `${longitud}`,
+                      "frequency": `${inputsCollection.frequency.value}`,  
+                      "distance": `${inputsCollection.distance.value}`,  
+                      "business": {
+                          "id": `${businessData.business.id}`
+                      },                 
+                      "customer": {
+                          "id": `${customerId}`
+                      },
+                      "routine": {
+                        "id": `${routine.id}`
+                      },
+                      'scheduleTime': `${inputsCollection.scheduleTime.value}`,
+                      'scheduleTimeEnd': `${inputsCollection.scheduleTimeEnd.value}`,
+                      'creationDate': `${currentDateTime().date}`,
+                      'creationTime': `${currentDateTime().timeHHMMSS}`,
+                  });
+                  if(inputsCollection.name.value == "" || inputsCollection.name.value == undefined){
+                    alert("Nombre de Ubicación vacía");
+                  }else if(inputsCollection.distance.value == "" || inputsCollection.distance.value == undefined || inputsCollection.distance.value < 0){
+                    alert("Distancia inválida");
+                  }else if(routine.id == '' || routine.id == null || routine.id == undefined){
+                    alert("No hay rutina");
+                  }else if(hourIni == hourEnd && minIni > minEnd){
+                    alert("Minutos iniciales no pueden ser mayores a las del final en horas iguales.");
+                  }else{
+                    registerEntity(raw, 'RoutineSchedule');
+                    setTimeout(() => {
+                        const container = document.getElementById('entity-editor-container');
+                        new CloseDialog().x(container);
+                        new Locations().render(Config.offset, Config.currentPage, infoPage.search, routine.id);
+                    }, 1000);
+                  }
                 }
             });
             const btnObtCords = document.getElementById('obtCords');
@@ -484,7 +486,7 @@ export class Locations {
                   }
                   const cords = document.getElementById('entity-cords');
                   cords.classList.add('input_filled');
-                  cords.setAttribute('value', `${location.lat()}, ${location.lng()}`);
+                  cords.value = `${location.lat()}, ${location.lng()}`;
                   //var latitud = location.lat();
                   //var longitud = location.lng();
                   //console.log('Latitud2: ' + latitud);
@@ -640,45 +642,47 @@ export class Locations {
 
           };
           updateButton.addEventListener('click', () => {
-            const coords = $value.cords.value.split(',');
-            //console.log(coords)
-            const latitud = parseFloat(coords[0].trim());
-            //console.log(latitud)
-            const longitud = parseFloat(coords[1].trim());
-            //console.log(longitud)
-            const timeIni = $value.scheduleTime.value.split(':');
-            const hourIni = parseInt(timeIni[0].trim());
-            //console.log(hourIni)
-            const minIni = parseInt(timeIni[1].trim());
-            //console.log(minIni)
-            const timeEnd = $value.scheduleTimeEnd.value.split(':');
-            const hourEnd = parseInt(timeEnd[0].trim());
-            //console.log(hourEnd)
-            const minEnd = parseInt(timeEnd[1].trim());
-            //console.log(minEnd)
-            let raw = JSON.stringify({
-                // @ts-ignore
-                "name": `${$value.name.value}`,
-                // @ts-ignore
-                "cords": `${$value.cords.value}`,
-                "latitude": `${latitud}`,
-                "longitude": `${longitud}`,
-                "scheduleTime": `${$value.scheduleTime.value}`,
-                "scheduleTimeEnd": `${$value.scheduleTimeEnd.value}`,
-                // @ts-ignore
-                "distance": `${$value.distance.value}`,
-                "frequency": `${$value.frequency.value}`,
-            });
-            if($value.name.value == "" || $value.name.value == undefined){
-              alert("Nombre de Ubicación vacía");
-            }else if($value.cords.value == "" || $value.cords.value == undefined){
+            if($value.cords.value == "" || $value.cords.value == undefined){
               alert("No se ha seleccionado una ubicación");
-            }else if($value.distance.value == "" || $value.distance.value == undefined || $value.distance.value < 0){
-              alert("Distancia inválida");
-            }else if(hourIni == hourEnd && minIni > minEnd){
-              alert("Minutos iniciales no pueden ser mayores a las del final en horas iguales.");
             }else{
-              update(raw);
+              const coords = $value.cords.value.split(',');
+              //console.log(coords)
+              const latitud = parseFloat(coords[0].trim());
+              //console.log(latitud)
+              const longitud = parseFloat(coords[1].trim());
+              //console.log(longitud)
+              const timeIni = $value.scheduleTime.value.split(':');
+              const hourIni = parseInt(timeIni[0].trim());
+              //console.log(hourIni)
+              const minIni = parseInt(timeIni[1].trim());
+              //console.log(minIni)
+              const timeEnd = $value.scheduleTimeEnd.value.split(':');
+              const hourEnd = parseInt(timeEnd[0].trim());
+              //console.log(hourEnd)
+              const minEnd = parseInt(timeEnd[1].trim());
+              //console.log(minEnd)
+              let raw = JSON.stringify({
+                  // @ts-ignore
+                  "name": `${$value.name.value}`,
+                  // @ts-ignore
+                  "cords": `${$value.cords.value}`,
+                  "latitude": `${latitud}`,
+                  "longitude": `${longitud}`,
+                  "scheduleTime": `${$value.scheduleTime.value}`,
+                  "scheduleTimeEnd": `${$value.scheduleTimeEnd.value}`,
+                  // @ts-ignore
+                  "distance": `${$value.distance.value}`,
+                  "frequency": `${$value.frequency.value}`,
+              });
+              if($value.name.value == "" || $value.name.value == undefined){
+                alert("Nombre de Ubicación vacía");
+              }else if($value.distance.value == "" || $value.distance.value == undefined || $value.distance.value < 0){
+                alert("Distancia inválida");
+              }else if(hourIni == hourEnd && minIni > minEnd){
+                alert("Minutos iniciales no pueden ser mayores a las del final en horas iguales.");
+              }else{
+                update(raw);
+              }
             }
           });
           const btnObtCords = document.getElementById('obtCords');
@@ -766,7 +770,7 @@ export class Locations {
                 }
                 const cords = document.getElementById('entity-cords');
                 cords.classList.add('input_filled');
-                cords.setAttribute('value', `${location.lat()}, ${location.lng()}`);
+                cords.value = `${location.lat()}, ${location.lng()}`;
                 if(marker2 != undefined)
                   marker2.map = null;
                   //marker2.setMap(null);
@@ -824,6 +828,7 @@ export class Locations {
                 const cancelButton = document.getElementById('cancel');
                 const dialogContent = document.getElementById('dialog-content');
                 deleteButton.onclick = () => {
+                    createRoutines('DLT', null, entityId);
                     deleteEntity('RoutineSchedule', entityId)
                         .then(res => new Locations().render(infoPage.offset, infoPage.currentPage, infoPage.search, routine.id));
                     new CloseDialog().x(dialogContent);
@@ -1045,12 +1050,18 @@ const createRoutines = async (mode, routineId, scheduleId) => {
     let validators; 
     let releaseHour = false;
     let releaseMin = false;
+    let exceed = false;
     let i = 0;
     do {
       minAdd = parseInt(minAdd) + ubications.frequency;
-      validators = timesResults[i].split(":");
-      if((equivalentTime(timeEnd[0]) == equivalentTime(validators[0])) && releaseHour == false){
+      if(exceed){
         releaseHour = true;
+        releaseMin = true;
+      }else{
+        validators = timesResults[i].split(":");
+        if(((equivalentTime(timeEnd[0]) == equivalentTime(validators[0])) && releaseHour == false)){
+          releaseHour = true;
+        }
       }
 
       if(releaseHour == true && (minAdd > parseInt(timeEnd[1]))){
@@ -1061,21 +1072,56 @@ const createRoutines = async (mode, routineId, scheduleId) => {
           hourAdd += 1;
           minAdd = minRest;
           if((parseInt(timeIni[0]) + hourAdd) > 24){
-            timesResults.push(agregarCero((parseInt(timeIni[0]) + hourAdd)-24)+":"+agregarCero(minRest)+":00");
+
+            if(((parseInt(timeIni[0]) + hourAdd)-24)==parseInt(timeEnd[0]) && minRest > parseInt(timeEnd[1])){
+              exceed = true;
+            }else{
+              timesResults.push(agregarCero((parseInt(timeIni[0]) + hourAdd)-24)+":"+agregarCero(minRest)+":00");
+            }
+            
+            
           }else if((parseInt(timeIni[0]) + hourAdd) == 24){
-            timesResults.push(agregarCero(equivalentTime(parseInt(timeIni[0]) + hourAdd))+":"+agregarCero(minRest)+":00");
+            
+            if((equivalentTime(parseInt(timeIni[0]) + hourAdd))==parseInt(timeEnd[0]) && minRest > parseInt(timeEnd[1])){
+              exceed = true;
+            }else{
+              timesResults.push(agregarCero(equivalentTime(parseInt(timeIni[0]) + hourAdd))+":"+agregarCero(minRest)+":00");
+            }
+          
           }else{
-            timesResults.push(agregarCero(parseInt(timeIni[0]) + hourAdd)+":"+agregarCero(minRest)+":00");
+
+            if((parseInt(timeIni[0]) + hourAdd)==parseInt(timeEnd[0]) && minRest > parseInt(timeEnd[1])){
+              exceed = true;
+            }else{
+              timesResults.push(agregarCero(parseInt(timeIni[0]) + hourAdd)+":"+agregarCero(minRest)+":00");
+            }
+            
           }
 
           
         }else{
           if((parseInt(timeIni[0]) + hourAdd) > 24){
-            timesResults.push(agregarCero((parseInt(timeIni[0]) + hourAdd)-24)+":"+agregarCero(minAdd)+":00");
+
+            if(((parseInt(timeIni[0]) + hourAdd)-24)==parseInt(timeEnd[0]) && minAdd > parseInt(timeEnd[1])){
+              exceed = true;
+            }else{
+              timesResults.push(agregarCero((parseInt(timeIni[0]) + hourAdd)-24)+":"+agregarCero(minAdd)+":00");
+            }
           }else if((parseInt(timeIni[0]) + hourAdd) == 24){
-            timesResults.push(agregarCero(equivalentTime(parseInt(timeIni[0]) + hourAdd))+":"+agregarCero(minAdd)+":00");
+
+            if((equivalentTime(parseInt(timeIni[0]) + hourAdd))==parseInt(timeEnd[0]) && minAdd > parseInt(timeEnd[1])){
+              exceed = true;
+            }else{
+              timesResults.push(agregarCero(equivalentTime(parseInt(timeIni[0]) + hourAdd))+":"+agregarCero(minAdd)+":00");
+            }
+            
           }else{
-            timesResults.push(agregarCero(parseInt(timeIni[0]) + hourAdd)+":"+agregarCero(minAdd)+":00");
+
+            if((parseInt(timeIni[0]) + hourAdd)==parseInt(timeEnd[0]) && minAdd > parseInt(timeEnd[1])){
+              exceed = true;
+            }else{
+              timesResults.push(agregarCero(parseInt(timeIni[0]) + hourAdd)+":"+agregarCero(minAdd)+":00");;
+            }
           }
         }
         i+=1;
@@ -1123,6 +1169,23 @@ const createRoutines = async (mode, routineId, scheduleId) => {
     if(times != undefined && times.length != 0){
       deleteTimes(times);
       insertTimes(data);
+    }
+  }else if(mode == 'DLT'){
+    let raw = JSON.stringify({
+      "filter": {
+          "conditions": [
+              {
+                "property": "routineSchedule.id",
+                "operator": "=",
+                "value": `${scheduleId}`
+              },
+          ],
+      },
+      sort: "-createdDate",
+    });
+    let times = await getFilterEntityData("RoutineTime", raw);
+    if(times != undefined && times.length != 0){
+      deleteTimes(times);
     }
   }
 };
