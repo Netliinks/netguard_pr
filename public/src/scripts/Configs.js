@@ -12,6 +12,6 @@ export let Config = {
     maxLimitPage: 10,
     colorPagination: "rgba(112, 111, 142, 0.16)",
     mapIdGM: "c6d95126296646a5",
-    timeReolad: 30000,
+    timeReolad: 60000,
     timeOut: null
 };
