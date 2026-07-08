@@ -19,6 +19,11 @@ export const UIContentLayout = `
                     <i class="fa-solid fa-search"></i>
                 </button>
                 <button class="datatable_button import_user" id="export-entities">Exportar</button>
+                <button
+                    class="datatable_button import_user"
+                    id="import-entities">
+                    Importar
+                </button>
             </div>
         </div>
 

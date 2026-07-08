@@ -171,15 +171,32 @@ export const registerEntity = async (raw, type) => {
         url: `${NetliinkBase}rest/entities/`,
         method: 'POST'
     };
+    const body = typeof raw === 'string' ? raw : JSON.stringify(raw);
     const requestOptions = {
         method: req.method,
         headers: headers,
-        body: raw,
+        body,
         redirect: 'follow'
     };
-    fetch(req.url + type, requestOptions)
-        .then(res => res.json())
-        .catch(err => console.error('Error:' + err));
+    console.debug('registerEntity request', { url: req.url + type, body });
+    return fetch(req.url + type, requestOptions)
+        .then(async res => {
+            const data = await res.json().catch(() => null);
+            if (!res.ok) {
+                console.error('registerEntity error', {
+                    status: res.status,
+                    url: req.url + type,
+                    body,
+                    response: data
+                });
+                return Promise.reject({ status: res.status, body: data });
+            }
+            return data;
+        })
+        .catch(err => {
+            console.error('registerEntity error catch', err, { url: req.url + type, body });
+            return Promise.reject(err);
+        });
 };
 export const filterEntities = async (user) => { };
 export const setPassword = async (raw) => {
