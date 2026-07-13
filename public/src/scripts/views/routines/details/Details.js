@@ -245,6 +245,7 @@ export class RoutineRegisters {
                     let register = paginatedItems[i]; // getting note items
                     let row = document.createElement('TR');
                     row.innerHTML += `
+                    <td>${calculateLine(register?.customer?.name, 40)}</td>
                     <td>${calculateLine(register?.routine?.name, 40)}</td>
                     <td>${calculateLine(register?.routineSchedule?.name, 40)}</td>
                     <td>${calculateLine(register?.user?.username, 40)}</td>
