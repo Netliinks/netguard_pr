@@ -153,9 +153,6 @@ export class Blacklist {
               <i class="fa-solid fa-pen"></i>
             </button>
 
-            <button class="button" id="remove-entity" data-entityId="${blacklist.id}">
-              <i class="fa-solid fa-trash"></i>
-            </button>
           </dt>
         `;
                 table.appendChild(row);

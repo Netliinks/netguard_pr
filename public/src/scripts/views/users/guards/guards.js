@@ -235,9 +235,6 @@ export class Guards {
               <i class="fa-solid fa-pen"></i>
             </button>
 
-            <button class="button" id="remove-entity" data-entityId="${client.id}">
-              <i class="fa-solid fa-trash"></i>
-            </button>
 
             <button class="button" id="convert-entity" data-entityId="${client.id}">
                 <i class="fa-solid fa-shield"></i>
