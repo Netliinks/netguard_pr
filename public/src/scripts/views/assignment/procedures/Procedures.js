@@ -142,9 +142,6 @@ export class Procedures {
           
           <td class="entity_options">
           
-            <button class="button" id="remove-entity" data-entityId="${procedure.id}">
-              <i class="fa-solid fa-trash"></i>
-            </button>
           </dt>
         `;
         table.appendChild(row);

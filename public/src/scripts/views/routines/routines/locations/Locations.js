@@ -161,9 +161,6 @@ export class Locations {
           <button class="button" id="edit-entity" data-entityId="${location.id}">
             <i class="fa-solid fa-pen"></i>
           </button>
-            <button class="button" id="remove-entity" data-entityId="${location.id}">
-              <i class="fa-solid fa-trash"></i>
-            </button>
           </dt>
         `;
                 table.appendChild(row);
